@@ -13,6 +13,12 @@ namespace SlowRobotics.Behaviours
             float maxDist;
             float orientToBestFit;
 
+        /// <summary>
+        /// Interpolates agent orientation towards best fit plane of 3 closest neighbours
+        /// </summary>
+        /// <param name="_priority"></param>
+        /// <param name="_maxDist">Maximum distance to search (legacy - not used)</param>
+        /// <param name="_orientToBestFit">normalized interpolation factor</param>
             public OrientToBestFitBehaviour(int _priority, float _maxDist, float _orientToBestFit) : base(_priority)
             {
                 maxDist = _maxDist;

@@ -10,7 +10,11 @@ namespace SlowRobotics.Behaviours
     {
 
         float radius;
-
+        /// <summary>
+        /// Finds neighbours within a given radius
+        /// </summary>
+        /// <param name="_radius">search radius from current agent position</param>
+        /// <param name="_priority"></param>
         public GetNeighboursBehaviour(float _radius, int _priority) : base(_priority)
         {
             radius = _radius;

@@ -98,11 +98,11 @@
     <Compile Include="Core\World.cs" />
     <Compile Include="GPGPU\GPUTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Simulation\ReactionDiffusion\BZReaction.cs" />
+    <Compile Include="Simulation\ReactionDiffusion\GreyScott3d.cs" />
+    <Compile Include="Utils\GenericWorker.cs" />
     <Compile Include="Utils\PriorityQueue.cs" />
-    <Compile Include="Voxels\Cell.cs" />
-    <Compile Include="Voxels\GenericWorker.cs" />
-    <Compile Include="Voxels\GreyScott3d.cs" />
-    <Compile Include="Voxels\VoxelEngine.cs" />
+    <Compile Include="Voxels\FloatGrid.cs" />
     <Compile Include="Voxels\VoxelGrid.cs" />
     <Compile Include="Voxels\Voxeliser.cs" />
     <Compile Include="Voxels\VoxelMesher.cs" />

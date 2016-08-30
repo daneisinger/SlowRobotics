@@ -1,25 +1,24 @@
-﻿using System;
-using System.Collections;
+﻿using SlowRobotics.Voxels;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
-namespace SlowRobotics.Voxels
+namespace SlowRobotics.Simulation.ReactionDiffusion
 {
-    class VoxelEngine
+    class BZReaction
     {
-        public VoxelGrid grid;
-        HashSet<int> birthRules = new HashSet<int> {5,7};
-        HashSet<int> survivalRules = new HashSet<int> {6};
+        public VoxelGrid<float> grid;
+        HashSet<int> birthRules = new HashSet<int> { 5, 7 };
+        HashSet<int> survivalRules = new HashSet<int> { 6 };
         public int generations = 0;
 
-        public VoxelEngine(VoxelGrid _grid)
+        public BZReaction(VoxelGrid<float> _grid)
         {
             grid = _grid;
         }
 
-        public VoxelGrid getData()
+        public VoxelGrid<float> getData()
         {
             return grid;
         }
@@ -34,33 +33,33 @@ namespace SlowRobotics.Voxels
                 {
                     for (int x = 0; x < grid.w; x++)
                     {
-                        BZReaction(grid.getCell(x, y, z));
+                        StepBZReaction(grid.get(x, y, z), x, y, z);
                         index++;
                     }
                 }
             }
         }
 
-        void BZReaction(Cell c)
+        void StepBZReaction(VoxelGrid<float>.Voxel c, int x, int y, int z)
         {
-            
-            float cellVal = c.get();
 
-            for(int i = -1; i <= 1; i++)
+            float cellVal = c.Data;
+
+            for (int i = -1; i <= 1; i++)
             {
                 for (int j = -1; j <= 1; j++)
                 {
                     for (int k = -1; k <= 1; k++)
                     {
-                        int nx = c.x+i;
-                        int ny = c.y+j;
-                        int nz = c.z+k;
-                         Cell neighbour = grid.getCell(nx, ny, nz);
+                        int nx = x + i;
+                        int ny = y + j;
+                        int nz = z + k;
+                        VoxelGrid<float>.Voxel neighbour = grid.get(nx, ny, nz);
                     }
                 }
             }
-           
+
         }
-       
+
     }
 }

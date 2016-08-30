@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
-namespace SlowRobotics.Voxels
+namespace SlowRobotics.Utils
 {
     class GenericWorker
     {
@@ -76,7 +76,7 @@ namespace SlowRobotics.Voxels
         public virtual void run(BackgroundWorker worker)
         {
 
-           // worker.ReportProgress(0);
+            // worker.ReportProgress(0);
         }
     }
 }

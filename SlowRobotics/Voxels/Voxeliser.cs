@@ -9,9 +9,9 @@ namespace SlowRobotics.Voxels
 {
     public class Voxeliser
     {
-        VoxelGrid grid;
+        FloatGrid grid;
 
-        public Voxeliser(VoxelGrid _grid)
+        public Voxeliser(FloatGrid _grid)
         {
             grid = _grid;
         }

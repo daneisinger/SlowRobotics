@@ -31,10 +31,10 @@ namespace SlowRobotics.Voxels
 
         //buffers
         public ConcurrentBag<Tri> buffer;
-        public VoxelGrid v;
+        public VoxelGrid<float> v;
         public Mesh[] mesh;
 
-        public VoxelMesher(VoxelGrid _voxelData)
+        public VoxelMesher(VoxelGrid<float> _voxelData)
         {
             v = _voxelData;
         }

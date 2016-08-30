@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SlowRobotics.Voxels
+namespace SlowRobotics.Simulation.ReactionDiffusion
 {
+
     /*Implementation of the ReactP5 solver
     Copyright(c) 2011, 2014, Ioannis(Yiannis) Chatzikonstantinou, All rights reserved.
 
@@ -26,7 +27,7 @@ namespace SlowRobotics.Voxels
         public float k = 0.060f;
         public float du = 0.16f;
         public float dv = 0.08f;
-        public int solverSteps =5;
+        public int solverSteps = 5;
 
         public GreyScott3D(int _w, int _h, int _d)
         {
@@ -68,31 +69,32 @@ namespace SlowRobotics.Voxels
         //updates the cell values
         public void stepReaction(int offset, int step)
         {
-            int i,j, k, p; //loop and placeholder variables
+            int i, j, k, p; //loop and placeholder variables
             float uVal, vVal, FVal, kVal;  //chemical and reaction rate variables
                                            //chemical - how much of each chemical is in the cell
                                            //reaction = how fast  the chemicals mix
             float[] bF = P[0]; //gets the F param array
             float[] bk = P[1]; //gets the K param array
 
- 
-            for(i=offset;i< w; i+=step) {
-            for (j = 0; j < h; j++)
-            {
-                for (k = 0; k < d; k++)
-                {
-                    p = i + j * w + k * w * h;  //loops through all the cells gets the current one in the array
-                    uVal = S[0][p];  //gets the current u chem value
-                    vVal = S[1][p];  //gets the current v chem alue 
-                    FVal = bF[p];  //gets the reaction rate - this can vary accross the simulation if you want, in this simulation its static
-                    kVal = bk[p];  //ditto for k rate
-                    S[0][p] = S[0][p] + FVal * (1.0f - uVal) - uVal * vVal * vVal; //greyscott reaction to update the chemical quantities
-                    S[1][p] = S[1][p] - (FVal + kVal) * vVal + uVal * vVal * vVal;
 
+            for (i = offset; i < w; i += step)
+            {
+                for (j = 0; j < h; j++)
+                {
+                    for (k = 0; k < d; k++)
+                    {
+                        p = i + j * w + k * w * h;  //loops through all the cells gets the current one in the array
+                        uVal = S[0][p];  //gets the current u chem value
+                        vVal = S[1][p];  //gets the current v chem alue 
+                        FVal = bF[p];  //gets the reaction rate - this can vary accross the simulation if you want, in this simulation its static
+                        kVal = bk[p];  //ditto for k rate
+                        S[0][p] = S[0][p] + FVal * (1.0f - uVal) - uVal * vVal * vVal; //greyscott reaction to update the chemical quantities
+                        S[1][p] = S[1][p] - (FVal + kVal) * vVal + uVal * vVal * vVal;
+
+                    }
                 }
             }
-        }
-           
+
         }
 
         //updates the diffusion
@@ -102,7 +104,7 @@ namespace SlowRobotics.Voxels
             for (int n = 0; n < S.Length; n++)
             {
 
-                for (i = offset; i < w; i+=step)
+                for (i = offset; i < w; i += step)
                 {
                     for (j = 0; j < h; j++)
                     {
@@ -116,7 +118,7 @@ namespace SlowRobotics.Voxels
                             Sn[n][p] = val;
                         }
                     }
-                    
+
                 }
             }
             swap(); //this avoids a concurrent modification I think. Though I am not sure if it even really works.
@@ -134,7 +136,7 @@ namespace SlowRobotics.Voxels
         void createNeighbourMap()
         {
             N = new int[6][];
-            for (int i = 0; i < N.Length; i++) N[i] = new int[w*h*d]; //.net initialise
+            for (int i = 0; i < N.Length; i++) N[i] = new int[w * h * d]; //.net initialise
 
             for (int i = 0; i < w; i++)
             {
@@ -262,5 +264,4 @@ namespace SlowRobotics.Voxels
             return dRS;
         }
     }
-
 }
