@@ -98,14 +98,17 @@
     <Compile Include="Core\World.cs" />
     <Compile Include="GPGPU\GPUTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rhino\MeshTools\Mesher.cs" />
+    <Compile Include="Rhino\MeshTools\MFace.cs" />
+    <Compile Include="Rhino\VoxelTools\Voxeliser.cs" />
+    <Compile Include="Rhino\VoxelTools\VoxelMesher.cs" />
     <Compile Include="Simulation\ReactionDiffusion\BZReaction.cs" />
     <Compile Include="Simulation\ReactionDiffusion\GreyScott3d.cs" />
     <Compile Include="Utils\GenericWorker.cs" />
     <Compile Include="Utils\PriorityQueue.cs" />
+    <Compile Include="Voxels\ColourGrid.cs" />
     <Compile Include="Voxels\FloatGrid.cs" />
     <Compile Include="Voxels\VoxelGrid.cs" />
-    <Compile Include="Voxels\Voxeliser.cs" />
-    <Compile Include="Voxels\VoxelMesher.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

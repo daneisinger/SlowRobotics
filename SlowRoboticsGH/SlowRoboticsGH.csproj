@@ -57,6 +57,16 @@
     <Compile Include="SlowRoboticsGHInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SlowRobotics\SlowRobotics.csproj">
+      <Project>{b48e23c2-3ecf-4915-8e48-63e6d6fc2fda}</Project>
+      <Name>SlowRobotics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Toxiclibs\Toxiclibs.csproj">
+      <Project>{1614e276-fbec-47b2-a8a8-53e77665c31e}</Project>
+      <Name>Toxiclibs</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

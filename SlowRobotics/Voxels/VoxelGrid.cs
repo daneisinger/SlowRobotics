@@ -17,6 +17,9 @@ namespace SlowRobotics.Voxels
         public float[] max;
 
         // Nested class is also generic on T
+
+        //TODO - overload operators to finish this up as a generic type
+
         public class Voxel
         {
             private T data;  //T as private member datatype
@@ -31,6 +34,7 @@ namespace SlowRobotics.Voxels
                 get { return data; }
                 set { data = value; }
             }
+
         }
 
 

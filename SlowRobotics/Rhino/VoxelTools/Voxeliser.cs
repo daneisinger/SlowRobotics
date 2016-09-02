@@ -1,11 +1,12 @@
 ﻿using Rhino.Geometry;
+using SlowRobotics.Voxels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Toxiclibs.core;
 
-namespace SlowRobotics.Voxels
+namespace SlowRobotics.Rhino.VoxelTools
 {
     public class Voxeliser
     {
@@ -33,7 +34,7 @@ namespace SlowRobotics.Voxels
                 }
             }
             */
-            foreach(Point3d pt in points)
+            foreach (Point3d pt in points)
             {
                 grid.setWithRadius((float)pt.X, (float)pt.Y, (float)pt.Z, val, maxRad);
             }
@@ -50,7 +51,7 @@ namespace SlowRobotics.Voxels
                 foreach (Vec3D n in neighbours)
                 {
                     float distSquared = pt.distanceToSquared(n);
-                    if (distSquared < maxRadSquared) voxelVal += val*(1-(distSquared / maxRadSquared));
+                    if (distSquared < maxRadSquared) voxelVal += val * (1 - (distSquared / maxRadSquared));
                 }
             }
             return voxelVal;
@@ -58,11 +59,11 @@ namespace SlowRobotics.Voxels
 
         public void voxelisePointBlur(List<Point3d> points, int blurIterations, float val)
         {
-            foreach(Point3d pt in points)
+            foreach (Point3d pt in points)
             {
-                grid.setValue((float) pt.X, (float) pt.Y, (float)pt.Z, val);
+                grid.setValue((float)pt.X, (float)pt.Y, (float)pt.Z, val);
             }
-            for(int i=0;i< blurIterations;i++) grid.blur();
+            for (int i = 0; i < blurIterations; i++) grid.blur();
         }
     }
 }
