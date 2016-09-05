@@ -7,20 +7,19 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Behaviours.TrailBehaviours
 {
-    public class AddForceToTrailBehaviour : TrailBehaviour
+    public class AddForceBehaviour : AgentBehaviour
     {
         Vec3D force;
 
-        public AddForceToTrailBehaviour(int _priority, Vec3D _force) : base(_priority)
+        public AddForceBehaviour(int _priority, Vec3D _force) : base(_priority)
         {
             force = _force;
         }
 
         override
-        public void run(Agent a, int i)
+        public void run(Agent a)
         {
-            Link l = a.trail[i];
-            l.a.addForce(force);
+            a.addForce(force);
         }
 
     }

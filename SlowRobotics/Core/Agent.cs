@@ -18,8 +18,6 @@ namespace SlowRobotics.Core
         public List<Vec3D> neighbours;
         public PriorityQueue<Behaviour> behaviours;
         public PriorityQueue<Behaviour> neighbourBehaviours;
-        public PriorityQueue<Behaviour> trailBehaviours;
-        public List<Link> trail;
 
         public Agent(Vec3D _o, Vec3D _x, Vec3D _y, bool _f, World _world) :base(_o, _x, _y)
         {
@@ -35,17 +33,23 @@ namespace SlowRobotics.Core
             init();
         }
 
+        public new Agent copy()
+        {
+            Agent b = new Agent(this, f, world);
+            b.behaviours = behaviours;
+            b.neighbourBehaviours = neighbourBehaviours;
+            return b;
+        }
+
         private void init()
         {
             neighbours = new List<Vec3D>();
             behaviours = new PriorityQueue<Behaviour>();
             neighbourBehaviours = new PriorityQueue<Behaviour>();
-            trailBehaviours = new PriorityQueue<Behaviour>();
-            trail = new List<Link>();
-            initTrail();
         }
 
-        public void run()
+        
+        public override void update()
         {
             //run base behaviours
             foreach (Behaviour b in behaviours.getData()) b.run(this);
@@ -58,16 +62,7 @@ namespace SlowRobotics.Core
                     foreach (Behaviour b in neighbourBehaviours.getData()) b.run(this,n);
                 }
             }
-            //run trail behaviours
-            if (trail.Count > 0)
-            {
-                for(int i = 0; i < trail.Count; i++)
-                {
-                    //run per link behaviours
-                    foreach (Behaviour b in trailBehaviours.getData()) b.run(this,i);
-                }
-                 
-            }
+
             update(0.94f);
         }
 
@@ -75,13 +70,6 @@ namespace SlowRobotics.Core
         {
             if (b is AgentBehaviour) behaviours.Enqueue(b);
             else if (b is NeighbourBehaviour) neighbourBehaviours.Enqueue(b);
-            else if (b is TrailBehaviour) trailBehaviours.Enqueue(b);
-        }
-
-        public void initTrail()
-        {
-            Link l = new Link(new Plane3D(this), this, true);
-            trail.Add(l);
         }
 
     }

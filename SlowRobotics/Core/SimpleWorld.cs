@@ -9,48 +9,42 @@ namespace SlowRobotics.Core
     public class SimpleWorld : World
     {
 
-        List<Agent> pop;
+        List<Node> pop;
         public Plane3DOctree dynamicTree;
         public Plane3DOctree staticTree;
         float bounds;
 
         public SimpleWorld(float _bounds)
         {
-            pop = new List<Agent>();
+            pop = new List<Node>();
             bounds = _bounds;
             dynamicTree = new Plane3DOctree(new Vec3D(-bounds, -bounds, -bounds), bounds * 2);
             staticTree = new Plane3DOctree(new Vec3D(-bounds, -bounds, -bounds), bounds * 2);
         }
 
         
-        public List<Agent> getPop()
+        public List<Node> getPop()
         {
             return pop;
         }
-        /// <summary>
-        /// Add an agent to the octree and pop list for updating behaviours
-        /// </summary>
-        /// <param name="a"></param>
-        public void add(Agent a)
-        {
-            pop.Add(a);
-            dynamicTree.addPoint(a);
-        }
+
         /// <summary>
         /// Add a plane to the octree
         /// </summary>
         /// <param name="p"></param>
-        public void addDynamic(Plane3D p)
+        public void addDynamic(Node p)
         {
+            pop.Add(p);
             dynamicTree.addPoint(p);
         }
         /// <summary>
         /// Remove a plane from the octree
         /// </summary>
         /// <param name="p"></param>
-        public void removeDynamic(Plane3D p)
+        public bool removeDynamic(Node p)
         {
-            dynamicTree.remove(p);
+            pop.Remove(p);
+            return dynamicTree.remove(p);
         }
 
         public List<Vec3D> getDynamicPoints(Vec3D pos, float radius)
@@ -72,30 +66,29 @@ namespace SlowRobotics.Core
             else return staticPts;
         }
 
-        public void addStatic(Plane3D p)
+        public void addStatic(Node p)
         {
+            pop.Add(p);
             staticTree.addPoint(p);
         }
 
-        public void removeStatic(Plane3D p)
+        public bool removeStatic(Node p)
         {
-            staticTree.remove(p);
+            pop.Remove(p);
+            return staticTree.remove(p);
         }
 
-        public void remove(Agent a)
-        {
-            pop.Remove(a);
-        }
 
         public void run()
         {
             Random r = new Random();
-            foreach (Agent a in pop.OrderBy(n => r.Next())) a.run();
+            foreach (Node a in pop.OrderBy(n => r.Next())) a.update();
             //rebuild octrees
             dynamicTree = new Plane3DOctree(new Vec3D(-bounds, -bounds, -bounds), bounds * 2);
-            foreach (Agent a in pop) dynamicTree.addPoint(a);
-            
-
+            foreach (Node a in pop)
+            {
+                if(a is Particle) dynamicTree.addPoint(a);
+            }
         }
     }
 }

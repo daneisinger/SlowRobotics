@@ -7,10 +7,10 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Behaviours.TrailBehaviours
 {
-    public class CollideTrailBehaviour : TrailBehaviour
+    public class CollideBehaviour : AgentBehaviour
     {
-        World world;
-        float searchRadius, repelScale, friction;
+        float searchRadius, repelScale, friction, stickThreshold;
+        bool ignoreParent;
 
         /// <summary>
         /// Create behaviour with default values for repel scale (0.6) and friction (-0.02)
@@ -18,10 +18,8 @@ namespace SlowRobotics.Behaviours.TrailBehaviours
         /// <param name="_priority"></param>
         /// <param name="_searchRadius"></param>
         /// <param name="world"></param>
-        public CollideTrailBehaviour(int _priority, float _searchRadius, World world):this(_priority,_searchRadius,0.6f,-0.02f,  world)
-        {
-
-        }
+        public CollideBehaviour(int _priority, float _searchRadius):this(_priority,_searchRadius,0.6f,-0.02f, 0f,true) { }
+        public CollideBehaviour(int _priority, float _searchRadius, float _repelScale, float _friction) : this(_priority, _searchRadius, 0.6f, -0.02f, 0f, true) { }
         /// <summary>
         /// Create collide behaviour
         /// </summary>
@@ -30,39 +28,39 @@ namespace SlowRobotics.Behaviours.TrailBehaviours
         /// <param name="_repelScale"> Strength of force pushing away from colliding points</param>
         /// <param name="_friction"> Stickiness of colliding points</param>
         /// <param name="_world"></param>
-        public CollideTrailBehaviour (int _priority, float _searchRadius, float _repelScale, float _friction, World _world) : base(_priority)
+        public CollideBehaviour (int _priority, float _searchRadius, float _repelScale, float _friction, float _stickThreshold, bool _ignoreParent) : base(_priority)
         {
-            world = _world;
+
             searchRadius = _searchRadius;
             repelScale = _repelScale;
             friction = _friction;
+            stickThreshold = _stickThreshold;
+            ignoreParent = _ignoreParent;
         }
 
         override
-        public void run(Agent a, int i)
+        public void run(Agent a)
         {
-            Link l = a.trail[i];
-            if (!l.a.locked())
-            {
                 Vec3D f = new Vec3D();
                 float frictioncof = 0;
 
-                List<Vec3D> n = world.getDynamicPoints(l.a, searchRadius);
-                n.AddRange(world.getStaticPoints(l.a,searchRadius));
-                foreach (Plane3D j in n)
+                List<Vec3D> n = a.world.getDynamicPoints(a, searchRadius);
+                n.AddRange(a.world.getStaticPoints(a,searchRadius));
+
+                foreach (Node j in n)
                 {
-                    f.addSelf(repel(l.a, j, repelScale, searchRadius + 1));
-                    frictioncof += a.map(1 - (l.a.distanceTo(j) / searchRadius), 0, 1, 0, friction);
+                    if (ignoreParent || j.parent != a.parent)
+                    {
+                        f.addSelf(repel(a, j, repelScale, searchRadius + 1));
+                        frictioncof += a.map(1 - (a.distanceTo(j) / searchRadius), 0, 1, 0, friction);
+                    }
                 }
+
                 //mult by age
                // frictioncof *= (1 + (l.a.age / 700f));
-                l.a.setInertia(1 + frictioncof);
-                l.a.addForce(f);
-                if (l.isEnd())
-                {
-                    l.b.setInertia(1 + frictioncof);
-                }
-            }
+                a.setInertia(1 + frictioncof);
+                if(a.getInertia()>stickThreshold)a.addForce(f);
+
         }
 
         private Vec3D repel(Vec3D a, Vec3D j, float scale, float max)

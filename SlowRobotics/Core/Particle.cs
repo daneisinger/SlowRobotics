@@ -6,14 +6,14 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Core
 {
-    public class Particle : Vec3D
+    public class Particle : Node
     {
         protected Vec3D accel = new Vec3D();
         protected Vec3D vel = new Vec3D();
         float spd = 1;
         float accLimit = 1;
         public int age = 0;
-        protected bool f = false;
+        protected bool f = false; //TODO remove this system for fixing and just use nodes instead
         private float inertia = 1;
 
         public Particle(float _x, float _y, float _z) : base(_x, _y, _z)
@@ -26,25 +26,12 @@ namespace SlowRobotics.Core
 
         }
 
-        //-------------------------------------------------------------------------------------
-
-        //Functions for bounds and mapping
-
-        //-------------------------------------------------------------------------------------
         public bool inBounds(int extents)
         {
             if (x < -extents || x > extents || y < -extents || y > extents || z < -extents || z > extents) return false;
             return true;
         }
-        /*
-        public bool inBounds(AABB bounds)
-        {
-            Vec3D bMin = bounds.getMin();
-            Vec3D bMax = bounds.getMax();
-            if (x < bMin.x || x > bMax.x || y < bMin.y || y > bMax.y || z < bMin.z || z > bMax.z) return false;
-            return true;
-        }
-        */
+
         public float constrain(float v, float min, float max)
         {
             if (v < min)
@@ -73,13 +60,6 @@ namespace SlowRobotics.Core
             return lerp((float)min, (float)max, f);
         }
 
-
-        //-------------------------------------------------------------------------------------
-
-        //Functions for motion
-
-        //-------------------------------------------------------------------------------------
-
         public void addForce(Vec3D force)
         {
             if (force.magnitude() > 0.001) accel.addSelf(force);
@@ -94,7 +74,7 @@ namespace SlowRobotics.Core
             }
         }
 
-        public void update()
+        public override void update()
         {
             update(1);
         }
