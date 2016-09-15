@@ -37,10 +37,12 @@ namespace SlowRobotics.Core
             if(oldN== a)
             {
                 a = newN;
+                updateLength();
                 return true;
             }else if(oldN== b)
             {
                 b = newN;
+                updateLength();
                 return true;
             }
             return false;

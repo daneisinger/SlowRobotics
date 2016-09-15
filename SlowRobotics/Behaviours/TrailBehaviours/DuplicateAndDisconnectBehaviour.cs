@@ -34,15 +34,22 @@ namespace SlowRobotics.Behaviours.TrailBehaviours
                 b.addSelf(offset);
                 b.parent = a.parent;
 
-                //replace current connections
-                foreach (Link l in a.getLinks()) l.replaceNode(a, b);
+                //replace connections and add to new node
+                foreach (Link l in a.getLinks())
+                {
+                    l.replaceNode(a, b);
+                    b.connect(l);
+                }
+                //delete links from a
                 a.isolate();
 
+                //create new link
                 Link connection = new Link(a, b);
                 connection.stiffness = stiffness;
                 a.connect(connection);
                 b.connect(connection);
 
+                //add behaviours
                 foreach (Behaviour nb in behaviours) b.addBehaviour(nb); 
 
                 a.world.addDynamic(b);//add to world
