@@ -36,7 +36,9 @@ namespace SlowRobotics.Rhino.VoxelTools
             */
             foreach (Point3d pt in points)
             {
-                grid.setWithRadius((float)pt.X, (float)pt.Y, (float)pt.Z, val, maxRad);
+                int[] gridPt = grid.map((float)pt.X, (float)pt.Y, (float)pt.Z);
+                int radV = (int)(maxRad / ((grid.max[0] - grid.min[0]) / grid.w));
+                grid.booleanSphere(gridPt[0], gridPt[1], gridPt[2], radV,val, VoxelGridT<float>.Greater);
             }
         }
 
@@ -61,7 +63,7 @@ namespace SlowRobotics.Rhino.VoxelTools
         {
             foreach (Point3d pt in points)
             {
-                grid.setValue((float)pt.X, (float)pt.Y, (float)pt.Z, val);
+                grid.setNearest((float)pt.X, (float)pt.Y, (float)pt.Z, val);
             }
             for (int i = 0; i < blurIterations; i++) grid.blur();
         }

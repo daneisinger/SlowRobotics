@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SlowRobotics.Voxels
 {
-    public class FloatGrid : VoxelGrid<float>
+    public class FloatGrid : VoxelGridT<float>
     {
 
         /// <summary>
@@ -18,126 +18,100 @@ namespace SlowRobotics.Voxels
         /// <param name="_max"></param>
         public FloatGrid(int _w, int _h, int _d, float[] _min, float[] _max) : base(_w,_h,_d,_min, _max)
         {
-            initGrid(0);
+            setAll(0);
         }
 
         /// <summary>
-        /// Initialise FloatGrid with random vals between 0 and max
+        /// Randomize grid values between 0 and max
         /// </summary>
-        /// <param name="max">Max range for random value</param>
-        public void initRandom(float max)
+        /// <param name="max"></param>
+        public void setRandom(float max)
         {
             System.Random r = new System.Random();
-            vals = new Voxel[w * h * d];
-            for (int i = 0; i < w; i++)
+            Function(() => (float)(r.NextDouble() * max));
+        }
+
+
+        public new void booleanSphere(int x, int y, int z, int rad, float val, Filter filter)
+        {
+            int radSqr = rad * rad;
+            setRegion(x, y, z, val, rad, (int i, int j, int k, float dVal) =>
             {
-                for (int j = 0; j < h; j++)
+                int distSqr = (i * i) + (j * j) + (k * k);
+                float v = val * (1 - ((float)distSqr / radSqr));
+                if (distSqr < radSqr && filter(val, getValue(x + i, y + j, z + k))) //sphere
                 {
-                    for (int k = 0; k < d; k++)
-                    {
-                        int index = i + w * (j + h * k);
-                        float v = (float)Math.Round(r.NextDouble() * 0.6);
-                        vals[index].Data = v * max;
-                    }
+                    set(x + i, y + j, z + k, v);
+                    return true;
                 }
-            }
+                return false;
+
+            });
         }
 
         /// <summary>
-        /// Set voxel values within a specified radius from a point in world space
+        /// Average voxel values with its 6 axis aligned neighbours
         /// </summary>
-        /// <param name="x">X coordinate of point </param>
-        /// <param name="y">Y coordinate of point </param>
-        /// <param name="z">Z coordinate of point </param>
-        /// <param name="val">new voxel value</param>
-        /// <param name="rad">max distance of voxel from point in world space</param>
-        public void setWithRadius(float x, float y, float z, float val, float rad)
+        public void blur()
         {
-            int[] pt = map(x, y, z);
-            int radV = (int)(rad / ((max[0] - min[0]) / w));
-            int bs = radV * radV;
-            for (int i = -radV; i <= radV; i++)
+            Function((int x, int y, int z) =>
             {
-                for (int j = -radV; j <= radV; j++)
+                float sum = 0;
+                int ctr = 0;
+                float[] n = new float[] {
+                    getValue(x + 1, y, z), getValue(x - 1, y, z),
+                    getValue(x, y + 1, z), getValue(x, y - 1, z),
+                    getValue(x, y, z + 1), getValue(x, y, z - 1)
+                };
+                foreach(float v in n)
                 {
-                    for (int k = -radV; k <= radV; k++)
+                    if (v >= 0)
                     {
-                        int ls = (i * i) + (j * j) + (k * k);
-                        if (ls < bs) //sphere
-                        {
-                            float v = val * (1 - ((float)ls / bs));
-                            if (getValue(pt[0] + i, pt[1] + j, pt[2] + k) < v)
-                            {
-                                setGridValue(pt[0] + i, pt[1] + j, pt[2] + k, v);
-                            }
-                        }
+                        sum += v;
+                        ctr++;
                     }
                 }
+                return sum/ctr;
+
+            });
             }
-        }
 
         /// <summary>
         /// Blur all voxels
         /// </summary>
-        public void blur()
+        public void scalarBlur()
         {
-            for (int z = 0; z < d; z += 1)
-            {
-                for (int y = 0; y < h; y += 1)
-                {
-                    for (int x = 0; x < w; x += 1)
-                    {
-                        blurVoxel(x, y, z);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Blur the value of a voxel using neighbours
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        public void blurVoxel(int x, int y, int z)
-        {
-            if ((x > 1) && (x < w - 2) &&
-                    (y > 1) && (y < h - 2) &&
-                    (z > 1) && (z < d - 2))
-            {
+            Function((int x, int y, int z) => {
                 float sum = 0;
-                for (int k = -1; k <= 1; k++)
+                int ctr = 0;
+                setRegion(x, y, z, 0, 1, (int i, int j, int k, float dVal) =>
                 {
-                    for (int j = -1; j <= 1; j++)
+                    float val = getValue(i+x,j+y,k+z);
+                    int scalar = 1;
+                    if (k == 0)
                     {
-                        for (int i = -1; i <= 1; i++)
+                        if (j * i == 0)
                         {
-                            int index = (i + x) + w * ((j + y) + h * (k + z));
-                            float val = vals[index].Data;
-                            int scalar = 1;
-                            if (k == 0)
-                            {
-                                if (j * i == 0)
-                                {
-                                    scalar = 2;
-                                }
-                                if (j == 0 && i == 0)
-                                {
-                                    scalar = 4;
-                                }
-                            }
-                            else if (j == 0 && i == 0)
-                            {
-                                scalar = 2;
-                            }
-
-                            sum += (val * scalar);
+                            scalar = 2;
+                        }
+                        if (j == 0 && i == 0)
+                        {
+                            scalar = 4;
                         }
                     }
-                }
-                int weightedAverage = (int)(sum / 36);
-                vals[x + w * (y + h * z)].Data = weightedAverage;
-            }
+                    else if (j == 0 && i == 0)
+                    {
+                        scalar = 2;
+                    }
+                    if (val >= 0)
+                    {
+                        sum += (val * scalar);
+                        ctr += scalar;
+                    }
+                    return true;
+                });
+                return (float)(sum / ctr);
+              });
         }
 
     }

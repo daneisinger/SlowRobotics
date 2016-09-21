@@ -8,17 +8,17 @@ namespace SlowRobotics.Simulation.ReactionDiffusion
 {
     class BZReaction
     {
-        public VoxelGrid<float> grid;
+        public VoxelGridT<float> grid;
         HashSet<int> birthRules = new HashSet<int> { 5, 7 };
         HashSet<int> survivalRules = new HashSet<int> { 6 };
         public int generations = 0;
 
-        public BZReaction(VoxelGrid<float> _grid)
+        public BZReaction(VoxelGridT<float> _grid)
         {
             grid = _grid;
         }
 
-        public VoxelGrid<float> getData()
+        public VoxelGridT<float> getData()
         {
             return grid;
         }
@@ -40,7 +40,7 @@ namespace SlowRobotics.Simulation.ReactionDiffusion
             }
         }
 
-        void StepBZReaction(VoxelGrid<float>.Voxel c, int x, int y, int z)
+        void StepBZReaction(VoxelGridT<float>.Voxel c, int x, int y, int z)
         {
 
             float cellVal = c.Data;
@@ -54,7 +54,7 @@ namespace SlowRobotics.Simulation.ReactionDiffusion
                         int nx = x + i;
                         int ny = y + j;
                         int nz = z + k;
-                        VoxelGrid<float>.Voxel neighbour = grid.get(nx, ny, nz);
+                        VoxelGridT<float>.Voxel neighbour = grid.get(nx, ny, nz);
                     }
                 }
             }

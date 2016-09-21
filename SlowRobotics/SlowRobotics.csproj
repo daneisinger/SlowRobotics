@@ -109,8 +109,10 @@
     <Compile Include="Utils\GenericWorker.cs" />
     <Compile Include="Utils\PriorityQueue.cs" />
     <Compile Include="Voxels\ColourGrid.cs" />
+    <Compile Include="Voxels\ColourVoxel.cs" />
     <Compile Include="Voxels\FloatGrid.cs" />
     <Compile Include="Voxels\VoxelGrid.cs" />
+    <Compile Include="Voxels\VoxelGridT.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

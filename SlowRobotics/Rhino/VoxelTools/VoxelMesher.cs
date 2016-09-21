@@ -19,9 +19,9 @@ namespace SlowRobotics.Rhino.VoxelTools
 
         //buffers
         public ConcurrentBag<MFace> buffer;
-        public VoxelGrid<float> v;
+        public VoxelGridT<float> v;
 
-        public VoxelMesher(VoxelGrid<float> _voxelData)
+        public VoxelMesher(VoxelGridT<float> _voxelData)
         {
             v = _voxelData;
         }
@@ -29,6 +29,9 @@ namespace SlowRobotics.Rhino.VoxelTools
         {
             return Mesher.buildMesh(buffer);
         }
+
+        //TODO - fix issue with non uniform grids
+
         public void run(float cutoff)
         {
 
@@ -38,9 +41,9 @@ namespace SlowRobotics.Rhino.VoxelTools
             Parallel.For(0, v.d, z =>
             {
 
-                for (int y = v.h; y > 0; y--)
+                for (int y = v.h; y >= 0; y--)
                 {
-                    for (int x = 0; x < v.w; x++)
+                    for (int x = 0; x <v.w; x++)
                     {
                         //see if there are neighbouring values if not create the faces
                         float val = v.getValue(x, y, z);
