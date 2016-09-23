@@ -19,12 +19,7 @@ namespace SlowRobotics.Behaviours
         /// <param name="a"></param>
         /// <param name="b"></param>
         void run(Agent a, Agent b);
-        /// <summary>
-        /// Behaviour to run per link in trail
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="linkIndex"></param>
-        void run(Agent a, int linkIndex);
+
         int getPriority();
 
     }

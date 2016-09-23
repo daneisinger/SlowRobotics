@@ -7,10 +7,11 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Behaviours.NeighbourBehaviours
 {
-    public class NeighbourBehaviour : Behaviour
+    public class NeighbourBehaviour : AgentBehaviour
     {
-        protected ExponentialInterpolation interp = new ExponentialInterpolation(2);
-        public int priority;
+       
+        //protected ExponentialInterpolation interp = new ExponentialInterpolation(2);
+       // public int priority;
         /// <summary>
         /// Empty constructor with default priority of 1
         /// </summary>
@@ -26,7 +27,7 @@ namespace SlowRobotics.Behaviours.NeighbourBehaviours
         {
             priority = _priority;
         }
-
+        /*
         public int CompareTo(Behaviour other)
         {
             if (other.getPriority() > priority) return -1;
@@ -49,10 +50,6 @@ namespace SlowRobotics.Behaviours.NeighbourBehaviours
         public virtual void run(Agent a, Agent b)
         {
 
-        }
-        public virtual void run(Agent a, int linkIndex)
-        {
-
-        }
+        }*/
     }
 }

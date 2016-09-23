@@ -59,8 +59,8 @@
       <HintPath>..\packages\NUnit.3.2.1\lib\net40\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="RhinoCommon_old">
-      <HintPath>..\..\realtimerobotics\RealtimeAgent\lib\RhinoCommon_old.dll</HintPath>
+    <Reference Include="RhinoCommon512">
+      <HintPath>..\..\..\..\..\..\Work\RMIT\Robotanist\Code\RhinoCommon512.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -100,10 +100,12 @@
     <Compile Include="Core\World.cs" />
     <Compile Include="GPGPU\GPUTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rhino\GraphTools\Graph.cs" />
     <Compile Include="Rhino\MeshTools\Mesher.cs" />
     <Compile Include="Rhino\MeshTools\MFace.cs" />
+    <Compile Include="Rhino\VoxelTools\ColourGridMesher.cs" />
     <Compile Include="Rhino\VoxelTools\Voxeliser.cs" />
-    <Compile Include="Rhino\VoxelTools\VoxelMesher.cs" />
+    <Compile Include="Rhino\VoxelTools\FloatGridMesher.cs" />
     <Compile Include="Simulation\ReactionDiffusion\BZReaction.cs" />
     <Compile Include="Simulation\ReactionDiffusion\GreyScott3d.cs" />
     <Compile Include="Utils\GenericWorker.cs" />

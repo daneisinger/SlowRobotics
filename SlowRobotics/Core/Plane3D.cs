@@ -6,16 +6,13 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Core
 {
-    public class Plane3D : Particle
+    public class Plane3D : Vec3D
     {
         public Vec3D xx;
         public Vec3D zz;
         public Vec3D yy;
-        int index = -1;
 
         protected ExponentialInterpolation interp = new ExponentialInterpolation(2);
-
-        //TriangleMesh mesh;
 
         public Plane3D(Vec3D _origin, Vec3D _x, Vec3D _y) :base(_origin)
         {
@@ -41,26 +38,15 @@ namespace SlowRobotics.Core
             yy = _j.yy.copy().normalize();
         }
 
-        //alignment function
-
-        public void interpolateToPlane3D(Plane3D j, float maxDist, float maxAlign)
+        public void interpolateToPlane3D(Plane3D j, float factor)
         {
             Quaternion interpToZ = Quaternion.getAlignmentQuat(j.zz, zz);
             Quaternion interpToX = Quaternion.getAlignmentQuat(j.xx, xx);
-
-            Vec3D toPlane3D = j.sub(this);
-            float ratio = toPlane3D.magnitude() / maxDist;
-            float f = interp.interpolate(0, maxAlign, ratio);
-
-            Quaternion transformMatrixZ = new Quaternion().interpolateToSelf(interpToZ, f);
-            Quaternion transformMatrixX = new Quaternion().interpolateToSelf(interpToX, f);
+            Quaternion transformMatrixZ = new Quaternion().interpolateToSelf(interpToZ, factor);
+            Quaternion transformMatrixX = new Quaternion().interpolateToSelf(interpToX, factor);
             transform(transformMatrixZ.toMatrix4x4());
             transform(transformMatrixX.toMatrix4x4());
         }
-
-        //interpolates the Plane3D towards a vector - I use this to fit the Plane3D to a best fit plane
-        //this means if the points already form an approximate surface then they will conform to it, 
-        //rather than occasionally resulting in complex noisy surfaces
 
         public void interpolateToZZ(Vec3D dir, float amt)
         {
@@ -87,7 +73,7 @@ namespace SlowRobotics.Core
 
         public void alignOriginWithXX(Plane3D b, float amt)
         {
-            Vec3D ab = b.sub(this); //vector between two planes
+            Vec3D ab = b.sub(this); 
             Quaternion interpTo = Quaternion.getAlignmentQuat(ab.getNormalized(), b.xx);
             Quaternion transformMatrix = new Quaternion().interpolateToSelf(interpTo, amt);
             transformOrigin(transformMatrix.toMatrix4x4());
@@ -95,7 +81,7 @@ namespace SlowRobotics.Core
 
         public Vec3D alignOriginWithXX(Vec3D o, Vec3D dir, float amt)
         {
-            Vec3D ab = o.sub(this); //vector between two planes
+            Vec3D ab = o.sub(this); 
             Quaternion interpTo = Quaternion.getAlignmentQuat(ab.getNormalized(), dir);
             Quaternion transformMatrix = new Quaternion().interpolateToSelf(interpTo, amt);
             return transformOrigin(transformMatrix.toMatrix4x4());
@@ -124,7 +110,6 @@ namespace SlowRobotics.Core
             xx = t.applyTo(xx).normalize();
             zz = t.applyTo(zz).normalize();
             yy = t.applyTo(yy).normalize();
-            //mesh.transform(t);
         }
 
         public Vec3D transformOrigin(Matrix4x4 t)

@@ -30,7 +30,7 @@ namespace SlowRobotics.Behaviours.NeighbourBehaviours
                 //move by normal
                 Vec3D toPlane3D = j.sub(a);
                 float ratio = toPlane3D.magnitude() / maxDist;
-                float f = interp.interpolate(0, strength, ratio);
+                float f = ExponentialInterpolation.Squared.interpolate(0, strength, ratio);
                 Vec3D zt = a.zz.scale(f);
                 float ab = toPlane3D.angleBetween(a.zz, true);
                 if (ab > (float)Math.PI / 2) zt.invert();

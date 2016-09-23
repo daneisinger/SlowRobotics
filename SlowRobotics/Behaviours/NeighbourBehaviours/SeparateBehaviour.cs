@@ -27,6 +27,8 @@ namespace SlowRobotics.Behaviours.NeighbourBehaviours
         public void run(Agent a, Agent b)
         {
 
+            //TODO use standard attract and repel behaviours
+
             Plane3D j = (Plane3D)b;
             if (j != a)
             {
@@ -44,7 +46,7 @@ namespace SlowRobotics.Behaviours.NeighbourBehaviours
                 else {
                     ratio = (d - cutoff) / (cutoff);
                 }
-                float f = interp.interpolate(0, max, ratio);
+                float f = ExponentialInterpolation.Squared.interpolate(0, max, ratio);
                 op.scaleSelf(f);
                 toPlane3D.scaleSelf(f);
                 if (inXY)

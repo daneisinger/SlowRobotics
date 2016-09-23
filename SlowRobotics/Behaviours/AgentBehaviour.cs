@@ -10,7 +10,7 @@ namespace SlowRobotics.Behaviours
     public class AgentBehaviour : Behaviour
     {
 
-        protected ExponentialInterpolation interp = new ExponentialInterpolation(2);
+        //protected readonly ExponentialInterpolation expInterpolator = new ExponentialInterpolation(2);
         public int priority;
         /// <summary>
         /// Empty constructor with default priority of 1
@@ -51,9 +51,45 @@ namespace SlowRobotics.Behaviours
         {
 
         }
-        public virtual void run(Agent a, int linkIndex)
-        {
 
+        public float scaleBehaviour(Vec3D ab, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
+        {
+            float dist = ab.magnitude();
+            float sf = 0;
+            if (dist > minDist && dist < maxDist)
+            {
+                float f = ((dist - minDist) / (maxDist - minDist));
+                sf = interpolator.interpolate(0, maxForce, f);
+            }
+            return sf;
         }
+
+        public Vec3D attract(Vec3D a, Vec3D b, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
+        {
+            Vec3D ab = b.sub(a);
+            return ab.normalizeTo(scaleBehaviour(ab,minDist,maxDist,maxForce, interpolator));
+        }
+
+        public Vec3D repel(Vec3D a, Vec3D b, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
+        {
+            Vec3D ab = b.sub(a);
+            return ab.normalizeTo(-(maxForce - scaleBehaviour(ab, minDist, maxDist, maxForce, interpolator)));
+        }
+
+        public Vec3D alignVectors(Vec3D a, Vec3D b, Vec3D aa, Vec3D bb, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
+        {
+            Vec3D ab = b.sub(a);
+            float sf = maxForce - scaleBehaviour(ab, minDist, maxDist, maxForce, interpolator); //invert
+            return aa.interpolateTo(bb, sf);
+        }
+
+        public void alignPlane(Plane3D toAlign, Plane3D b, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
+        {
+            Vec3D ab = b.sub(toAlign);
+            float sf = maxForce - scaleBehaviour(ab, minDist, maxDist, maxForce, interpolator); //invert
+            if(sf>0) toAlign.interpolateToPlane3D(b, sf);
+        }
+
+        
     }
 }

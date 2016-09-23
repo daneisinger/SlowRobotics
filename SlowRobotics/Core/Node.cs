@@ -6,29 +6,26 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Core
 {
-    /// <summary>
-    /// Extension of vec3d to handle topology and physics updates
-    /// </summary>
-    public class Node : Vec3D
-    {
-        //get rid of this sorted list - need one shared link object reference for each connection!
 
-        //  SortedList<Node,Link> links;
+    public class Node : Plane3D
+    {
+
         HashSet<Link> links;
         public Node parent { get; set; }
 
         public Node(float _x, float _y, float _z) : this(new Vec3D(_x,_y,_z)){ }
+        public Node(Vec3D _o) : this(new Plane3D(_o)) { }
 
-        public Node(Node n) : this(new Vec3D(n))
+        public Node(Plane3D plane) : base(plane)
+        {
+            links = new HashSet<Link>();
+        }
+
+        public Node(Node n) : base(n)
         {
             links = n.links;
         }
 
-        public Node(Vec3D _o) :base (_o)
-        {
-            //   links = new SortedList<Node,Link>();
-            links = new HashSet<Link>();
-        }
 
         virtual public void update() { }
 

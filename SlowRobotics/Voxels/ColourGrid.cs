@@ -23,6 +23,27 @@ namespace SlowRobotics.Voxels
             setAll(ColourVoxel.White);
         }
 
+        public void filter(Color c, float tolerance, bool subtract)
+        {
+            Function((int x, int y, int z) => {
+                ColourVoxel v = getValue(x, y, z);
+                bool withinThreshold = compareColours(c, v, tolerance);
+                if((withinThreshold && subtract) || (!withinThreshold && !subtract))
+                {
+                    return ColourVoxel.White;
+                }
+                return v;
+            });
+        }
+        
+        public bool compareColours(Color c, ColourVoxel v, float tolerance)
+        {
+            float dr = (float)(Math.Abs(c.R - v.R)) / 255;
+            float dg = (float)(Math.Abs(c.G - v.G)) / 255;
+            float db = (float)(Math.Abs(c.B - v.B)) / 255;
+            return (dr < tolerance && db < tolerance && dg < tolerance);
+        }
+
         public void paintHollowCurve(Curve profile, Curve target, int numSteps, float val, float thickness) {
             //reparametrize curves
             profile.Domain = new Interval(0, 1);

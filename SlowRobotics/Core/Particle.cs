@@ -16,15 +16,9 @@ namespace SlowRobotics.Core
         protected bool f = false; //TODO remove this system for fixing and just use nodes instead
         private float inertia = 1;
 
-        public Particle(float _x, float _y, float _z) : base(_x, _y, _z)
-        {
-            
-        }
-
-        public Particle(Vec3D _o) : base(_o)
-        {
-
-        }
+        public Particle(float _x, float _y, float _z) : base(_x, _y, _z) { }
+        public Particle(Vec3D _o) : base(_o) { }
+        public Particle(Node _n) : base(_n) { }
 
         public bool inBounds(int extents)
         {

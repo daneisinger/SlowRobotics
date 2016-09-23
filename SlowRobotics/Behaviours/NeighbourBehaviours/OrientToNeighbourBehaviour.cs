@@ -23,12 +23,12 @@ namespace SlowRobotics.Behaviours.NeighbourBehaviours
        public void run(Agent a, Agent b)
         {
 
-                    Plane3D j = (Plane3D)b;
-                    if (j != a)
-                    {
-                        a.interpolateToPlane3D(j,maxDist, orientToNeighbour);
-
-                    }
+            Plane3D j = (Plane3D)b;
+            if (j != a)
+            {
+                alignPlane(a, j, 0.1f, maxDist, orientToNeighbour, ExponentialInterpolation.Squared);
+              //  a.interpolateToPlane3D(j, maxDist, orientToNeighbour);
+            }
         }
     }
 }

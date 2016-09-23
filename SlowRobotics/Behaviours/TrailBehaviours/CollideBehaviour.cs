@@ -51,32 +51,13 @@ namespace SlowRobotics.Behaviours.TrailBehaviours
                 {
                     if (ignoreParent || j.parent != a.parent)
                     {
-                        f.addSelf(repel(a, j, repelScale, searchRadius + 1));
+                        f.addSelf(repel(a, j, 0.1f, searchRadius + 1, repelScale, ExponentialInterpolation.Squared));
                         frictioncof += a.map(1 - (a.distanceTo(j) / searchRadius), 0, 1, 0, friction);
                     }
                 }
-
-                //mult by age
-               // frictioncof *= (1 + (l.a.age / 700f));
                 a.setInertia(1 + frictioncof);
                 if(a.getInertia()>stickThreshold)a.addForce(f);
 
-        }
-
-        private Vec3D repel(Vec3D a, Vec3D j, float scale, float max)
-        {
-            Vec3D toPlane3D = j.sub(a);
-            float d = toPlane3D.magnitude();
-            if (d < max && d > 0.1)
-            {
-                float ratio = 1 - (d / (max));
-                float f = interp.interpolate(0, scale, ratio);
-                toPlane3D.invert();
-                return toPlane3D.scale(f);
-            }
-            else {
-                return new Vec3D();
-            }
         }
     }
 }

@@ -10,6 +10,7 @@ namespace Toxiclibs.core
     {
 
     private float exponent;
+    public readonly static ExponentialInterpolation Squared = new ExponentialInterpolation(2);
 
     /**
      * Default constructor uses square parabola (exp=2)

@@ -11,7 +11,7 @@ using Toxiclibs.core;
 namespace SlowRobotics.Core
 {
 
-    public class Agent : Plane3D
+    public class Agent : Particle
     {
 
         public World world;
@@ -19,18 +19,19 @@ namespace SlowRobotics.Core
         public PriorityQueue<Behaviour> behaviours;
         public PriorityQueue<Behaviour> neighbourBehaviours;
 
-        public Agent(Vec3D _o, Vec3D _x, Vec3D _y, bool _f, World _world) :base(_o, _x, _y)
-        {
-            f = _f;
-            world = _world;
-            init();
-        }
+        public Agent(Vec3D _o, Vec3D _x, Vec3D _y, bool _f, World _world) : this(new Plane3D(_o, _x, _y),_f,_world) { }
+        public Agent(Plane3D p, bool _f, World _world) : this(new Node(p), _f, _world) { }
 
-        public Agent(Plane3D p, bool _f, World _world) :base(p)
+        public Agent(Node n, bool _f, World _world) : base(n)
         {
             f = _f;
             world = _world;
             init();
+
+            foreach(Link l in getLinks())
+            {
+                l.replaceNode(n, this);
+            }
         }
 
         public new Agent copy()
@@ -68,8 +69,10 @@ namespace SlowRobotics.Core
 
         public void addBehaviour(Behaviour b)
         {
-            if (b is AgentBehaviour) behaviours.Enqueue(b);
-            else if (b is NeighbourBehaviour) neighbourBehaviours.Enqueue(b);
+            if (b is NeighbourBehaviour)
+            {
+                neighbourBehaviours.Enqueue(b);
+            }else if (b is AgentBehaviour) behaviours.Enqueue(b);
         }
 
     }
