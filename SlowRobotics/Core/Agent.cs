@@ -49,8 +49,7 @@ namespace SlowRobotics.Core
             neighbourBehaviours = new PriorityQueue<Behaviour>();
         }
 
-        
-        public override void update()
+        public override void step(float damping)
         {
             //run base behaviours
             foreach (Behaviour b in behaviours.getData()) b.run(this);
@@ -64,7 +63,7 @@ namespace SlowRobotics.Core
                 }
             }
 
-            update(0.94f);
+            update(damping);
         }
 
         public void addBehaviour(Behaviour b)

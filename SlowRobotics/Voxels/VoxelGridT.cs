@@ -326,7 +326,7 @@ namespace SlowRobotics.Voxels
 
         public void set(int index, T val)
         {
-            if (index>=0) vals[index] = new Voxel(val);
+            if (index>=0 && index <= Count) vals[index] = new Voxel(val);
         }
 
         /// <summary>

@@ -11,6 +11,8 @@ namespace SlowRobotics.Core
     {
 
         HashSet<Link> links;
+        HashSet<LinkPair> pairs;
+
         public Node parent { get; set; }
 
         public Node(float _x, float _y, float _z) : this(new Vec3D(_x,_y,_z)){ }
@@ -19,15 +21,16 @@ namespace SlowRobotics.Core
         public Node(Plane3D plane) : base(plane)
         {
             links = new HashSet<Link>();
+            pairs = new HashSet<LinkPair>();
         }
 
         public Node(Node n) : base(n)
         {
             links = n.links;
+            pairs = n.pairs;
         }
 
-
-        virtual public void update() { }
+        virtual public void step(float damping) { }
 
         public void connect(Link l)
         {
@@ -36,7 +39,75 @@ namespace SlowRobotics.Core
 
         public bool disconnect(Link b)
         {
-            return links.Remove(b);
+            return (tryRemoveMatchingPairs(b) && links.Remove(b));
+        }
+
+        public void pairLinks(LinkPair pair)
+        {
+            pairs.Add(pair);
+
+        }
+        public bool tryRemoveMatchingPairs(Link shared)
+        {
+            List<LinkPair> toRemove = new List<LinkPair>();
+            pairs.ToList().ForEach(lp => {
+                if (lp.hasLink(shared)) toRemove.Add(lp);
+            });
+
+            foreach(LinkPair l in toRemove)
+            {
+                pairs.Remove(l);
+            }
+
+            if (toRemove.Count > 0) return true;
+            return false;
+        }
+
+        public void pairLinksByListOrder()
+        {
+            if (links.Count > 1)
+            {
+                for (int i = 0; i < links.Count; i++)
+                {
+                    int j = (i==0)?links.Count-1:i-1;
+                    pairLinks(new LinkPair(getLinks()[i], getLinks()[j]));
+                }
+            }
+        }
+
+        public void pairLinksBySortedAngles()
+        {
+            if (links.Count > 1)
+            {
+                List<Link> remaining = new List<Link>();
+                remaining.AddRange(getLinks());
+                Link first = remaining[0];
+                remaining.Remove(first);
+                Link next = null;
+
+                while (remaining.Count>0)
+                {
+                    float angle = 1000;
+                    foreach (Link j in remaining)
+                    {
+                            float thisAngle = j.angleBetween(first, true);
+                            if (thisAngle < angle)
+                            {
+                                next = j;
+                                angle = thisAngle;
+                            }
+                    }
+                    if (next != null)
+                    {
+                        pairLinks(new LinkPair(first, next));
+                        remaining.Remove(next);
+                        first = next;
+                    }
+                }
+
+                //create last pair
+               pairLinks(new LinkPair(first, getLinks()[0]));
+            }
         }
 
         public void isolate()
@@ -47,6 +118,11 @@ namespace SlowRobotics.Core
         public List<Link> getLinks()
         {
             return links.ToList();
+        }
+
+        public List<LinkPair> getPairs()
+        {
+            return pairs.ToList();
         }
 
         public List<Node> getConnectedNodes()

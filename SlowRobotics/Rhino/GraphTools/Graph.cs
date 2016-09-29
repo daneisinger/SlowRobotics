@@ -19,6 +19,8 @@ namespace SlowRobotics.Rhino.GraphTools
             return output;
         }
 
+        //TODO - redo this by sorting by coordinates to find close pts - should be much faster
+
         public static List<Node> mergeDuplicates (List<Point3d> pts, float distToMergeDuplicates)
         {
             Dictionary<string, Node> bins = new Dictionary<string, Node>(); //bins to keep track of duplicates within a threshold

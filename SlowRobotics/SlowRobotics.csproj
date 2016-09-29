@@ -75,6 +75,7 @@
   <ItemGroup>
     <Compile Include="Behaviours\AgentBehaviour.cs" />
     <Compile Include="Behaviours\GetNeighboursBehaviour.cs" />
+    <Compile Include="Behaviours\NeighbourBehaviours\AlignNeighbourLinksBehaviour.cs" />
     <Compile Include="Behaviours\NeighbourBehaviours\OrientToNeighbourBehaviour.cs" />
     <Compile Include="Behaviours\NeighbourBehaviours\CohereZBehaviour.cs" />
     <Compile Include="Behaviours\NeighbourBehaviours\NeighbourBehaviour.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Core\Agent.cs" />
     <Compile Include="Behaviours\Behaviour.cs" />
     <Compile Include="Core\Link.cs" />
+    <Compile Include="Core\LinkPair.cs" />
     <Compile Include="Core\Node.cs" />
     <Compile Include="Core\Particle.cs" />
     <Compile Include="Core\Plane3D.cs" />
@@ -103,6 +105,7 @@
     <Compile Include="Rhino\GraphTools\Graph.cs" />
     <Compile Include="Rhino\MeshTools\Mesher.cs" />
     <Compile Include="Rhino\MeshTools\MFace.cs" />
+    <Compile Include="Rhino\Visualisation\Draw.cs" />
     <Compile Include="Rhino\VoxelTools\ColourGridMesher.cs" />
     <Compile Include="Rhino\VoxelTools\Voxeliser.cs" />
     <Compile Include="Rhino\VoxelTools\FloatGridMesher.cs" />
@@ -110,6 +113,7 @@
     <Compile Include="Simulation\ReactionDiffusion\GreyScott3d.cs" />
     <Compile Include="Utils\GenericWorker.cs" />
     <Compile Include="Utils\PriorityQueue.cs" />
+    <Compile Include="Voxels\ByteGrid.cs" />
     <Compile Include="Voxels\ColourGrid.cs" />
     <Compile Include="Voxels\ColourVoxel.cs" />
     <Compile Include="Voxels\FloatGrid.cs" />

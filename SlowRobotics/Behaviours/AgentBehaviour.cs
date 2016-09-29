@@ -76,11 +76,11 @@ namespace SlowRobotics.Behaviours
             return ab.normalizeTo(-(maxForce - scaleBehaviour(ab, minDist, maxDist, maxForce, interpolator)));
         }
 
-        public Vec3D alignVectors(Vec3D a, Vec3D b, Vec3D aa, Vec3D bb, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
+        public Vec3D alignVectors(Vec3D aPos, Vec3D bPos, Vec3D aDir, Vec3D bDir, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
         {
-            Vec3D ab = b.sub(a);
+            Vec3D ab = bPos.sub(aPos);
             float sf = maxForce - scaleBehaviour(ab, minDist, maxDist, maxForce, interpolator); //invert
-            return aa.interpolateTo(bb, sf);
+            return aDir.interpolateTo(bDir, sf);
         }
 
         public void alignPlane(Plane3D toAlign, Plane3D b, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)

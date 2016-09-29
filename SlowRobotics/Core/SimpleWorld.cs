@@ -81,13 +81,18 @@ namespace SlowRobotics.Core
 
         public void run()
         {
+            run(0.94f);
+        }
+
+        public void run(float damping)
+        {
             Random r = new Random();
-            foreach (Node a in pop.OrderBy(n => r.Next())) a.update();
+            foreach (Node a in pop.OrderBy(n => r.Next())) a.step(damping);
             //rebuild octrees
             dynamicTree = new Plane3DOctree(new Vec3D(-bounds, -bounds, -bounds), bounds * 2);
             foreach (Node a in pop)
             {
-                if(a is Particle) dynamicTree.addPoint(a);
+                if (a is Particle) dynamicTree.addPoint(a);
             }
         }
     }

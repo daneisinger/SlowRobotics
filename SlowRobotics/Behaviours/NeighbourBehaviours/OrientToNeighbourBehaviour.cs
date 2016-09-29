@@ -27,7 +27,6 @@ namespace SlowRobotics.Behaviours.NeighbourBehaviours
             if (j != a)
             {
                 alignPlane(a, j, 0.1f, maxDist, orientToNeighbour, ExponentialInterpolation.Squared);
-              //  a.interpolateToPlane3D(j, maxDist, orientToNeighbour);
             }
         }
     }

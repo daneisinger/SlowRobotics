@@ -64,18 +64,16 @@ namespace SlowRobotics.Core
             if (force.magnitude() > 0.001)
             {
                 accel.addSelf(force);
-                update();
+                step(1);
             }
         }
 
-        public override void update()
+        public override void step(float damping)
         {
-            update(1);
-        }
+            update(damping);        }
 
         public void update(float damping)
         {
-            // accel.limit(10);
             if (!f)
             {
                 accel.limit(accLimit);

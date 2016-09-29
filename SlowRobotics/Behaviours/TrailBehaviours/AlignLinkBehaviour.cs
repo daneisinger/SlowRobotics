@@ -1,26 +1,34 @@
-﻿using System;
+﻿using SlowRobotics.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Toxiclibs.core;
 
 namespace SlowRobotics.Behaviours.TrailBehaviours
 {
-    class AlignLinkBehaviour
+    public class AlignLinkBehaviour : AgentBehaviour
     {
-        /*
-                public void alignEnds()
+
+        float strength;
+
+        public AlignLinkBehaviour(int _priority, float _strength) : base(_priority)
         {
-            a.interpolateToZZ(b.sub(a).normalize(), 0.1f);
-            b.interpolateToZZ(b.sub(a).normalize(), 0.1f);
-            a.interpolateToXX(b.xx, 0.1f);
+            strength = _strength;
         }
 
-        public void alignWithLink(Link l, float sf)
+        override
+        public void run(Agent a)
         {
-            a.interpolateToXX(l.a.xx, sf);
-            b.interpolateToXX(l.b.xx, sf);
-            //a.interpolateToXX(l.a.zz, 0.1f);
+            foreach(Link l in a.getLinks())
+            {
+                a.interpolateToXX(l.getDir(), strength);
+
+                //try adjusting
+                float delta = a.xx.angleBetween(l.getDir(), true);
+                a.addForce(a.yy.scale(-delta * strength));
+            }
         }
-        */
+
     }
 }

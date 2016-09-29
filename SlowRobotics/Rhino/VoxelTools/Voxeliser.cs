@@ -2,6 +2,7 @@
 using SlowRobotics.Voxels;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Toxiclibs.core;
@@ -66,6 +67,23 @@ namespace SlowRobotics.Rhino.VoxelTools
                 grid.setNearest((float)pt.X, (float)pt.Y, (float)pt.Z, val);
             }
             for (int i = 0; i < blurIterations; i++) grid.blur();
+        }
+
+        public static ByteGrid readRawFile(string path)
+        {
+            byte[] data = File.ReadAllBytes(path);
+            // byte[] r = new byte[8];
+            // Array.Copy(data, 8, r, 0, 8);
+            int sx = BitConverter.ToInt32(data, 4);
+            int sy = BitConverter.ToInt32(data, 8);
+            int sz = BitConverter.ToInt32(data, 12);
+            int res = BitConverter.ToInt32(data, 16);
+
+            ByteGrid grid = new ByteGrid(sx, sy, sz, new float[] { 0, 0, 0 }, new float[] { sx, sy, sz });
+            grid.Function((int x, int y, int z) => {
+                return data[grid.indexAt(x,y, z)+20];
+            });
+            return grid;
         }
     }
 }
