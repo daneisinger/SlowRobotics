@@ -28,6 +28,7 @@ namespace SlowRobotics.Core
         {
             links = n.links;
             pairs = n.pairs;
+            parent = n.parent;
         }
 
         virtual public void step(float damping) { }
@@ -42,19 +43,36 @@ namespace SlowRobotics.Core
             return (tryRemoveMatchingPairs(b) && links.Remove(b));
         }
 
+        public void replaceLink(Link toReplace, Link newLink)
+        {
+            foreach(LinkPair l in getPairsForLink(toReplace))
+            {
+                l.replaceLink(toReplace, newLink);
+            }
+
+            links.Remove(toReplace);
+            links.Add(newLink);
+        }
+
         public void pairLinks(LinkPair pair)
         {
             pairs.Add(pair);
 
         }
+
+        public List<LinkPair> getPairsForLink(Link shared)
+        {
+            List<LinkPair> hasLink = new List<LinkPair>();
+            pairs.ToList().ForEach(lp => {
+                if (lp.hasLink(shared)) hasLink.Add(lp);
+            });
+            return hasLink;
+        }
+
         public bool tryRemoveMatchingPairs(Link shared)
         {
-            List<LinkPair> toRemove = new List<LinkPair>();
-            pairs.ToList().ForEach(lp => {
-                if (lp.hasLink(shared)) toRemove.Add(lp);
-            });
-
-            foreach(LinkPair l in toRemove)
+            List<LinkPair> toRemove = getPairsForLink(shared);
+            foreach (LinkPair l in toRemove)
             {
                 pairs.Remove(l);
             }
@@ -79,19 +97,19 @@ namespace SlowRobotics.Core
         {
             if (links.Count > 1)
             {
-                List<Link> remaining = new List<Link>();
-                remaining.AddRange(getLinks());
+                List<Link> remaining = getLinks();
                 Link first = remaining[0];
                 remaining.Remove(first);
                 Link next = null;
 
-                while (remaining.Count>0)
+                while (remaining.Count>1)
                 {
                     float angle = 1000;
                     foreach (Link j in remaining)
                     {
-                            float thisAngle = j.angleBetween(first, true);
-                            if (thisAngle < angle)
+                        float thisAngle = j.angleBetween(first, true);
+                        if (float.IsNaN(thisAngle)) thisAngle = 0;
+                        if (thisAngle < angle)
                             {
                                 next = j;
                                 angle = thisAngle;
@@ -134,31 +152,7 @@ namespace SlowRobotics.Core
             return output;
         }
 
-        public Dictionary<int,List<Node>> marchNodes(Node last, List<Node> current, ref int index)
-        {
-            Dictionary<int,List<Node>> nodes = new Dictionary<int,List<Node>>(); //create dictionary
+        
 
-            foreach (Node n in current)
-            {
-                nodes.Add(index, new List<Node>());//create initial list
-                List<Node> childNodes = n.getConnectedNodes();
-                childNodes.Remove(last);
-                nodes[index].AddRange(childNodes);
-                marchNodes(n, childNodes, ref index).ToList().ForEach(x => {
-                    if (nodes.ContainsKey(x.Key))
-                    {
-                        nodes[x.Key].AddRange(x.Value);
-                    }
-                    else
-                    {
-                        nodes.Add(x.Key, x.Value);
-                    }
-                     
-                 });
-                index++;
-            }
-
-            return nodes;
-        }
     }
 }

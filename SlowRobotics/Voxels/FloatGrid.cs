@@ -58,12 +58,8 @@ namespace SlowRobotics.Voxels
             {
                 float sum = 0;
                 int ctr = 0;
-                float[] n = new float[] {
-                    getValue(x + 1, y, z), getValue(x - 1, y, z),
-                    getValue(x, y + 1, z), getValue(x, y - 1, z),
-                    getValue(x, y, z + 1), getValue(x, y, z - 1)
-                };
-                foreach(float v in n)
+                
+                foreach(float v in getAxisNeighbours(x,y,z))
                 {
                     if (v >= 0)
                     {

@@ -261,7 +261,14 @@ namespace SlowRobotics.Voxels
             return n;
         }
 
-       
+       public T[] getAxisNeighbours(int x, int y, int z)
+        {
+            return new T[] {
+                    getValue(x + 1, y, z), getValue(x - 1, y, z),
+                    getValue(x, y + 1, z), getValue(x, y - 1, z),
+                    getValue(x, y, z + 1), getValue(x, y, z - 1)
+                };
+        }
 
         /// <summary>
         /// Returns a shallow copy of all voxel objects

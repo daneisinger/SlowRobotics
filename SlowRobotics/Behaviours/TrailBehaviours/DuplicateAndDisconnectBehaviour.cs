@@ -15,14 +15,18 @@ namespace SlowRobotics.Behaviours.TrailBehaviours
         int frequency;
         int ctr;
         float stiffness;
+        bool dynamic;
 
-        public DuplicateAndDisconnectBehaviour(int _priority, int _frequency, Vec3D _offset, float _stiffness, List<Behaviour> _behaviours) : base(_priority)
+        public DuplicateAndDisconnectBehaviour(int _priority, int _frequency, Vec3D _offset, float _stiffness, List<Behaviour> _behaviours) : this(_priority, _frequency, _offset,_stiffness,_behaviours, true) {}
+        public DuplicateAndDisconnectBehaviour(int _priority, int _frequency, Vec3D _offset ) : this(_priority, _frequency, _offset, 0, new List<Behaviour>(), false) { }
+        public DuplicateAndDisconnectBehaviour(int _priority, int _frequency, Vec3D _offset, float _stiffness, List<Behaviour> _behaviours, bool _dynamic) : base(_priority)
         {
             offset = _offset;
             frequency = _frequency;
             ctr = 0;
             behaviours = _behaviours;
             stiffness = _stiffness;
+            dynamic = _dynamic;
         }
 
         override
@@ -50,9 +54,16 @@ namespace SlowRobotics.Behaviours.TrailBehaviours
                 b.connect(connection);
 
                 //add behaviours
-                foreach (Behaviour nb in behaviours) b.addBehaviour(nb); 
 
-                a.world.addDynamic(b);//add to world
+                if (dynamic)
+                {
+                    foreach (Behaviour nb in behaviours) b.addBehaviour(nb);
+                    a.world.addDynamic(b);//add to world
+                }
+                else
+                {
+                    a.world.addStatic(b);
+                }
             }
             ctr++;
 

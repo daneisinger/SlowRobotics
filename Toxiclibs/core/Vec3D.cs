@@ -320,6 +320,11 @@ namespace Toxiclibs.core
         return (float)Math.Acos(theta);
     }
 
+        public static Vec3D operator - (Vec3D a, Vec3D b)
+        {
+            return a.sub(b);
+        }
+
     /**
      * Sets all vector components to 0.
      * 

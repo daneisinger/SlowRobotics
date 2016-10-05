@@ -6,6 +6,9 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Core
 {
+
+    //TODO make halfedges for easier splitting
+
     public class Link
     {
         public Node a;
@@ -45,8 +48,23 @@ namespace SlowRobotics.Core
             return false;
         }
 
+        public void split(Node splitPt)
+        {
+            Link a_s = new Link(splitPt, a);
+            Link b_s = new Link(splitPt, b);
+
+            splitPt.connect(a_s);
+            splitPt.connect(b_s);
+
+            a.replaceLink(this, a_s);
+            b.replaceLink(this, b_s);
+
+            
+        }
+
         public float angleBetween(Link other, bool flip)
         {
+
             Vec3D ab = a.sub(b);
             Vec3D abo = other.a.sub(other.b);
             if (flip) abo.invert();
@@ -62,30 +80,46 @@ namespace SlowRobotics.Core
             return a.add(dir.scaleSelf(t));
         }
 
-        public bool closestPtBetweenLinks(Link l1, Link l2, Vec3D a, Vec3D b)
+      
+
+        public Vec3D pointAt(float param)
+        {
+            Vec3D ab = b.sub(a);
+            ab.scaleSelf(param);
+            return a.add(ab);
+        }
+
+        public static void closestPtBetweenLinks(Link l1, Link l2, ref Vec3D a, ref Vec3D b)
+        {
+
+            //TODO - sort out this mess
+            b = closestOnB(l1, l2);
+            a = closestOnB(l2, l1);
+        }
+
+        private static Vec3D closestOnB(Link l1, Link l2)
         {
             // Algorithm is ported from the C algorithm of 
-            // Paul Bourke at http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline3d/
-            Vec3D resultSegmentPoint1 = new Vec3D();
-            Vec3D resultSegmentPoint2 = new Vec3D();
-
+            // Paul Bourke
             Vec3D p1 = l1.a;
             Vec3D p2 = l1.b;
             Vec3D p3 = l2.a;
             Vec3D p4 = l2.b;
+            Vec3D p21 = p2.sub(p1);
             Vec3D p13 = p1.sub(p3);
             Vec3D p43 = p4.sub(p3);
 
+            /*
             if (p43.magSquared() < Math.E)
             {
                 return false;
             }
-            Vec3D p21 = p2.sub(p1);
+            
             if (p21.magSquared() < Math.E)
             {
                 return false;
-            }
-
+            }*/
+            
             double d1343 = p13.x * (double)p43.x + (double)p13.y * p43.y + (double)p13.z * p43.z;
             double d4321 = p43.x * (double)p21.x + (double)p43.y * p21.y + (double)p43.z * p21.z;
             double d1321 = p13.x * (double)p21.x + (double)p13.y * p21.y + (double)p13.z * p21.z;
@@ -93,24 +127,27 @@ namespace SlowRobotics.Core
             double d2121 = p21.x * (double)p21.x + (double)p21.y * p21.y + (double)p21.z * p21.z;
 
             double denom = d2121 * d4343 - d4321 * d4321;
+            /*
             if (Math.Abs(denom) < Math.E)
             {
-                return false;
-            }
+               // return false;
+            }*/
+
             double numer = d1343 * d4321 - d1321 * d4343;
 
             float mua = Math.Max(Math.Min((float)(numer / denom),1),0);
             float mub = Math.Max(Math.Min((float)((d1343 + d4321 * (mua)) / d4343), 1),0);
 
-            // if((mua==0 && mub != 0) || (mua == 1 && mub != 1))return false;
-            a.x = (p1.x + mua * p21.x);
-            a.y = (p1.y + mua * p21.y);
-            a.z = (p1.z + mua * p21.z);
-            b.x = (p3.x + mub * p43.x);
-            b.y = (p3.y + mub * p43.y);
-            b.z = (p3.z + mub * p43.z);
-            return true;
+            // a.x = (p1.x + mua * p21.x);
+            // a.y = (p1.y + mua * p21.y);
+            // a.z = (p1.z + mua * p21.z);
+            return l2.pointAt(mub);
+            //b.x = (p3.x + mub * p43.x);
+           // b.y = (p3.y + mub * p43.y);
+            //b.z = (p3.z + mub * p43.z);
+        //    return true;
         }
+        
 
         public void updateLength()
         {

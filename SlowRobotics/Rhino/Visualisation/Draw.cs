@@ -1,5 +1,7 @@
-﻿using Rhino.Geometry;
+﻿using Grasshopper.Kernel.Types;
+using Rhino.Geometry;
 using SlowRobotics.Core;
+using SlowRobotics.Rhino.GraphTools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +13,47 @@ namespace SlowRobotics.Rhino.Visualisation
     public static class Draw
     {
 
+        public static List<GH_ObjectWrapper> LinkedPlanes(World world)
+        {
+            Dictionary<Node, List<Node>> map = new Dictionary<Node, List<Node>>();
+            world.getPop().ForEach(agent => {
+
+                if (map.ContainsKey(agent))
+                {
+                    map[agent].Add(agent);
+                }
+                else {
+                    map.Add(agent, new List<Node>() { agent });
+                }
+
+            });
+            List<GH_ObjectWrapper> nodes = new List<GH_ObjectWrapper>();
+            foreach (Node n in map.Keys)
+            {
+                //get an end pt
+                Node start = null;
+
+                foreach (Node forStart in map[n]) if (forStart.getLinks().Count == 1) start = forStart;
+
+                if (start != null)
+                {
+
+                    List<Node> used = new List<Node>() { start };
+                    Graph.marchNodes(start, ref used);
+                    nodes.Add(new GH_ObjectWrapper(used.ConvertAll(x => NodeToPlane(x))));
+                }
+            }
+            return nodes;
+        }
+
+        public static Plane NodeToPlane(Node nn)
+        {
+            Point3d pt = new Point3d(nn.x, nn.y, nn.z);
+            Vector3d xx = new Vector3d(nn.xx.x, nn.xx.y, nn.xx.z);
+            Vector3d yy = new Vector3d(nn.yy.x, nn.yy.y, nn.yy.z);
+            return new Plane(pt, xx, yy);
+        }
+
         public static List<Line> Links(Node a)
         {
             List<Line> output = new List<Line>();
@@ -20,15 +63,15 @@ namespace SlowRobotics.Rhino.Visualisation
             return output;
         }
 
-        public static void Pairs(Node a, out List<Polyline> geom, out List<float> targetAngles)
+        public static void Pairs(Node a, out List<Polyline> geom, out List<string> targetAngles)
         {
             List<Polyline> output = new List<Polyline>();
-            List<float> angles = new List<float>();
+            List<string> angles = new List<string>();
             a.getPairs().ForEach(p => {
 
                 Vec3D aa = p.a.tryGetOther(a);
                 Vec3D ab = p.b.tryGetOther(a);
-                angles.Add(p.angle);
+                angles.Add("" + p.getCurrentAngle().ToString() + ", "+ p.angle.ToString());
 
                 output.Add(new Polyline(new List<Point3d>() {
                     new Point3d(aa.x,aa.y,aa.z),

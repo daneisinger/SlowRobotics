@@ -71,6 +71,40 @@ namespace SlowRobotics.Rhino.GraphTools
             return bins.Values.ToList<Node>();
         }
 
+
+        public static void marchNodes(Node current, ref List<Node> used)
+        {
+
+            List<Node> childNodes = current.getConnectedNodes().Except(used).ToList();
+            used.AddRange(childNodes);
+
+            foreach (Node n in childNodes)
+            {
+                marchNodes(n, ref used);
+            }
+
+        }
+
+        public static void parentUnique(List<Node> nodes)
+        {
+            List<Node> remaining = new List<Node>(nodes);
+            List<Node> used = new List<Node>();
+
+            Node current = remaining[0];
+            used.Add(current);
+            marchNodes(current, ref used);
+            
+            foreach (Node n in used)
+                {
+                     n.parent = current;
+                     remaining.Remove(n);
+                }
+            
+          if (remaining.Count<nodes.Count() && remaining.Count > 1) parentUnique(remaining);
+            
+        }
+
+
         public static string makeSpatialKey(Point3d pt, float binSize)
         {
             return(""+

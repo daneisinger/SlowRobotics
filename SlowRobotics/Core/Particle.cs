@@ -108,6 +108,11 @@ namespace SlowRobotics.Core
             return vel.magnitude();
         }
 
+        public Vec3D getVel()
+        {
+            return vel.copy();
+        }
+
         public void scaleInertia(float factor)
         {
             setInertia(inertia *= factor);

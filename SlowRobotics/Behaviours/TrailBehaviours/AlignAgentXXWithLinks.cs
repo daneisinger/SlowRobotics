@@ -7,12 +7,12 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Behaviours.TrailBehaviours
 {
-    public class AlignLinkBehaviour : AgentBehaviour
+    public class AlignAgentXXWithLinks : AgentBehaviour
     {
 
         float strength;
 
-        public AlignLinkBehaviour(int _priority, float _strength) : base(_priority)
+        public AlignAgentXXWithLinks(int _priority, float _strength) : base(_priority)
         {
             strength = _strength;
         }

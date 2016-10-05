@@ -27,6 +27,7 @@ namespace SlowRobotics.Core
             f = _f;
             world = _world;
             init();
+            
 
             foreach(Link l in getLinks())
             {
@@ -72,6 +73,14 @@ namespace SlowRobotics.Core
             {
                 neighbourBehaviours.Enqueue(b);
             }else if (b is AgentBehaviour) behaviours.Enqueue(b);
+        }
+
+        public List<Behaviour> getBehaviours()
+        {
+            List<Behaviour> ab = new List<Behaviour>();
+            ab.AddRange(behaviours.getData());
+            ab.AddRange(neighbourBehaviours.getData());
+            return ab;
         }
 
     }
