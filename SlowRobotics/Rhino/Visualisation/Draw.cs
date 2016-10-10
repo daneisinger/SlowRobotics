@@ -62,27 +62,5 @@ namespace SlowRobotics.Rhino.Visualisation
             });
             return output;
         }
-
-        public static void Pairs(Node a, out List<Polyline> geom, out List<string> targetAngles)
-        {
-            List<Polyline> output = new List<Polyline>();
-            List<string> angles = new List<string>();
-            a.getPairs().ForEach(p => {
-
-                Vec3D aa = p.a.tryGetOther(a);
-                Vec3D ab = p.b.tryGetOther(a);
-                angles.Add("" + p.getCurrentAngle().ToString() + ", "+ p.angle.ToString());
-
-                output.Add(new Polyline(new List<Point3d>() {
-                    new Point3d(aa.x,aa.y,aa.z),
-                    new Point3d(a.x,a.y,a.z),
-                    new Point3d(ab.x,ab.y,ab.z)
-                }));
-
-            });
-            geom = output;
-            targetAngles = angles;
-
-        }
     }
 }

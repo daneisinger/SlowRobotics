@@ -89,6 +89,12 @@ namespace SlowRobotics.Voxels
             });
         }
 
+        public void blur()
+        {
+
+
+        }
+
         public void rayMarchImage(Bitmap img, Surface srf, int numSteps, double depthPerStep)
         {
             srf.SetDomain(0, new Interval(0, 1));

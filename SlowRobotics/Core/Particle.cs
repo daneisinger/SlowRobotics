@@ -13,7 +13,6 @@ namespace SlowRobotics.Core
         float spd = 1;
         float accLimit = 1;
         public int age = 0;
-        protected bool f = false; //TODO remove this system for fixing and just use nodes instead
         private float inertia = 1;
 
         public Particle(float _x, float _y, float _z) : base(_x, _y, _z) { }
@@ -70,22 +69,20 @@ namespace SlowRobotics.Core
 
         public override void step(float damping)
         {
-            update(damping);        }
+            update(damping);
+        }
 
         public void update(float damping)
         {
-            if (!f)
-            {
-                accel.limit(accLimit);
-                vel.addSelf(accel);
-                vel.limit(spd);
-                vel.scaleSelf(damping * inertia);
-                addSelf(vel);
+            accel.limit(accLimit);
+            vel.addSelf(accel);
+            vel.limit(spd);
+            vel.scaleSelf(damping * inertia);
+            addSelf(vel);
+            age++;
 
-                age++;
-
-            }
             accel = new Vec3D();
+            inertia = 1; 
         }
 
         public void setSpeed(float s)
@@ -129,14 +126,5 @@ namespace SlowRobotics.Core
             if (inertia > 1) inertia = 1;
             if (inertia < 0) inertia = 0;
         }
-
-        public void Lock(){
-	  		f = true;
-	  	}
-
-    public bool locked()
-    {
-        return f;
     }
-}
 }

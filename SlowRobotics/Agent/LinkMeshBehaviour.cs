@@ -3,19 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SlowRobotics.Core;
-using Toxiclibs.core;
 
-namespace SlowRobotics.Behaviours.NeighbourBehaviours
+namespace SlowRobotics.Agent
 {
-    public class NeighbourBehaviour : AgentBehaviour
+    public class LinkMeshBehaviour : Behaviour
     {
-       
-        //protected ExponentialInterpolation interp = new ExponentialInterpolation(2);
-       // public int priority;
+        public int priority;
         /// <summary>
         /// Empty constructor with default priority of 1
         /// </summary>
-        public NeighbourBehaviour() : this(1)
+        public LinkMeshBehaviour() : this(1)
         {
 
         }
@@ -23,11 +20,11 @@ namespace SlowRobotics.Behaviours.NeighbourBehaviours
         /// Create new behaviour with a given priority
         /// </summary>
         /// <param name="_priority">Behaviour priority, higher runs first</param>
-        public NeighbourBehaviour(int _priority)
+        public LinkMeshBehaviour(int _priority)
         {
             priority = _priority;
         }
-        /*
+
         public int CompareTo(Behaviour other)
         {
             if (other.getPriority() > priority) return -1;
@@ -39,17 +36,27 @@ namespace SlowRobotics.Behaviours.NeighbourBehaviours
         {
             return priority;
         }
+
+        /// <summary>
+        /// Cast to plane agent
+        /// </summary>
+        /// <param name="a"></param>
+        public virtual void run(Agent a)
+        {
+            if (a is LinkMesh) run((LinkMesh)a);
+        }
+
+        public virtual void test(Agent a, Plane3D p)
+        {
+            if (a is LinkMesh) test((LinkMesh)a, p);
+        }
+
         /// <summary>
         /// Function for behaviour to run. Override this function in new behaviours
         /// </summary>
         /// <param name="a">Current agent</param>
-        public virtual void run(Agent a)
-        {
+        public virtual void run(LinkMesh a) { }
 
-        }
-        public virtual void run(Agent a, Agent b)
-        {
-
-        }*/
+        public virtual void test(LinkMesh a, Plane3D p) { }
     }
 }

@@ -66,9 +66,11 @@ namespace SlowRobotics.Core
             else return staticPts;
         }
 
+        //TODO - static shouldnt be in pop REALLY NEED TO FIX
+
         public void addStatic(Node p)
         {
-            pop.Add(p);
+            pop.Add(p); 
             staticTree.addPoint(p);
         }
 

@@ -9,9 +9,7 @@ namespace SlowRobotics.Core
     public class Plane3DOctree : PointOctree
     {
 
-      public Plane3DOctree(Vec3D o, float d) : base(o,d)
-    {
-    }
+      public Plane3DOctree(Vec3D o, float d) : base(o,d){ }
 
-}
+    }
 }

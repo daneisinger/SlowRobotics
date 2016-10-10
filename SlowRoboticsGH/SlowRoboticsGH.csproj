@@ -53,9 +53,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SlowRoboticsGHComponent.cs" />
+    <Compile Include="BehaviourComponents.cs" />
+    <Compile Include="CreationComponents.cs" />
+    <Compile Include="SimulateComponents.cs" />
     <Compile Include="SlowRoboticsGHInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SlowRoboticsParameters.cs" />
+    <Compile Include="SlowRoboticsTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SlowRobotics\SlowRobotics.csproj">

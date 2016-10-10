@@ -5,17 +5,17 @@ using System.Text;
 using SlowRobotics.Core;
 using Toxiclibs.core;
 
-namespace SlowRobotics.Behaviours
+namespace SlowRobotics.Agent
 {
-    public class AgentBehaviour : Behaviour
+    public class PlaneAgentBehaviour : Behaviour
     {
 
-        //protected readonly ExponentialInterpolation expInterpolator = new ExponentialInterpolation(2);
+
         public int priority;
         /// <summary>
         /// Empty constructor with default priority of 1
         /// </summary>
-        public AgentBehaviour() : this(1)
+        public PlaneAgentBehaviour() : this(1)
         {
 
         }
@@ -23,7 +23,7 @@ namespace SlowRobotics.Behaviours
         /// Create new behaviour with a given priority
         /// </summary>
         /// <param name="_priority">Behaviour priority, higher runs first</param>
-        public AgentBehaviour(int _priority)
+        public PlaneAgentBehaviour(int _priority)
         {
             priority = _priority;
         }
@@ -39,18 +39,29 @@ namespace SlowRobotics.Behaviours
         {
             return priority;
         }
+        
+        /// <summary>
+        /// Cast to plane agent
+        /// </summary>
+        /// <param name="a"></param>
+        public virtual void run(Agent a)
+        {
+            if (a is PlaneAgent) run((PlaneAgent)a);
+        }
+
+        public virtual void test(Agent a, Plane3D p)
+        {
+            if (a is PlaneAgent) test((PlaneAgent)a, p);
+        }
+
         /// <summary>
         /// Function for behaviour to run. Override this function in new behaviours
         /// </summary>
         /// <param name="a">Current agent</param>
-        public virtual void run(Agent a)
-        {
+        public virtual void run(PlaneAgent a) {}
 
-        }
-        public virtual void run(Agent a, Agent b)
-        {
+        public virtual void test(PlaneAgent a, Plane3D p) { }
 
-        }
 
         public float scaleBehaviour(Vec3D ab, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
         {
@@ -58,7 +69,7 @@ namespace SlowRobotics.Behaviours
             float sf = 0;
             if (dist > minDist && dist < maxDist)
             {
-                float f = ((dist - minDist) / (maxDist - minDist));
+                float f = (dist - minDist) / (maxDist - minDist);
                 sf = interpolator.interpolate(0, maxForce, f);
             }
             return sf;
@@ -67,13 +78,15 @@ namespace SlowRobotics.Behaviours
         public Vec3D attract(Vec3D a, Vec3D b, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
         {
             Vec3D ab = b.sub(a);
-            return ab.normalizeTo(scaleBehaviour(ab,minDist,maxDist,maxForce, interpolator));
+            float f = maxForce - scaleBehaviour(ab, minDist, maxDist, maxForce, interpolator);
+            return (f!=0) ? ab.normalizeTo(f) : new Vec3D();
         }
 
         public Vec3D repel(Vec3D a, Vec3D b, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
         {
             Vec3D ab = b.sub(a);
-            return ab.normalizeTo(-(maxForce - scaleBehaviour(ab, minDist, maxDist, maxForce, interpolator)));
+            float f = -(maxForce - scaleBehaviour(ab, minDist, maxDist, maxForce, interpolator));
+            return (f!=0) ? ab.normalizeTo(f) :new Vec3D();
         }
 
         public Vec3D alignVectors(Vec3D aPos, Vec3D bPos, Vec3D aDir, Vec3D bDir, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
@@ -87,9 +100,7 @@ namespace SlowRobotics.Behaviours
         {
             Vec3D ab = b.sub(toAlign);
             float sf = maxForce - scaleBehaviour(ab, minDist, maxDist, maxForce, interpolator); //invert
-            if(sf>0) toAlign.interpolateToPlane3D(b, sf);
+            if (sf > 0) toAlign.interpolateToPlane3D(b, sf);
         }
-
-        
     }
 }

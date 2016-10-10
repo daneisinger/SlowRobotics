@@ -8,6 +8,8 @@ namespace SlowRobotics.Core
 {
     public class Plane3D : Vec3D
     {
+
+
         public Vec3D xx;
         public Vec3D zz;
         public Vec3D yy;

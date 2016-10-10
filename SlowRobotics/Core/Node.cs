@@ -11,7 +11,6 @@ namespace SlowRobotics.Core
     {
 
         HashSet<Link> links;
-        HashSet<LinkPair> pairs;
 
         public Node parent { get; set; }
 
@@ -21,13 +20,11 @@ namespace SlowRobotics.Core
         public Node(Plane3D plane) : base(plane)
         {
             links = new HashSet<Link>();
-            pairs = new HashSet<LinkPair>();
         }
 
         public Node(Node n) : base(n)
         {
             links = n.links;
-            pairs = n.pairs;
             parent = n.parent;
         }
 
@@ -40,94 +37,23 @@ namespace SlowRobotics.Core
 
         public bool disconnect(Link b)
         {
-            return (tryRemoveMatchingPairs(b) && links.Remove(b));
+            return links.Remove(b);
+
+        }
+
+        public Link last()
+        {
+            return links.LastOrDefault();
         }
 
         public void replaceLink(Link toReplace, Link newLink)
         {
-            foreach(LinkPair l in getPairsForLink(toReplace))
-            {
-                l.replaceLink(toReplace, newLink);
-            }
 
             links.Remove(toReplace);
             links.Add(newLink);
         }
 
-        public void pairLinks(LinkPair pair)
-        {
-            pairs.Add(pair);
-
-        }
-
-        public List<LinkPair> getPairsForLink(Link shared)
-        {
-            List<LinkPair> hasLink = new List<LinkPair>();
-            pairs.ToList().ForEach(lp => {
-                if (lp.hasLink(shared)) hasLink.Add(lp);
-            });
-            return hasLink;
-        }
-
-        public bool tryRemoveMatchingPairs(Link shared)
-        {
-            List<LinkPair> toRemove = getPairsForLink(shared);
-            foreach (LinkPair l in toRemove)
-            {
-                pairs.Remove(l);
-            }
-
-            if (toRemove.Count > 0) return true;
-            return false;
-        }
-
-        public void pairLinksByListOrder()
-        {
-            if (links.Count > 1)
-            {
-                for (int i = 0; i < links.Count; i++)
-                {
-                    int j = (i==0)?links.Count-1:i-1;
-                    pairLinks(new LinkPair(getLinks()[i], getLinks()[j]));
-                }
-            }
-        }
-
-        public void pairLinksBySortedAngles()
-        {
-            if (links.Count > 1)
-            {
-                List<Link> remaining = getLinks();
-                Link first = remaining[0];
-                remaining.Remove(first);
-                Link next = null;
-
-                while (remaining.Count>1)
-                {
-                    float angle = 1000;
-                    foreach (Link j in remaining)
-                    {
-                        float thisAngle = j.angleBetween(first, true);
-                        if (float.IsNaN(thisAngle)) thisAngle = 0;
-                        if (thisAngle < angle)
-                            {
-                                next = j;
-                                angle = thisAngle;
-                            }
-                    }
-                    if (next != null)
-                    {
-                        pairLinks(new LinkPair(first, next));
-                        remaining.Remove(next);
-                        first = next;
-                    }
-                }
-
-                //create last pair
-               pairLinks(new LinkPair(first, getLinks()[0]));
-            }
-        }
-
+        
         public void isolate()
         {
             links = new HashSet<Link>();
@@ -138,9 +64,9 @@ namespace SlowRobotics.Core
             return links.ToList();
         }
 
-        public List<LinkPair> getPairs()
+        public bool hasLinks()
         {
-            return pairs.ToList();
+            return getLinks().Count > 0;
         }
 
         public List<Node> getConnectedNodes()

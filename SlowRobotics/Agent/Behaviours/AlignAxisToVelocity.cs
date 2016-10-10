@@ -1,0 +1,36 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace SlowRobotics.Agent.Behaviours
+{
+    public class AlignAxisToVelocity : PlaneAgentBehaviour
+    {
+
+        public float strength { get; set; }
+        public int axis { get; set; }
+
+        public AlignAxisToVelocity(int _priority, float _strength, int _axis) : base(_priority)
+            {
+                strength = _strength;
+                axis = _axis;
+            }
+
+        public override void run(PlaneAgent a)
+        {
+            switch (axis) {
+                case 0:
+                    a.interpolateToXX(a.getVel(), strength);
+                    break;
+                case 1:
+                    a.interpolateToYY(a.getVel(), strength);
+                    break;
+                case 2:
+                    a.interpolateToZZ(a.getVel(), strength);
+                    break;
+            }
+        }
+
+     }
+}
