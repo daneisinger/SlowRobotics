@@ -42,7 +42,7 @@ namespace SlowRoboticsGH
         {
             GH_World world = null;
 
-            if (!DA.GetData(1, ref world)) { return; }
+            if (!DA.GetData(0, ref world)) { return; }
 
             world.Value.run();
 

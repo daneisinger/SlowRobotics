@@ -61,10 +61,10 @@ namespace SlowRoboticsGH
             else
             {
                 spring = new Spring(priority, (float)damping, verlet);
-                DA.SetData(0, new GH_Behaviour(spring));
-            }
                 
-           
+            }
+            DA.SetData(0,spring);
+
         }
     }
 
@@ -122,9 +122,9 @@ namespace SlowRoboticsGH
             else
             {
                 alignNearLinks = new AlignXXToNearLinks(priority, (float)maxDist, (float)strength, useParent);
-                DA.SetData(0, new GH_Behaviour(alignNearLinks));
+                
             }
-
+            DA.SetData(0, alignNearLinks);
 
         }
     }
@@ -179,10 +179,10 @@ namespace SlowRoboticsGH
             else
             {
                 cZAxis = new CohereInZAxis(priority, (float)strength, (float)maxDist);
-                DA.SetData(0, new GH_Behaviour(cZAxis));
+                
             }
 
-
+            DA.SetData(0, cZAxis);
         }
     }
 
@@ -240,8 +240,9 @@ namespace SlowRoboticsGH
             else
             {
                 cLink = new CohereToNearestLink(priority, parent, (float) maxDist, (float) strength);
-                DA.SetData(0, new GH_Behaviour(cLink));
+                
             }
+            DA.SetData(0, cLink);
         }
     }
 
@@ -298,8 +299,9 @@ namespace SlowRoboticsGH
             else
             {
                 duplicate = new Duplicate(priority, parent, (float) stiffness, behaviours.ConvertAll(b => { return b.Value; }));
-                DA.SetData(0, new GH_Behaviour(duplicate));
+                
             }
+            DA.SetData(0, duplicate);
         }
     }
 
@@ -377,8 +379,9 @@ namespace SlowRoboticsGH
             else
             {
                 addLink = new AddLink(priority, parent, brace, freq, IO.ConvertToVec3D(offset), (float)stiffness, (float) braceStiffness, behaviours.ConvertAll(b => { return b.Value; }),dynamic);
-                DA.SetData(0, new GH_Behaviour(addLink));
+                
             }
+            DA.SetData(0, addLink);
         }
     }
 
@@ -432,8 +435,9 @@ namespace SlowRoboticsGH
             else
             {
                 friction = new Friction(priority, (float)maxDist, (float)frictionCof);
-                DA.SetData(0, new GH_Behaviour(friction));
+                
             }
+            DA.SetData(0, friction);
         }
     }
 
@@ -491,8 +495,9 @@ namespace SlowRoboticsGH
             else
             {
                 iLock = new InertiaLock(priority, (float)minInertia, (float)speedFactor, minAge);
-                DA.SetData(0, new GH_Behaviour(iLock));
+                
             }
+            DA.SetData(0, iLock);
         }
     }
 
@@ -542,14 +547,20 @@ namespace SlowRoboticsGH
             else
             {
                 zLock = new ZLock(priority, (float)minZ);
-                DA.SetData(0, new GH_Behaviour(zLock));
+                
             }
+            DA.SetData(0, zLock);
         }
     }
 
     public class InteractComponent : GH_Component
     {
-        public InteractComponent() : base("Interact Behaviour", "Interact", "Interact with neighbouring nodes", "SlowRobotics", "Behaviours") { }
+
+        public Interact interact;
+
+        public InteractComponent() : base("Interact Behaviour", "Interact", "Interact with neighbouring nodes", "SlowRobotics", "Behaviours") {
+            interact = null;
+        }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{9327e8c7-a048-49af-aaaa-3c29bd5201c5}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
@@ -573,31 +584,28 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public Interact interact = null;
+        
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
 
-            //  List<Object> behaviours = new List<Object>();
             List<GH_Behaviour> behaviours = new List<GH_Behaviour>();
-
             int priority = 5;
-            //Object b = null;
 
             if (!DA.GetDataList(0, behaviours)) { return; }
             if (!DA.GetData(1, ref priority)) { return; }
             
             if (interact != null)
             {
-                //interact.setBehaviours(behaviours.ConvertAll(x => {return  (Behaviour)x; }));
                 interact.setBehaviours(behaviours.ConvertAll(b=> { return b.Value; }));
                 interact.priority = priority;
             }
             else
             {
                 interact = new Interact(priority, behaviours.ConvertAll(b => { return b.Value; }));
-                DA.SetData(0, new GH_Behaviour(interact));
+                
             }
+            DA.SetData(0, interact);
         }
     }
 
@@ -645,8 +653,9 @@ namespace SlowRoboticsGH
             else
             {
                 newton = new Newton(priority, IO.ConvertToVec3D(force));
-                DA.SetData(0, new GH_Behaviour(newton));
+                
             }
+            DA.SetData(0, newton);
         }
     }
 
@@ -705,8 +714,9 @@ namespace SlowRoboticsGH
             else
             {
                 aAxis = new AlignAxisToLinks(priority, (float)strength, axis);
-                DA.SetData(0, new GH_Behaviour(aAxis));
+               
             }
+            DA.SetData(0, aAxis);
         }
     }
 
@@ -765,8 +775,9 @@ namespace SlowRoboticsGH
             else
             {
                 aVel = new AlignAxisToVelocity(priority, (float)strength, axis);
-                DA.SetData(0, new GH_Behaviour(aVel));
+                
             }
+            DA.SetData(0, aVel);
         }
     }
 
@@ -815,13 +826,13 @@ namespace SlowRoboticsGH
                 alignPlanes.orientToNeighbour = (float)strength;
                 alignPlanes.maxDist = (float)maxDist;
                 alignPlanes.priority = priority;
-
             }
             else
             {
                 alignPlanes = new AlignPlanes(priority, (float)maxDist, (float)strength);
-                DA.SetData(0, new GH_Behaviour(alignPlanes));
+                
             }
+            DA.SetData(0, alignPlanes);
         }
     }
 
@@ -875,8 +886,9 @@ namespace SlowRoboticsGH
             else
             {
                 bestFit = new AlignZZToBestFit(priority, (float)maxDist, (float)strength);
-                DA.SetData(0, new GH_Behaviour(bestFit));
+                
             }
+            DA.SetData(0,bestFit);
         }
     }
 
@@ -939,8 +951,9 @@ namespace SlowRoboticsGH
             else
             {
                 attract = new Attract(priority, (float)minDist, (float)maxDist, inXY, (float)strength);
-                DA.SetData(0, new GH_Behaviour(attract));
+                
             }
+            DA.SetData(0, attract);
         }
     }
 
@@ -1003,8 +1016,8 @@ namespace SlowRoboticsGH
             else
             {
                 separate = new Separate(priority, (float)minDist, (float)maxDist, inXY, (float)strength);
-                DA.SetData(0, new GH_Behaviour(separate));
             }
+            DA.SetData(0, separate);
         }
     }
 
@@ -1069,7 +1082,7 @@ namespace SlowRoboticsGH
                     break;
             }
             var command = new Search(priority, (float) radius, search);
-            DA.SetData(0, new GH_Behaviour(command));
+            DA.SetData(0, command);
         }
     }
 

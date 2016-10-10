@@ -88,5 +88,14 @@ namespace SlowRobotics.Rhino.IO
         {
             return new Vec3D((float)p.X, (float)p.Y, (float)p.Z);
         }
+
+        public static Plane ConvertPlane3DToPlane(Plane3D p)
+        {
+            Point3d origin = new Point3d(p.x, p.y, p.z);
+            Vector3d xx = new Vector3d(p.xx.x, p.xx.y, p.xx.z);
+            Vector3d yy = new Vector3d(p.yy.x, p.yy.y, p.yy.z);
+
+            return new Plane(origin, xx, yy);
+        }
     }
 }
