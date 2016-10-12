@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SlowRobotics.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,29 +25,6 @@ namespace SlowRobotics.Agent.Behaviours
             foreach (IScaledBehaviour b in behaviours) b.scale(1);
         }
 
-        private static float approxDistance(Vec3D source, Vec3D target)
-        {
-            float dx = target.x - source.x;
-            float dz = target.y - source.y;
-            float dy = target.z - source.z;
-
-            return (dx * dx) + (dy * dy) + (dz * dz);
-        }
-
-        public static List<Vec3D> getClosestN(Vec3D a, List<Vec3D> _pts, int numClosest)
-        {
-            return _pts.Where(point => point != a).
-                      OrderBy(point => approxDistance(a, point)).Take(numClosest).ToList();
-        }
-
-        public static Vec3D averageVectors (List<Vec3D> _pts)
-        {
-            return new Vec3D(
-            _pts.Average(x => x.x),
-            _pts.Average(x => x.y),
-            _pts.Average(x => x.z));
-        }
-
         public class ByClosestPoint : Scale
         {
 
@@ -70,7 +48,7 @@ namespace SlowRobotics.Agent.Behaviours
 
             public virtual float getFactor(Vec3D a, List<Vec3D> _pts)
             {
-                Vec3D cPt = Scale.getClosestN(a, _pts, 1)[0];
+                Vec3D cPt = SR_Math.getClosestN(a, _pts, 1)[0];
                 float f = a.distanceTo(cPt);
                 return f > maxDist ? 1 : f / maxDist;
             }
@@ -87,7 +65,7 @@ namespace SlowRobotics.Agent.Behaviours
 
             public override float getFactor(Vec3D a, List<Vec3D> _pts)
             {
-                Vec3D avg = Scale.averageVectors(Scale.getClosestN(a, _pts, numClosest));
+                Vec3D avg = SR_Math.averageVectors(SR_Math.getClosestN(a, _pts, numClosest));
                 float f = a.distanceTo(avg);
                 return f > maxDist ? 1 : f / maxDist;
             }

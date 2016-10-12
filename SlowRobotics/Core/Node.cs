@@ -10,8 +10,7 @@ namespace SlowRobotics.Core
     public class Node : Plane3D
     {
 
-        HashSet<Link> links;
-
+        public HashSet<Link> links;
         public Node parent { get; set; }
 
         public Node(float _x, float _y, float _z) : this(new Vec3D(_x,_y,_z)){ }

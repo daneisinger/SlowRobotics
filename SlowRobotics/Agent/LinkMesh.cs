@@ -80,6 +80,23 @@ namespace SlowRobotics.Agent
             }
         }
 
+        public static float angleBetweenSharedNode(Link _a, Link _b)
+        {
+            Node shared;
+            if (getSharedNode(_a, _b, out shared))
+            {
+                Vec3D ab = _a.tryGetOther(shared).sub(shared);
+                Vec3D abo = _b.tryGetOther(shared).sub(shared);
+                return ab.angleBetween(abo, true);
+            }
+            return 0;
+        }
+
+        public bool hasLink(Link l)
+        {
+            return (links.Contains(l) || tertiaryLinks.Contains(l));
+        }
+
         public static bool getSharedNode(Link _a, Link _b, out Node shared)
         {
             if (_a.a == _b.a || _a.a == _b.b)
@@ -94,6 +111,25 @@ namespace SlowRobotics.Agent
             }
             shared = null;
             return false;
+        }
+
+        public HashSet<Node> getNodes()
+        {
+            HashSet<Node> nodes = new HashSet<Node>();
+            getLinks().ForEach(l =>
+            {
+                nodes.Add(l.a);
+                nodes.Add(l.b);
+            });
+            return nodes;
+        }
+
+        public void addForce(Vec3D force)
+        {
+          foreach(Node n in getNodes())
+            {
+                if (n is Particle) ((Particle)n).addForce(force);
+            }
         }
 
         public void addBehaviour(IBehaviour b)

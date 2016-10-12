@@ -1,4 +1,6 @@
 ﻿using Rhino.Geometry;
+using Rhino.Geometry.Intersect;
+using SlowRobotics.Utils;
 using SlowRobotics.Voxels;
 using System;
 using System.Collections.Generic;
@@ -84,6 +86,43 @@ namespace SlowRobotics.Rhino.VoxelTools
                 return data[grid.indexAt(x,y, z)+20];
             });
             return grid;
+        }
+
+        public static void voxeliseMesh(FloatGrid grid, int wallThickness, float value, Mesh mesh)
+        {
+            Vector3d v1 = new Vector3d(grid.w * 4, 0, 0);
+            for (int z = 1; z < grid.d; z++)
+            {
+                for (int y = 1; y < grid.h; y++)
+                {
+                    Point3d s = new Point3d(-(grid.w * 2), y - 1, z - 1);
+                    Line lsct = new Line(s, v1);
+                    int[] fids;
+                    Point3d[] pts = Intersection.MeshLine(mesh, lsct, out fids);
+                    List<Point3d> xPts = pts.OrderBy(x => x.X).ToList();
+
+                    if (xPts.Count > 1)
+                    {
+                        bool f = true;
+                        for (int i = 0; i < xPts.Count - 1; i += 1)
+                        {
+
+                            int current = (int)SR_Math.constrain((float)xPts[i].X, 0, grid.w - 1);
+                            int next = (int)SR_Math.constrain((float)xPts[i + 1].X, 0, grid.w - 1);
+
+                            if (f)
+                            {
+                                for (int x = current; x <= next; x++)
+                                {
+                                    grid.set(x, y, z, value);
+                                }
+                            }
+                            f = !f;
+
+                        }
+                    }
+                }
+            }
         }
     }
 }

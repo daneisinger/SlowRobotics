@@ -96,7 +96,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public AlignXXToNearLinks alignNearLinks = null;
+        public Align.AxisToNearLinks alignNearLinks = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -114,14 +114,14 @@ namespace SlowRoboticsGH
             {
 
                 alignNearLinks.strength = (float)strength;
-                alignNearLinks.searchRadius = (float)maxDist;
+                alignNearLinks.maxDist = (float)maxDist;
                 alignNearLinks.useParent = useParent;
                 alignNearLinks.priority = priority;
 
             }
             else
             {
-                alignNearLinks = new AlignXXToNearLinks(priority, (float)maxDist, (float)strength, useParent);
+                alignNearLinks = new Align.AxisToNearLinks(priority, (float)maxDist, (float)strength, useParent);
                 
             }
             DA.SetData(0, alignNearLinks);
@@ -156,12 +156,12 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public CohereInZAxis cZAxis = null;
+        public Attract.InZAxis cZAxis = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            double strength = 0.1;
-            double maxDist = 10;
+            double strength = 0.005;
+            double maxDist = 7;
             int priority = 5;
 
             if (!DA.GetData(0, ref strength)) { return; }
@@ -178,7 +178,7 @@ namespace SlowRoboticsGH
             }
             else
             {
-                cZAxis = new CohereInZAxis(priority, (float)strength, (float)maxDist);
+                cZAxis = new Attract.InZAxis(priority, (float)strength, (float)maxDist);
                 
             }
 
@@ -214,7 +214,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public CohereToNearestLink cLink = null;
+        public Attract.ToNearestLink cLink = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -234,12 +234,12 @@ namespace SlowRoboticsGH
 
                 cLink.parent = parent;
                 cLink.strength = (float)strength;
-                cLink.searchRadius = (float)maxDist;
+                cLink.maxDist = (float)maxDist;
                 cLink.priority = priority;
             }
             else
             {
-                cLink = new CohereToNearestLink(priority, parent, (float) maxDist, (float) strength);
+                cLink = new Attract.ToNearestLink(priority, parent, (float)strength, (float)maxDist);
                 
             }
             DA.SetData(0, cLink);
@@ -629,7 +629,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public AlignAxisToLinks aAxis = null;
+        public Align.AxisToLinks aAxis = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -650,7 +650,7 @@ namespace SlowRoboticsGH
             }
             else
             {
-                aAxis = new AlignAxisToLinks(priority, (float)strength, axis);
+                aAxis = new Align.AxisToLinks(priority, (float)strength, axis);
                
             }
             DA.SetData(0, aAxis);
@@ -690,7 +690,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public AlignAxisToVelocity aVel = null;
+        public Align.AxisToVelocity aVel = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -711,7 +711,7 @@ namespace SlowRoboticsGH
             }
             else
             {
-                aVel = new AlignAxisToVelocity(priority, (float)strength, axis);
+                aVel = new Align.AxisToVelocity(priority, (float)strength, axis);
                 
             }
             DA.SetData(0, aVel);
@@ -746,7 +746,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public AlignPlanes alignPlanes = null;
+        public Align.Planes alignPlanes = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -760,13 +760,13 @@ namespace SlowRoboticsGH
 
             if (alignPlanes != null)
             {
-                alignPlanes.orientToNeighbour = (float)strength;
+                alignPlanes.strength = (float)strength;
                 alignPlanes.maxDist = (float)maxDist;
                 alignPlanes.priority = priority;
             }
             else
             {
-                alignPlanes = new AlignPlanes(priority, (float)maxDist, (float)strength);
+                alignPlanes = new Align.Planes(priority, (float)maxDist, (float)strength);
                 
             }
             DA.SetData(0, alignPlanes);
@@ -801,11 +801,11 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public AlignZZToBestFit bestFit = null;
+        public Align.AxisToBestFit bestFit = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            double strength = 0.1;
+            double strength = 0.04;
             double maxDist = 10;
             int priority = 5;
 
@@ -815,14 +815,14 @@ namespace SlowRoboticsGH
 
             if (bestFit != null)
             {
-                bestFit.orientToBestFit = (float)strength;
+                bestFit.strength = (float)strength;
                 bestFit.maxDist = (float)maxDist;
                 bestFit.priority = priority;
 
             }
             else
             {
-                bestFit = new AlignZZToBestFit(priority, (float)maxDist, (float)strength);
+                bestFit = new Align.AxisToBestFit(priority, (float)maxDist, (float)strength);
                 
             }
             DA.SetData(0,bestFit);
@@ -877,18 +877,21 @@ namespace SlowRoboticsGH
 
             if (attract != null)
             {
-
-                attract.inXY = inXY;
                 attract.strength = (float)strength;
                 attract.minDist = (float)minDist;
                 attract.maxDist = (float)maxDist;
                 attract.priority = priority;
-
             }
             else
             {
-                attract = new Attract(priority, (float)minDist, (float)maxDist, inXY, (float)strength);
-                
+                if (!inXY)
+                {
+                    attract = new Attract(priority, (float)minDist, (float)maxDist, (float)strength);
+                }
+                else
+                {
+                    attract = new Attract.InXY(priority, (float)minDist, (float)maxDist, (float)strength);
+                }
             }
             DA.SetData(0, attract);
         }

@@ -102,7 +102,6 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new WorldParameter(), "World", "W", "World to contain agents", GH_ParamAccess.item);
             pManager.AddParameter(new LinkMeshParameter(), "LinkMesh", "L", "LinkMesh to contain links", GH_ParamAccess.item);
             pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Bend Stiffness", "B", "Stiffness of bracing springs", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Create Agents", "C", "Create the agents", GH_ParamAccess.item);
 
             pManager[1].Optional = true;
@@ -124,7 +123,6 @@ namespace SlowRoboticsGH
             List<GH_Behaviour> behaviours = new List<GH_Behaviour>();
             GH_World world = null;
             double stiffness = 0.1;
-            double bendStiffness = 0.1;
            // GH_LinkMesh linkMesh = null;
             int res = 0;
             bool create = false;
@@ -132,9 +130,8 @@ namespace SlowRoboticsGH
             if (!DA.GetData(0, ref curve)) { return; }
             if (!DA.GetData(1, ref res)) { return; }
             if (!DA.GetData(3, ref world)) { return; }
-            if (!DA.GetData(7, ref create)) { return; }
+            if (!DA.GetData(6, ref create)) { return; }
             if (!DA.GetData(5, ref stiffness)) { return; }
-            if (!DA.GetData(6, ref bendStiffness)) { return; }
             if (!DA.GetDataList(2, behaviours))
             {
                 behaviours = new List<GH_Behaviour>();
@@ -168,8 +165,6 @@ namespace SlowRoboticsGH
                     agents.Add(b);
                     a = b;
                 }
-
-                if (linkMesh.hasLinks()) linkMesh.braceNthLinks(linkMesh.getLinks(), (float)bendStiffness);
             }
 
             DA.SetData(0, new GH_ObjectWrapper(agents));

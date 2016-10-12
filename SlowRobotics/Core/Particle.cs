@@ -26,34 +26,6 @@ namespace SlowRobotics.Core
             return true;
         }
 
-        public float constrain(float v, float min, float max)
-        {
-            if (v < min)
-            {
-                return min;
-            }
-            else if (v > max)
-            {
-                return max;
-            }
-            else return v;
-        }
-
-        public float map(float v, float min, float max, float min2, float max2)
-        {
-            return min2 + ((v / (max - min)) * (max2 - min2));
-        }
-
-        public float lerp(float min, float max, float f)
-        {
-            return min + (max - min) * f;
-        }
-
-        public float lerp(int min, int max, float f)
-        {
-            return lerp((float)min, (float)max, f);
-        }
-
         public void addForce(Vec3D force)
         {
             if (force.magnitude() > 0.001) accel.addSelf(force);

@@ -73,25 +73,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Agent\Behaviours\Align.cs" />
     <Compile Include="Agent\Behaviours\Scale.cs" />
     <Compile Include="Agent\IAgent.cs" />
     <Compile Include="Agent\IScaledBehaviour.cs" />
     <Compile Include="Agent\AgentBehaviour.cs" />
     <Compile Include="Agent\IBehaviour.cs" />
     <Compile Include="Agent\Behaviours\AddLink.cs" />
-    <Compile Include="Agent\Behaviours\AlignAxisToLinks.cs" />
-    <Compile Include="Agent\Behaviours\AlignPlanes.cs" />
-    <Compile Include="Agent\Behaviours\AlignXXToNearLinks.cs" />
     <Compile Include="Agent\Behaviours\Attract.cs" />
-    <Compile Include="Agent\Behaviours\CohereInZAxis.cs" />
-    <Compile Include="Agent\Behaviours\CohereToNearestLink.cs" />
     <Compile Include="Agent\Behaviours\Friction.cs" />
     <Compile Include="Agent\Behaviours\InertiaLock.cs" />
     <Compile Include="Agent\Behaviours\Interact.cs" />
     <Compile Include="Agent\Behaviours\Newton.cs" />
     <Compile Include="Agent\Behaviours\Search.cs" />
-    <Compile Include="Agent\Behaviours\AlignAxisToVelocity.cs" />
-    <Compile Include="Agent\Behaviours\AlignZZToBestFit.cs" />
     <Compile Include="Agent\Behaviours\Separate.cs" />
     <Compile Include="Agent\Behaviours\Spring.cs" />
     <Compile Include="Agent\Behaviours\ZLock.cs" />
@@ -99,7 +93,6 @@
     <Compile Include="Agent\PlaneAgent.cs" />
     <Compile Include="Agent\ScaledAgentBehaviour.cs" />
     <Compile Include="Core\Link.cs" />
-    <Compile Include="Core\LinkPair.cs" />
     <Compile Include="Core\Node.cs" />
     <Compile Include="Core\Particle.cs" />
     <Compile Include="Core\Plane3D.cs" />
@@ -120,6 +113,7 @@
     <Compile Include="Simulation\ReactionDiffusion\BZReaction.cs" />
     <Compile Include="Simulation\ReactionDiffusion\GreyScott3d.cs" />
     <Compile Include="Utils\GenericWorker.cs" />
+    <Compile Include="Utils\SR_Math.cs" />
     <Compile Include="Utils\PriorityQueue.cs" />
     <Compile Include="Voxels\ByteGrid.cs" />
     <Compile Include="Voxels\ColourGrid.cs" />

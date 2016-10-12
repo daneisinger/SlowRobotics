@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using SlowRobotics.Core;
 using Toxiclibs.core;
+using SlowRobotics.Utils;
 
 namespace SlowRobotics.Agent.Behaviours
 {
@@ -22,7 +23,7 @@ namespace SlowRobotics.Agent.Behaviours
 
         public override void test(PlaneAgent a, Plane3D p)
         {
-            inertiaMod += (frictionCof-normalizeDistance(p.sub(a), 0, maxDist, frictionCof, ExponentialInterpolation.Squared)) * scaleFactor;
+            inertiaMod += (frictionCof-SR_Math.normalizeDistance(p.sub(a), 0, maxDist, frictionCof, ExponentialInterpolation.Squared)) * scaleFactor;
         }
 
         public override void run(PlaneAgent a)

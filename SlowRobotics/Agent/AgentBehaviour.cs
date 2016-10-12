@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using SlowRobotics.Core;
 using Toxiclibs.core;
+using SlowRobotics.Utils;
 
 namespace SlowRobotics.Agent
 {
@@ -70,46 +71,13 @@ namespace SlowRobotics.Agent
 
         public virtual void test(LinkMesh a, Plane3D p) { }
 
-        public float normalizeDistance(Vec3D ab, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
-        {
-            float dist = ab.magnitude();
-            float sf = 0;
-            if (dist > minDist && dist < maxDist)
-            {
-                float f = (dist - minDist) / (maxDist - minDist);
-                sf = interpolator.interpolate(0, maxForce, f);
-            }
-            return sf;
-        }
-
-        public Vec3D attract(Vec3D a, Vec3D b, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
-        {
-            Vec3D ab = b.sub(a);
-            float d = ab.magnitude();
-            float f = maxForce - normalizeDistance(ab, minDist, maxDist, maxForce, interpolator);
-            return (d > minDist && d < maxDist) ? ab.normalizeTo(f) : new Vec3D();
-        }
-
         public Vec3D repel(Vec3D a, Vec3D b, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
         {
             Vec3D ab = b.sub(a);
             float d = ab.magnitude();
-            float f = -(maxForce - normalizeDistance(ab, minDist, maxDist, maxForce, interpolator));
+            float f = -(maxForce - SR_Math.normalizeDistance(ab, minDist, maxDist, maxForce, interpolator));
             return (d>minDist && d<maxDist) ? ab.normalizeTo(f) :new Vec3D();
         }
 
-        public Vec3D alignVectors(Vec3D aPos, Vec3D bPos, Vec3D aDir, Vec3D bDir, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
-        {
-            Vec3D ab = bPos.sub(aPos);
-            float sf = maxForce - normalizeDistance(ab, minDist, maxDist, maxForce, interpolator); //invert
-            return aDir.interpolateTo(bDir, sf);
-        }
-
-        public void alignPlane(Plane3D toAlign, Plane3D b, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
-        {
-            Vec3D ab = b.sub(toAlign);
-            float sf = maxForce - normalizeDistance(ab, minDist, maxDist, maxForce, interpolator); //invert
-            if (sf > 0) toAlign.interpolateToPlane3D(b, sf);
-        }
     }
 }
