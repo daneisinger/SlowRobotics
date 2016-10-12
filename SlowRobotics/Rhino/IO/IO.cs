@@ -14,7 +14,7 @@ namespace SlowRobotics.Rhino.IO
 {
     public static class IO
     {
-        public static List<PlaneAgent> ConvertCurveToLinkMesh(Curve c, int res, World world, float stiffness, out LinkMesh lm)
+        public static List<PlaneAgent> ConvertCurveToLinkMesh(Curve c, int res, IWorld world, float stiffness, out LinkMesh lm)
         {
             Plane startPlane;
             c.FrameAt(0, out startPlane);
@@ -42,12 +42,13 @@ namespace SlowRobotics.Rhino.IO
             return agents;
         }
 
-        public static List<PlaneAgent> ConvertMeshToLinkMesh(Mesh m, World world, float stiffness, out LinkMesh lm)
+        public static List<IAgent> ConvertMeshToLinkMesh(Mesh m, IWorld world, float stiffness, out LinkMesh lm)
         {
             List<PlaneAgent> agents = new List<PlaneAgent>();
             PlaneAgent a = new PlaneAgent(new Plane3D(ConvertToVec3D(m.TopologyVertices[0])), world);
             lm = new LinkMesh(a, world);
             a.parent = lm;
+            agents.Add(a);
 
             for (int i = 1; i < m.TopologyVertices.Count; i++)
             {
@@ -55,19 +56,19 @@ namespace SlowRobotics.Rhino.IO
                 PlaneAgent aa = new PlaneAgent(new Plane3D(ConvertToVec3D(p)), world);
                 aa.parent = lm;
                 agents.Add(aa);
-            } 
-            
-            for(int i =0; i<m.TopologyEdges.Count;i++)
+            }
+
+            for (int i = 0; i < m.TopologyEdges.Count; i++)
             {
                 IndexPair p = m.TopologyEdges.GetTopologyVertices(i);
                 lm.connectNodes(agents[p.I], agents[p.J], stiffness);
             }
 
-            return agents;
+            return agents.Select(x=>(IAgent)x).ToList();
 
         }
 
-        public static PlaneAgent ConvertToPlaneAgent(Plane p, World world)
+        public static PlaneAgent ConvertToPlaneAgent(Plane p, IWorld world)
         {
             return new PlaneAgent(ConvertToPlane3D(p), world);
         }

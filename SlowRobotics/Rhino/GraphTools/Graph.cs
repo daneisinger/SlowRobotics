@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Toxiclibs.core;
 
 namespace SlowRobotics.Rhino.GraphTools
 {
@@ -19,7 +20,16 @@ namespace SlowRobotics.Rhino.GraphTools
             return output;
         }
 
-        //TODO - redo this by sorting by coordinates to find close pts - should be much faster
+        public static List<Node> mergeDuplicatesByCoordinates(List<Point3d> pts, float distToMergeDuplicates)
+        {
+            List<Node> unique = new List<Node>();
+
+            foreach(Point3d p in Point3d.SortAndCullPointList(pts, distToMergeDuplicates))
+            {
+                unique.Add(new Node((float)p.X, (float)p.Y, (float)p.Z));
+            }
+            return unique;
+        }
 
         public static List<Node> mergeDuplicates (List<Point3d> pts, float distToMergeDuplicates)
         {
@@ -40,6 +50,22 @@ namespace SlowRobotics.Rhino.GraphTools
             return bins.Values.ToList<Node>();
         }
 
+        public static void LinkByProximity(IWorld world, int maxConnections, float minDist, float maxDist)
+        {
+            List<Node> graph = new List<Node>();
+            foreach(Node n in world.getPop())
+            {
+
+                List<Vec3D> neighbours = world.getDynamicPoints(n, maxDist);
+                neighbours.AddRange(world.getStaticPoints(n, maxDist));
+                foreach (Vec3D v in neighbours){
+                    if(v.distanceTo(n)> minDist)
+                    {
+                        //create link
+                    }
+                }
+            }
+        }
         public static List<Node> buildFromLines(List<Line> lines, float distToMergeDuplicates)
         {
             Dictionary<string, Node> bins = new Dictionary<string, Node>(); //bins to keep track of duplicates within a threshold

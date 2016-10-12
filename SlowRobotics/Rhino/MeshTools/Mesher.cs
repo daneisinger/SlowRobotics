@@ -9,29 +9,72 @@ namespace SlowRobotics.Rhino.MeshTools
 {
     public static class Mesher
     {
-        public static Mesh buildMeshFromPolylineSections(List<Polyline> sections)
+
+        public static Mesh pipeCurve(Curve curve, int numSections, float radius, int numSides)
         {
-            Polyline last = null;
+            //generate sections
+            List<Polyline> sections = new List<Polyline>();
+            foreach(double d in curve.DivideByCount(numSections, true))
+            {
+                Plane p;
+                if (curve.PerpendicularFrameAt(d, out p))
+                {
+                    Circle circ = new Circle(p, radius);
+                    Polyline pts = new Polyline();
+                    for (int i = 0;i<numSides;i++)
+                    {
+                        pts.Add(circ.PointAt((2.0 * Math.PI * ((double)i / numSides))));
+                    }
+                    pts.Add(pts[0]); //close polyline
+                    sections.Add(pts);
+                }
+            }
+
+            return buildClosedMeshFromPolylineSections(sections);
+        }
+
+        public static Mesh buildClosedMeshFromPolylineSections(List<Polyline> sections)
+        {
             Mesh chunk = new Mesh();
-            int c = 0;
+            int numVertsPerPoly = 0;
+            int vertexCounter = 0;
             foreach (Polyline p in sections)
             {
-                if (last != null)
+                if (p != null)
                 {
-                    int numVerts = p.Count;
-                    for (int i = 0; i < numVerts - 1; i++)
-                    {
-                        chunk.Vertices.Add(p[i]);
-                        chunk.Vertices.Add(p[(i + 1)]);
-                        chunk.Vertices.Add(last[(i + 1)]);
-                        chunk.Vertices.Add(last[i]);
-                        chunk.Faces.AddFace(c, c + 1, c + 2, c + 3);
-                        c += 4;
-                    }
-                }
+                    if (numVertsPerPoly == 0) numVertsPerPoly = p.Count; //set num verts
+                    if (p.Count != numVertsPerPoly) return chunk; //exit if using uneven sections
 
-                last = p;
+                    chunk.Vertices.AddVertices(p); //add verts
+
+                    if (p == sections.First())
+                    {
+                        Polyline flip = new Polyline(p); //sort out normals
+                        flip.Reverse();
+                        chunk.Faces.AddFaces(flip.TriangulateClosedPolyline()); //cap start
+                    }
+                    if (p == sections.Last())
+                    {
+                        MeshFace[] end = p.TriangulateClosedPolyline();
+                        for (int i = 0; i < end.Length; i++)
+                        {
+                            end[i].A += vertexCounter;
+                            end[i].B += vertexCounter;
+                            end[i].C += vertexCounter;
+                            end[i].D += vertexCounter;
+                        }
+                        chunk.Faces.AddFaces(end); //cap end
+                    }
+                    
+                    vertexCounter += numVertsPerPoly; //count verts
+                }
             }
+
+            for (int i = 0; i < (numVertsPerPoly * (sections.Count - 1)) - 1; i++)
+            {
+                chunk.Faces.AddFace(i, i + 1, i + numVertsPerPoly + 1, i + numVertsPerPoly);
+            }
+
             return chunk;
         }
 

@@ -7,7 +7,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class Spring : LinkMeshBehaviour
+    public class Spring : ScaledAgentBehaviour
     {
         public float damping { get; set; }
         public bool verlet { get; set; }
@@ -29,15 +29,16 @@ namespace SlowRobotics.Agent.Behaviours
                 if (l.a is Particle)
                 {
                     Particle p = (Particle)l.a;
-                    p.addForce(ab.scale(-d * l.stiffness * damping));
+                    p.addForce(ab.scale(-d * l.stiffness * damping * scaleFactor));
                 }
                 if (l.b is Particle && verlet)
                 {
                     Particle p = (Particle)l.b;
-                    p.addForce(ab.scale(d * l.stiffness * damping));
+                    p.addForce(ab.scale(d * l.stiffness * damping * scaleFactor));
                 }
             }
 
         }
+
     }
 }

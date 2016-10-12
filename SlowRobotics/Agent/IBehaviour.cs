@@ -7,21 +7,21 @@ using System.Text;
 
 namespace SlowRobotics.Agent
 {
-    public interface Behaviour : IComparable<Behaviour>
+    public interface IBehaviour : IComparable<IBehaviour>
     {
 
         /// <summary>
         /// Method to update agent
         /// </summary>
         /// <param name="a"></param>
-        void run(Agent a);
+        void run(IAgent a);
 
         /// <summary>
         /// Method to test for conditions before updating
         /// </summary>
         /// <param name="a"></param>
         /// <param name="p"></param>
-        void test(Agent a, Plane3D p);
+        void test(IAgent a, Plane3D p);
 
         /// <summary>
         /// Return priority of this behaviour

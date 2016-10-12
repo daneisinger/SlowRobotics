@@ -7,14 +7,14 @@ using System.Text;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class Interact : PlaneAgentBehaviour
+    public class Interact : AgentBehaviour
     {
-        private PriorityQueue<Behaviour> behaviours;
+        private PriorityQueue<IBehaviour> behaviours;
 
-        public Interact(int _priority, List<Behaviour> _interactionBehaviours) : base(_priority)
+        public Interact(int _priority, List<IBehaviour> _interactionBehaviours) : base(_priority)
         {
-            behaviours = new PriorityQueue<Behaviour>();
-            foreach (Behaviour b in _interactionBehaviours) behaviours.Enqueue(b);
+            behaviours = new PriorityQueue<IBehaviour>();
+            foreach (IBehaviour b in _interactionBehaviours) behaviours.Enqueue(b);
         }
 
         public override void run(PlaneAgent a)
@@ -25,17 +25,17 @@ namespace SlowRobotics.Agent.Behaviours
                 // used for closest point search etc.
                 foreach (Plane3D p in a.neighbours)
                 {
-                    foreach (Behaviour b in behaviours.getData()) b.test(a,p); 
+                    foreach (IBehaviour b in behaviours.getData()) b.test(a,p); 
                 }
                 //update the agent using test data
-                foreach (Behaviour b in behaviours.getData()) b.run(a);
+                foreach (IBehaviour b in behaviours.getData()) b.run(a);
             }
         }
 
-        public void setBehaviours(List<Behaviour> newBehaviours)
+        public void setBehaviours(List<IBehaviour> newBehaviours)
         {
-            behaviours = new PriorityQueue<Behaviour>();
-            foreach (Behaviour b in newBehaviours) behaviours.Enqueue(b);
+            behaviours = new PriorityQueue<IBehaviour>();
+            foreach (IBehaviour b in newBehaviours) behaviours.Enqueue(b);
         }
 
     }

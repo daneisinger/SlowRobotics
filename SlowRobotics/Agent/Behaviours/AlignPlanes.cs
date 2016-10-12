@@ -7,7 +7,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class AlignPlanes : PlaneAgentBehaviour
+    public class AlignPlanes : ScaledAgentBehaviour
     {
         public float maxDist { get; set; }
         public float orientToNeighbour { get; set; }
@@ -20,7 +20,7 @@ namespace SlowRobotics.Agent.Behaviours
 
        public override void test(PlaneAgent a, Plane3D p)
         {
-           alignPlane(a, p, 0.1f, maxDist, orientToNeighbour, ExponentialInterpolation.Squared);
+           alignPlane(a, p, 0.1f, maxDist, orientToNeighbour*scaleFactor, ExponentialInterpolation.Squared);
         }
     }
 }

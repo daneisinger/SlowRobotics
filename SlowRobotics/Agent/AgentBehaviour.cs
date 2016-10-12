@@ -7,15 +7,14 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent
 {
-    public class PlaneAgentBehaviour : Behaviour
+    public class AgentBehaviour : IBehaviour
     {
-
 
         public int priority;
         /// <summary>
         /// Empty constructor with default priority of 1
         /// </summary>
-        public PlaneAgentBehaviour() : this(1)
+        public AgentBehaviour() : this(1)
         {
 
         }
@@ -23,12 +22,12 @@ namespace SlowRobotics.Agent
         /// Create new behaviour with a given priority
         /// </summary>
         /// <param name="_priority">Behaviour priority, higher runs first</param>
-        public PlaneAgentBehaviour(int _priority)
+        public AgentBehaviour(int _priority)
         {
             priority = _priority;
         }
 
-        public int CompareTo(Behaviour other)
+        public int CompareTo(IBehaviour other)
         {
             if (other.getPriority() > priority) return -1;
             if (other.getPriority() < priority) return 1;
@@ -40,18 +39,23 @@ namespace SlowRobotics.Agent
             return priority;
         }
         
+
+        //TODO - rethink this to be more generic
+
         /// <summary>
-        /// Cast to plane agent
+        /// Cast to appropriate behaviour methods
         /// </summary>
         /// <param name="a"></param>
-        public virtual void run(Agent a)
+        public virtual void run(IAgent a)
         {
             if (a is PlaneAgent) run((PlaneAgent)a);
+            if (a is LinkMesh) run((LinkMesh)a);
         }
 
-        public virtual void test(Agent a, Plane3D p)
+        public virtual void test(IAgent a, Plane3D p)
         {
             if (a is PlaneAgent) test((PlaneAgent)a, p);
+            if (a is LinkMesh) test((LinkMesh)a, p);
         }
 
         /// <summary>
@@ -62,8 +66,11 @@ namespace SlowRobotics.Agent
 
         public virtual void test(PlaneAgent a, Plane3D p) { }
 
+        public virtual void run(LinkMesh a) { }
 
-        public float scaleBehaviour(Vec3D ab, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
+        public virtual void test(LinkMesh a, Plane3D p) { }
+
+        public float normalizeDistance(Vec3D ab, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
         {
             float dist = ab.magnitude();
             float sf = 0;
@@ -78,28 +85,30 @@ namespace SlowRobotics.Agent
         public Vec3D attract(Vec3D a, Vec3D b, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
         {
             Vec3D ab = b.sub(a);
-            float f = maxForce - scaleBehaviour(ab, minDist, maxDist, maxForce, interpolator);
-            return (f!=0) ? ab.normalizeTo(f) : new Vec3D();
+            float d = ab.magnitude();
+            float f = maxForce - normalizeDistance(ab, minDist, maxDist, maxForce, interpolator);
+            return (d > minDist && d < maxDist) ? ab.normalizeTo(f) : new Vec3D();
         }
 
         public Vec3D repel(Vec3D a, Vec3D b, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
         {
             Vec3D ab = b.sub(a);
-            float f = -(maxForce - scaleBehaviour(ab, minDist, maxDist, maxForce, interpolator));
-            return (f!=0) ? ab.normalizeTo(f) :new Vec3D();
+            float d = ab.magnitude();
+            float f = -(maxForce - normalizeDistance(ab, minDist, maxDist, maxForce, interpolator));
+            return (d>minDist && d<maxDist) ? ab.normalizeTo(f) :new Vec3D();
         }
 
         public Vec3D alignVectors(Vec3D aPos, Vec3D bPos, Vec3D aDir, Vec3D bDir, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
         {
             Vec3D ab = bPos.sub(aPos);
-            float sf = maxForce - scaleBehaviour(ab, minDist, maxDist, maxForce, interpolator); //invert
+            float sf = maxForce - normalizeDistance(ab, minDist, maxDist, maxForce, interpolator); //invert
             return aDir.interpolateTo(bDir, sf);
         }
 
         public void alignPlane(Plane3D toAlign, Plane3D b, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
         {
             Vec3D ab = b.sub(toAlign);
-            float sf = maxForce - scaleBehaviour(ab, minDist, maxDist, maxForce, interpolator); //invert
+            float sf = maxForce - normalizeDistance(ab, minDist, maxDist, maxForce, interpolator); //invert
             if (sf > 0) toAlign.interpolateToPlane3D(b, sf);
         }
     }

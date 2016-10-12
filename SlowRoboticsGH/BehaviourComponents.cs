@@ -246,68 +246,10 @@ namespace SlowRoboticsGH
         }
     }
 
-    public class DuplicateComponent : GH_Component
-    {
-        public DuplicateComponent() : base("Duplicate Behaviour", "Duplicate", "Duplicate an agent and create a link", "SlowRobotics", "Behaviours") { }
-        public override GH_Exposure Exposure => GH_Exposure.primary;
-        public override Guid ComponentGuid => new Guid("{64d3c9fe-65b9-4004-ad8d-be90f52f9076}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
-
-        protected override void RegisterInputParams(GH_InputParamManager pManager)
-        {
-            pManager.AddParameter(new BehaviourParameter(), "New Behaviours", "B", "Behaviours for duplicated agent", GH_ParamAccess.list);
-            pManager.AddParameter(new LinkMeshParameter(), "Parent LinkMesh", "P", "LinkMesh to parent links to", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Stiffness", "S", "Link Stiffness", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
-        }
-
-        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-        {
-            pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
-        }
-
-        public Duplicate duplicate = null;
-
-        protected override void SolveInstance(IGH_DataAccess DA)
-        {
-            List<GH_Behaviour> behaviours = new List<GH_Behaviour>();
-            LinkMesh parent = null;
-            double stiffness = 0.1;
-            int priority = 5;
-            //Object b = null;
-
-            if (!DA.GetDataList(0, behaviours)) { return; }
-            if (!DA.GetData(2, ref parent)) { return; }
-            if (!DA.GetData(3, ref stiffness)) { return; }
-            if (!DA.GetData(4, ref priority)) { return; }
-
-            if (duplicate != null)
-            {
-                duplicate.behaviours = (behaviours.ConvertAll(b => { return b.Value; }));
-                duplicate.parent = parent;
-                duplicate.stiffness = (float)stiffness;
-                duplicate.priority = priority;
-            }
-            else
-            {
-                duplicate = new Duplicate(priority, parent, (float) stiffness, behaviours.ConvertAll(b => { return b.Value; }));
-                
-            }
-            DA.SetData(0, duplicate);
-        }
-    }
-
+    //TODO - too much overlap between this and the duplicate behaviour
     public class AddLinkComponent : GH_Component
     {
-        public AddLinkComponent() : base("Duplicate Behaviour", "Duplicate", "Duplicate an agent and create a link", "SlowRobotics", "Behaviours") { }
+        public AddLinkComponent() : base("Add Link Behaviour", "AddLink", "Duplicate an agent and create a braced link", "SlowRobotics", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{2962c6c8-c190-4a81-835f-b3b489349199}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
@@ -556,11 +498,7 @@ namespace SlowRoboticsGH
     public class InteractComponent : GH_Component
     {
 
-        public Interact interact;
-
-        public InteractComponent() : base("Interact Behaviour", "Interact", "Interact with neighbouring nodes", "SlowRobotics", "Behaviours") {
-            interact = null;
-        }
+        public InteractComponent() : base("Interact Behaviour", "Interact", "Interact with neighbouring nodes", "SlowRobotics", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{9327e8c7-a048-49af-aaaa-3c29bd5201c5}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
@@ -584,7 +522,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        
+        public Interact interact = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -603,7 +541,6 @@ namespace SlowRoboticsGH
             else
             {
                 interact = new Interact(priority, behaviours.ConvertAll(b => { return b.Value; }));
-                
             }
             DA.SetData(0, interact);
         }
@@ -1054,6 +991,8 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
+        public Search searchBehaviour = null;
+
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             double radius = 10;
@@ -1064,6 +1003,7 @@ namespace SlowRoboticsGH
             if (!DA.GetData(1, ref method)) { return; }
             if (!DA.GetData(2, ref priority)) { return; }
 
+            
             Search.SearchMethod search = Search.SearchMethod.All;
 
             switch (method)
@@ -1081,8 +1021,19 @@ namespace SlowRoboticsGH
                     search = Search.SearchMethod.All;
                     break;
             }
-            var command = new Search(priority, (float) radius, search);
-            DA.SetData(0, command);
+
+            if (searchBehaviour != null)
+            {
+                searchBehaviour.dynamicRadius = (float)radius;
+                searchBehaviour.staticRadius = (float)radius;
+                searchBehaviour.method = search;
+                searchBehaviour.priority = priority;
+            }
+            else
+            {
+                searchBehaviour = new Search(priority, (float)radius, search);
+            } 
+            DA.SetData(0, searchBehaviour);
         }
     }
 

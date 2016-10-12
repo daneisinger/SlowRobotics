@@ -14,6 +14,7 @@ namespace SlowRobotics.Core
         float accLimit = 1;
         public int age = 0;
         private float inertia = 1;
+        public bool f { get; set; } = false; //TODO sort out better locking system
 
         public Particle(float _x, float _y, float _z) : base(_x, _y, _z) { }
         public Particle(Vec3D _o) : base(_o) { }
@@ -74,12 +75,15 @@ namespace SlowRobotics.Core
 
         public void update(float damping)
         {
-            accel.limit(accLimit);
-            vel.addSelf(accel);
-            vel.limit(spd);
-            vel.scaleSelf(damping * inertia);
-            addSelf(vel);
-            age++;
+            if (!f)
+            {
+                accel.limit(accLimit);
+                vel.addSelf(accel);
+                vel.limit(spd);
+                vel.scaleSelf(damping * inertia);
+                addSelf(vel);
+                age++;
+            }
 
             accel = new Vec3D();
             inertia = 1; 

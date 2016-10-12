@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class ZLock : PlaneAgentBehaviour
+    public class ZLock : AgentBehaviour
     {
         public float minZ
         {

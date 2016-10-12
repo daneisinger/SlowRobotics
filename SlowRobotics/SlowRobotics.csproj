@@ -73,10 +73,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Agent\Agent.cs" />
-    <Compile Include="Agent\LinkMeshBehaviour.cs" />
-    <Compile Include="Agent\PlaneAgentBehaviour.cs" />
-    <Compile Include="Agent\Behaviour.cs" />
+    <Compile Include="Agent\Behaviours\Scale.cs" />
+    <Compile Include="Agent\IAgent.cs" />
+    <Compile Include="Agent\IScaledBehaviour.cs" />
+    <Compile Include="Agent\AgentBehaviour.cs" />
+    <Compile Include="Agent\IBehaviour.cs" />
     <Compile Include="Agent\Behaviours\AddLink.cs" />
     <Compile Include="Agent\Behaviours\AlignAxisToLinks.cs" />
     <Compile Include="Agent\Behaviours\AlignPlanes.cs" />
@@ -84,7 +85,6 @@
     <Compile Include="Agent\Behaviours\Attract.cs" />
     <Compile Include="Agent\Behaviours\CohereInZAxis.cs" />
     <Compile Include="Agent\Behaviours\CohereToNearestLink.cs" />
-    <Compile Include="Agent\Behaviours\Duplicate.cs" />
     <Compile Include="Agent\Behaviours\Friction.cs" />
     <Compile Include="Agent\Behaviours\InertiaLock.cs" />
     <Compile Include="Agent\Behaviours\Interact.cs" />
@@ -97,6 +97,7 @@
     <Compile Include="Agent\Behaviours\ZLock.cs" />
     <Compile Include="Agent\LinkMesh.cs" />
     <Compile Include="Agent\PlaneAgent.cs" />
+    <Compile Include="Agent\ScaledAgentBehaviour.cs" />
     <Compile Include="Core\Link.cs" />
     <Compile Include="Core\LinkPair.cs" />
     <Compile Include="Core\Node.cs" />
@@ -104,7 +105,7 @@
     <Compile Include="Core\Plane3D.cs" />
     <Compile Include="Core\Plane3DOctree.cs" />
     <Compile Include="Core\SimpleWorld.cs" />
-    <Compile Include="Core\World.cs" />
+    <Compile Include="Core\IWorld.cs" />
     <Compile Include="GPGPU\GPUTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rhino\GraphTools\Graph.cs" />

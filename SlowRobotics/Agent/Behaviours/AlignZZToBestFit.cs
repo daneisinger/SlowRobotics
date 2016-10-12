@@ -9,7 +9,7 @@ using Toxiclibs.core;
 namespace SlowRobotics.Agent.Behaviours
 {
     //previously orient to best fit
-    public class AlignZZToBestFit : PlaneAgentBehaviour
+    public class AlignZZToBestFit : ScaledAgentBehaviour
     {
         public float maxDist { get; set; }
         public float orientToBestFit { get; set; }
@@ -44,7 +44,7 @@ namespace SlowRobotics.Agent.Behaviours
                 Triangle3D tri = new Triangle3D((Vec3D)closestPts.GetValueList()[0], (Vec3D)closestPts.GetValueList()[1], (Vec3D)closestPts.GetValueList()[2]);
                 n = tri.computeNormal();
                 if (a.zz.angleBetween(n) > (float)Math.PI / 2) n.invert();
-                a.interpolateToZZ(n, orientToBestFit);
+                a.interpolateToZZ(n, orientToBestFit*scaleFactor);
             }
             reset();
         }

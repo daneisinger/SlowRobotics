@@ -4,18 +4,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Toxiclibs.core;
 
 namespace SlowRobotics.Agent
 {
-    public class LinkMesh : Node, Agent
+    public class LinkMesh : Node, IAgent
     {
-        public World world { get; set; }
-        public PriorityQueue<Behaviour> behaviours { get; set; }
+        public IWorld world { get; set; }
+        public PriorityQueue<IBehaviour> behaviours { get; set; }
 
         HashSet<Link> tertiaryLinks;
 
-        public LinkMesh(Node n, World _world):base(n){
-            behaviours = new PriorityQueue<Behaviour>();
+        public LinkMesh(Node n, IWorld _world):base(n){
+            behaviours = new PriorityQueue<IBehaviour>();
             world = _world;
             tertiaryLinks = new HashSet<Link>();
         }
@@ -95,19 +96,25 @@ namespace SlowRobotics.Agent
             return false;
         }
 
-        public void addBehaviour(Behaviour b)
+        public void addBehaviour(IBehaviour b)
         {
             behaviours.Enqueue(b);
         }
 
-        public List<Behaviour> getBehaviours()
+        public List<IBehaviour> getBehaviours()
         {
             return behaviours.getData();
         }
 
+        public void setBehaviours(List<IBehaviour> newBehaviours)
+        {
+            behaviours = new PriorityQueue<IBehaviour>();
+            foreach (IBehaviour b in newBehaviours) behaviours.Enqueue(b);
+        }
+
         public override void step(float damping)
         {
-            foreach (Behaviour b in behaviours.getData()) b.run(this);
+            foreach (IBehaviour b in behaviours.getData()) b.run(this);
         }
     }
 }

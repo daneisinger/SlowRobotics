@@ -6,7 +6,7 @@ using System.Text;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class AlignAxisToLinks : PlaneAgentBehaviour
+    public class AlignAxisToLinks : ScaledAgentBehaviour
     {
 
         public float strength { get; set; }
@@ -25,13 +25,13 @@ namespace SlowRobotics.Agent.Behaviours
                 switch (axis)
                 {
                     case 0:
-                        a.interpolateToXX(l.getDir(), strength);
+                        a.interpolateToXX(l.getDir(), strength*scaleFactor);
                         break;
                     case 1:
-                        a.interpolateToYY(l.getDir(), strength);
+                        a.interpolateToYY(l.getDir(), strength * scaleFactor);
                         break;
                     case 2:
-                        a.interpolateToZZ(l.getDir(), strength);
+                        a.interpolateToZZ(l.getDir(), strength * scaleFactor);
                         break;
                 }
             }

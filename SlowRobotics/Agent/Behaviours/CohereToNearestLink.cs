@@ -9,7 +9,7 @@ namespace SlowRobotics.Agent.Behaviours
 {
 
     //TODO - update for linkmesh
-    public class CohereToNearestLink : PlaneAgentBehaviour
+    public class CohereToNearestLink : ScaledAgentBehaviour
     {
 
         public float strength { get; set; }
@@ -77,7 +77,7 @@ namespace SlowRobotics.Agent.Behaviours
         {
             if (targetA != null && minD > 0.2)
             {
-                float frictioncof = scaleBehaviour(b_l.sub(a_l), 0.1f, searchRadius, -0.3f, ExponentialInterpolation.Squared);
+                float frictioncof = normalizeDistance(b_l.sub(a_l), 0.1f, searchRadius, -0.3f, ExponentialInterpolation.Squared);
 
                 //TODO - fix inertia
 
@@ -107,7 +107,7 @@ namespace SlowRobotics.Agent.Behaviours
             parent.replaceLink(l, a_s);
             parent.replaceLink(l, b_s);
 
-            foreach (Behaviour b in a.behaviours.getData()) aa.addBehaviour(b);
+            foreach (IBehaviour b in a.behaviours.getData()) aa.addBehaviour(b);
 
             a.world.addDynamic(aa);
         }

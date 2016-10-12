@@ -7,7 +7,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class Attract : PlaneAgentBehaviour
+    public class Attract : ScaledAgentBehaviour
     {
         public bool inXY { get; set; }
         public float strength { get; set; }
@@ -27,13 +27,13 @@ namespace SlowRobotics.Agent.Behaviours
             Vec3D force = new Vec3D();
             if (!inXY)
             {
-                force = attract(a, p, minDist, maxDist, strength, ExponentialInterpolation.Squared);
+                force = attract(a, p, minDist, maxDist, strength*scaleFactor, ExponentialInterpolation.Squared);
             }
             else
             {
                 ToxiPlane tp = new ToxiPlane(a, a.zz);
                 Vec3D op = tp.getProjectedPoint(p);
-                force = attract(a, op, minDist, maxDist, strength, ExponentialInterpolation.Squared);
+                force = attract(a, op, minDist, maxDist, strength*scaleFactor, ExponentialInterpolation.Squared);
             }
             a.addForce(force);
         }

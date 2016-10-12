@@ -7,7 +7,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class AlignXXToNearLinks : PlaneAgentBehaviour
+    public class AlignXXToNearLinks : ScaledAgentBehaviour
     {
 
         public float searchRadius { get; set; }
@@ -33,7 +33,7 @@ namespace SlowRobotics.Agent.Behaviours
                 foreach (Link l in p.getLinks())
                 {
                     Vec3D ab = l.closestPt(a).sub(a);
-                    float f = scaleBehaviour(ab, 0, searchRadius, strength, ExponentialInterpolation.Squared);
+                    float f = normalizeDistance(ab, 0, searchRadius, strength*scaleFactor, ExponentialInterpolation.Squared);
                     a.interpolateToXX(l.getDir(), f);
                 }
             }

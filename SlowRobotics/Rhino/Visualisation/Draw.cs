@@ -13,17 +13,18 @@ namespace SlowRobotics.Rhino.Visualisation
     public static class Draw
     {
 
-        public static List<GH_ObjectWrapper> LinkedPlanes(World world)
+        public static List<GH_ObjectWrapper> LinkedPlanes(IWorld world)
         {
             Dictionary<Node, List<Node>> map = new Dictionary<Node, List<Node>>();
-            world.getPop().ForEach(agent => {
 
-                if (map.ContainsKey(agent))
+            world.getPoints().ForEach(v => {
+                Node node = (Node)v;
+                if (map.ContainsKey(node))
                 {
-                    map[agent].Add(agent);
+                    map[node].Add(node);
                 }
                 else {
-                    map.Add(agent, new List<Node>() { agent });
+                    map.Add(node, new List<Node>() { node });
                 }
 
             });

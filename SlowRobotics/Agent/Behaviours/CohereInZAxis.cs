@@ -7,7 +7,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class CohereInZAxis : PlaneAgentBehaviour
+    public class CohereInZAxis : ScaledAgentBehaviour
     {
         public float strength { get; set; }
         public float maxDist { get; set; }
@@ -25,7 +25,7 @@ namespace SlowRobotics.Agent.Behaviours
         {
             Vec3D toPlane3D = p.sub(a);
             float ratio = toPlane3D.magnitude() / maxDist;
-            float f = ExponentialInterpolation.Squared.interpolate(0, strength, ratio);
+            float f = ExponentialInterpolation.Squared.interpolate(0, strength *scaleFactor, ratio);
             Vec3D zt = a.zz.scale(f);
             float ab = toPlane3D.angleBetween(a.zz, true);
             if (ab > (float)Math.PI / 2) zt.invert();

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class InertiaLock : PlaneAgentBehaviour
+    public class InertiaLock : ScaledAgentBehaviour
     {
 
         public float minInertia { get; set; }
@@ -22,7 +22,7 @@ namespace SlowRobotics.Agent.Behaviours
 
         public override void run(PlaneAgent a)
         {
-            if (a.getInertia() + (a.getSpeed() * speedFactor) < minInertia && a.age > minAge)
+            if (a.getInertia() + (a.getSpeed() * speedFactor * scaleFactor) < minInertia && a.age > minAge)
             {
                 a.setInertia(0);
             }

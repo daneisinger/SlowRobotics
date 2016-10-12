@@ -6,7 +6,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class Newton : PlaneAgentBehaviour
+    public class Newton : ScaledAgentBehaviour
     {
         public Vec3D force { get; set; }
 
@@ -17,7 +17,7 @@ namespace SlowRobotics.Agent.Behaviours
 
         public override void run(PlaneAgent a)
         {
-            a.addForce(force);
+            a.addForce(force.scale(scaleFactor));
         }
 
     }

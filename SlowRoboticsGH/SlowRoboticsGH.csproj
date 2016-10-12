@@ -55,6 +55,12 @@
   <ItemGroup>
     <Compile Include="BehaviourComponents.cs" />
     <Compile Include="CreationComponents.cs" />
+    <Compile Include="MeshComponents.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="SimulateComponents.cs" />
     <Compile Include="SlowRoboticsGHInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -70,6 +76,17 @@
       <Project>{1614e276-fbec-47b2-a8a8-53e77665c31e}</Project>
       <Name>Toxiclibs</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\createNode.png" />
+    <Content Include="Resources\meshPipe.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

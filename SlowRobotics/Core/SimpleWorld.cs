@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SlowRobotics.Agent;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,24 +7,25 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Core
 {
-    public class SimpleWorld : World
+    public class SimpleWorld : IWorld
     {
 
-        List<Node> pop;
-        public Plane3DOctree dynamicTree;
-        public Plane3DOctree staticTree;
+        List<IAgent> pop; //things with behaviours to run
+
+        public Plane3DOctree dynamicTree; //particles
+        public Plane3DOctree staticTree; //nodes
         float bounds;
 
         public SimpleWorld(float _bounds)
         {
-            pop = new List<Node>();
+            pop = new List<IAgent>();
             bounds = _bounds;
             dynamicTree = new Plane3DOctree(new Vec3D(-bounds, -bounds, -bounds), bounds * 2);
             staticTree = new Plane3DOctree(new Vec3D(-bounds, -bounds, -bounds), bounds * 2);
         }
 
         
-        public List<Node> getPop()
+        public List<IAgent> getPop()
         {
             return pop;
         }
@@ -32,19 +34,30 @@ namespace SlowRobotics.Core
         /// Add a plane to the octree
         /// </summary>
         /// <param name="p"></param>
-        public void addDynamic(Node p)
+        public void addDynamic(Particle p)
         {
-            pop.Add(p);
+            if(p is IAgent)pop.Add((IAgent)p);
             dynamicTree.addPoint(p);
         }
         /// <summary>
         /// Remove a plane from the octree
         /// </summary>
         /// <param name="p"></param>
-        public bool removeDynamic(Node p)
+        public bool removeDynamic(Particle p)
         {
-            pop.Remove(p);
+            if (p is IAgent) pop.Remove((IAgent)p);
             return dynamicTree.remove(p);
+        }
+
+        public List<Vec3D> getPoints()
+        {
+            List<Vec3D> total = new List<Vec3D>();
+            List<Vec3D> pts = dynamicTree.getPoints();
+            List<Vec3D> spts = staticTree.getPoints();
+            if (pts != null) total.AddRange(pts);
+            if (spts != null) total.AddRange(spts);
+            return total;
+
         }
 
         public List<Vec3D> getDynamicPoints(Vec3D pos, float radius)
@@ -66,20 +79,17 @@ namespace SlowRobotics.Core
             else return staticPts;
         }
 
-        //TODO - static shouldnt be in pop REALLY NEED TO FIX
-
         public void addStatic(Node p)
         {
-            pop.Add(p); 
+            if (p is IAgent) pop.Add((IAgent)p); 
             staticTree.addPoint(p);
         }
 
         public bool removeStatic(Node p)
         {
-            pop.Remove(p);
+            if (p is IAgent) pop.Remove((IAgent)p);
             return staticTree.remove(p);
         }
-
 
         public void run()
         {
@@ -89,12 +99,12 @@ namespace SlowRobotics.Core
         public void run(float damping)
         {
             Random r = new Random();
-            foreach (Node a in pop.OrderBy(n => r.Next())) a.step(damping);
+            foreach (IAgent a in pop.OrderBy(n => r.Next())) a.step(damping);
             //rebuild octrees
             dynamicTree = new Plane3DOctree(new Vec3D(-bounds, -bounds, -bounds), bounds * 2);
-            foreach (Node a in pop)
+            foreach (IAgent a in pop)
             {
-                if (a is Particle) dynamicTree.addPoint(a);
+                if(a is Particle)dynamicTree.addPoint((Particle)a);
             }
         }
     }

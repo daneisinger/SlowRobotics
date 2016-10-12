@@ -78,6 +78,10 @@ namespace SlowRobotics.Core
             return output;
         }
 
+        public Vec3D getPos()
+        {
+            return this;
+        }
         
 
     }

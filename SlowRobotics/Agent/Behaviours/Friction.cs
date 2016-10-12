@@ -7,7 +7,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class Friction : PlaneAgentBehaviour
+    public class Friction : ScaledAgentBehaviour
     {
         public float frictionCof { get; set; }
         public float inertiaMod { get; set; }
@@ -22,8 +22,7 @@ namespace SlowRobotics.Agent.Behaviours
 
         public override void test(PlaneAgent a, Plane3D p)
         {
-            inertiaMod += frictionCof-scaleBehaviour(p.sub(a), 0, maxDist, frictionCof, ExponentialInterpolation.Squared);
-           // inertiaMod += frictionCof;
+            inertiaMod += (frictionCof-normalizeDistance(p.sub(a), 0, maxDist, frictionCof, ExponentialInterpolation.Squared)) * scaleFactor;
         }
 
         public override void run(PlaneAgent a)

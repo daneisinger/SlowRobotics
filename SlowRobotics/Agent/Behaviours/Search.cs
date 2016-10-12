@@ -7,7 +7,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class Search : PlaneAgentBehaviour
+    public class Search : ScaledAgentBehaviour
     {
         public struct SearchMethod
         {
@@ -64,22 +64,22 @@ namespace SlowRobotics.Agent.Behaviours
 
         public List<Vec3D> searchDynamic(PlaneAgent a, float radius)
         {
-            List<Vec3D> n = a.world.getDynamicPoints(a, radius);
+            List<Vec3D> n = a.world.getDynamicPoints(a, radius * scaleFactor);
             n.Remove(a);
             return n;
         }
 
         public List<Vec3D> searchStatic(PlaneAgent a, float radius)
         {
-            List<Vec3D> n = a.world.getStaticPoints(a, radius);
+            List<Vec3D> n = a.world.getStaticPoints(a, radius * scaleFactor);
             n.Remove(a);
             return n;
         }
 
         public List<Vec3D> searchAll(PlaneAgent a, float dynamicRadius, float staticRadius)
         {
-            List<Vec3D> n = a.world.getDynamicPoints(a, dynamicRadius);
-            n.AddRange(searchStatic(a, staticRadius));
+            List<Vec3D> n = a.world.getDynamicPoints(a, dynamicRadius * scaleFactor);
+            n.AddRange(searchStatic(a, staticRadius * scaleFactor));
             n.Remove(a);
             return n;
         }

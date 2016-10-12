@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class AlignAxisToVelocity : PlaneAgentBehaviour
+    public class AlignAxisToVelocity : ScaledAgentBehaviour
     {
 
         public float strength { get; set; }
@@ -21,13 +21,13 @@ namespace SlowRobotics.Agent.Behaviours
         {
             switch (axis) {
                 case 0:
-                    a.interpolateToXX(a.getVel(), strength);
+                    a.interpolateToXX(a.getVel(), strength * scaleFactor);
                     break;
                 case 1:
-                    a.interpolateToYY(a.getVel(), strength);
+                    a.interpolateToYY(a.getVel(), strength * scaleFactor);
                     break;
                 case 2:
-                    a.interpolateToZZ(a.getVel(), strength);
+                    a.interpolateToZZ(a.getVel(), strength * scaleFactor);
                     break;
             }
         }

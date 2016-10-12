@@ -62,6 +62,36 @@ namespace SlowRoboticsGH
         }
     }
 
+    public class NodeParameter : GH_PersistentParam<GH_Node>
+    {
+        public NodeParameter() : base("Node parameter", "Node", "This is a Node", "SlowRobotics", "Parameters") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        //protected override System.Drawing.Bitmap Icon => Properties.Resources.iconParamProgram;
+        protected override Bitmap Icon
+        {
+            get
+            {
+                //Return a 24x24 pixel bitmap to represent this GHA library.
+                return null;
+            }
+        }
+        public override System.Guid ComponentGuid => new Guid("{3f999a67-553e-438d-9c10-8115d04e045e}");
+
+        protected override GH_GetterResult Prompt_Singular(ref GH_Node value)
+        {
+
+            value = new GH_Node();
+            return GH_GetterResult.success;
+
+        }
+
+        protected override GH_GetterResult Prompt_Plural(ref List<GH_Node> values)
+        {
+            values = new List<GH_Node>();
+            return GH_GetterResult.success;
+        }
+    }
+
     public class AgentParameter : GH_PersistentParam<GH_Agent>
     {
         public AgentParameter() : base("Agent parameter", "Agent", "This is an Agent", "SlowRobotics", "Parameters") { }
@@ -91,6 +121,7 @@ namespace SlowRoboticsGH
             return GH_GetterResult.success;
         }
     }
+
 
     public class WorldParameter : GH_PersistentParam<GH_World>
     {

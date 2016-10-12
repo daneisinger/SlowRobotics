@@ -7,11 +7,11 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class AddLink : PlaneAgentBehaviour
+    public class AddLink : ScaledAgentBehaviour
     {
 
         public Vec3D offset { get; set; }
-        public List<Behaviour> behaviours { get; set; }
+        public List<IBehaviour> behaviours { get; set; }
         public LinkMesh parent { get; set; }
 
         public int frequency { get; set; }
@@ -21,7 +21,7 @@ namespace SlowRobotics.Agent.Behaviours
         public bool dynamic { get; set; }
         public bool tryToBrace { get; set; }
 
-        public AddLink(int _priority, LinkMesh _parent, bool _tryToBrace, int _frequency, Vec3D _offset, float _stiffness, float _braceStiffness, List<Behaviour> _behaviours, bool _dynamic) : base(_priority)
+        public AddLink(int _priority, LinkMesh _parent, bool _tryToBrace, int _frequency, Vec3D _offset, float _stiffness, float _braceStiffness, List<IBehaviour> _behaviours, bool _dynamic) : base(_priority)
         {
             offset = _offset;
             frequency = _frequency;
@@ -55,16 +55,16 @@ namespace SlowRobotics.Agent.Behaviours
                     {
                         float linkLengths = last.l + secondLast.l;
                         Link nL = new Link(b, secondLast.tryGetOther(shared), linkLengths);
-                        nL.stiffness = braceStiffness;
+                        nL.stiffness = braceStiffness * scaleFactor;
                         parent.connectTertiary(nL);
                     }
                 }
 
-                parent.connectNodes(a, b, stiffness);
+                parent.connectNodes(a, b, stiffness*scaleFactor);
 
                 if (dynamic)
                 {
-                    foreach (Behaviour nb in behaviours) b.addBehaviour(nb);
+                    foreach (IBehaviour nb in behaviours) b.addBehaviour(nb);
                     a.world.addDynamic(b);//add to world
                 }
                 else
@@ -76,5 +76,24 @@ namespace SlowRobotics.Agent.Behaviours
 
         }
 
+        public static void createLink(LinkMesh parent, bool tertiary, PlaneAgent a, PlaneAgent b, float _stiffness, List<IBehaviour> newBehaviours)
+        {
+
+            if (tertiary)
+            {
+                parent.connectTertiaryNodes(a, b, _stiffness);
+
+            }
+            else
+            {
+                parent.connectNodes(a, b, _stiffness);
+            }
+
+            foreach (IBehaviour nb in newBehaviours)
+            {
+                b.addBehaviour(nb); //add new behaviours
+            }
+            a.world.addDynamic(b);//add to world
+        }
     }
 }
