@@ -59,12 +59,12 @@ namespace SlowRobotics.Simulation.Noise
                 z = z % repeat;
             }*/
 
-            int xi = (int)x & 255;                              // Calculate the "unit cube" that the point asked will be located in
-            int yi = (int)y & 255;                              // The left bound is ( |_x_|,|_y_|,|_z_| ) and the right bound is that
-            int zi = (int)z & 255;                              // plus 1.  Next we calculate the location (from 0.0 to 1.0) in that cube.
-            double xf = x - (int)x;                             // We also fade the location to smooth the result.
-            double yf = y - (int)y;
-            double zf = z - (int)z;
+            int xi = (int)Math.Floor(x) & 255;                              // Calculate the "unit cube" that the point asked will be located in
+            int yi = (int)Math.Floor(y) & 255;                              // The left bound is ( |_x_|,|_y_|,|_z_| ) and the right bound is that
+            int zi = (int)Math.Floor(z) & 255;                              // plus 1.  Next we calculate the location (from 0.0 to 1.0) in that cube.
+            double xf = x - (int)Math.Floor(x);                             // We also fade the location to smooth the result.
+            double yf = y - (int)Math.Floor(y);
+            double zf = z - (int)Math.Floor(z);
             double u = fade(xf);
             double v = fade(yf);
             double w = fade(zf);

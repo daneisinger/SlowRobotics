@@ -37,7 +37,7 @@ namespace SlowRobotics.Utils
             return lerp((float)min, (float)max, f);
         }
 
-        private static float approxDistance(Vec3D source, Vec3D target)
+        public static float approxDistance(Vec3D source, Vec3D target)
         {
             float dx = target.x - source.x;
             float dz = target.y - source.y;

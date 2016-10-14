@@ -11,6 +11,8 @@ using SlowRobotics.Agent;
 using SlowRobotics.Core;
 using Grasshopper.Kernel.Types;
 using SlowRobotics.Rhino.MeshTools;
+using SlowRobotics.Field;
+using SlowRobotics.Field.Elements;
 
 namespace SlowRoboticsGH
 {
@@ -19,15 +21,7 @@ namespace SlowRoboticsGH
         public CreateAgentsFromPlanesComponent() : base("Agents From Planes", "CreateAgents", "Create Agents from a collection of planes", "SlowRobotics", "Agent") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{93c48701-8b2f-43ed-8a6a-fb82ebdf3737}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -67,7 +61,7 @@ namespace SlowRoboticsGH
             if (create)
             {
                 agents = new List<IAgent>();
-                foreach (Plane3D p in planes.ConvertAll(x => { return IO.ConvertToPlane3D(x); }))
+                foreach (Plane3D p in planes.ConvertAll(x => { return IO.ToPlane3D(x); }))
                 {
                     IAgent a = new PlaneAgent(p, world.Value);
                     foreach (GH_Behaviour b in behaviours) a.addBehaviour(b.Value);
@@ -84,15 +78,7 @@ namespace SlowRoboticsGH
         public CreateAgentsFromCurveComponent() : base("Agents From Curve", "CreateAgents", "Create Linked agents by dividing a curve", "SlowRobotics", "Agent") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{67691d26-05ad-4680-a28d-666f0b83e939}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -147,7 +133,7 @@ namespace SlowRoboticsGH
                 //first agent
                 Plane currentPlane;
                 curve.FrameAt(0, out currentPlane);
-                PlaneAgent a = new PlaneAgent(IO.ConvertToPlane3D(currentPlane), world.Value);
+                PlaneAgent a = new PlaneAgent(IO.ToPlane3D(currentPlane), world.Value);
                 foreach (IBehaviour _b in agentBehaviours) a.addBehaviour(_b);
                 agents.Add(a);
 
@@ -158,7 +144,7 @@ namespace SlowRoboticsGH
                 for (int i = 1; i < pts.Length; i++)
                 {
                     curve.FrameAt(pts[i], out currentPlane);
-                    PlaneAgent b = new PlaneAgent(IO.ConvertToPlane3D(currentPlane), world.Value);
+                    PlaneAgent b = new PlaneAgent(IO.ToPlane3D(currentPlane), world.Value);
                     foreach (IBehaviour _b in agentBehaviours) b.addBehaviour(_b);
 
                     linkMesh.connectNodes(a, b, (float)stiffness);
@@ -172,46 +158,392 @@ namespace SlowRoboticsGH
         }
     }
 
-   
-
-    public class CreateNodeComponent : GH_Component
+    public class CreatePlaneFieldElementComponent : GH_Component
     {
-        public CreateNodeComponent() : base("Create Node", "CreateNode", "Create Node from Plane", "SlowRobotics", "Simulation") { }
+        public CreatePlaneFieldElementComponent() : base("Create Plane Field Element", "CreatePlaneElement", "Create plane field elements", "SlowRobotics", "Field") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{9d565fc7-b92d-4464-b18c-80022e8f6e1d}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddGeometryParameter("Geometry", "G", "Field Geometry", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Weight", "W", "Field element weight", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Distance for field element", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Attenuation", "A", "Attenuation of field element", GH_ParamAccess.list);
+
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new FieldElementParameter(), "Field Elements", "F", "Field ELements", GH_ParamAccess.list);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            List<IGH_GeometricGoo> geometry = new List<IGH_GeometricGoo>();
+            List<double> weights = new List<double>();
+            List<double> distances = new List<double>();
+            List<double> attens = new List<double>();
+
+            if (!DA.GetDataList(0, geometry)) { return; }
+            if (!DA.GetDataList(1, weights)) { return; }
+            if (!DA.GetDataList(2, distances)) { return; }
+            if (!DA.GetDataList(3, attens)) { return; }
+
+            List<IFieldElement> pts = new List<IFieldElement>();
+
+            for (int i = 0; i < geometry.Count; i++)
+            {
+                IGH_GeometricGoo g = geometry[i];
+                if (g is GH_Plane)
+                {
+                    pts.Add(new PlaneFieldElement(
+                        IO.ToPlane3D(((GH_Plane)g).Value),
+                        (float)weights[Math.Min(i, weights.Count - 1)],
+                        (float)distances[Math.Min(i, distances.Count - 1)],
+                        (float)attens[Math.Min(i, attens.Count - 1)]
+                        ));
+                }
+            }
+
+            DA.SetDataList(0, pts);
+
+        }
+    }
+
+    public class CreateDistanceFieldElementComponent : GH_Component
+    {
+        public CreateDistanceFieldElementComponent() : base("Create Distance Field Element", "CreateDistanceElement", "Create distance field elements (attracion forces)", "SlowRobotics", "Field") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{6522aa26-68a2-4e16-8ce4-16766d662245}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddPointParameter("Locations", "L", "Point defining origin of field", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Weight", "W", "Field element weight", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Distance for field element", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Attenuation", "A", "Attenuation of field element", GH_ParamAccess.list);
+
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new FieldElementParameter(), "Field Elements", "F", "Field ELements", GH_ParamAccess.list);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            List<IGH_GeometricGoo> geometry = new List<IGH_GeometricGoo>();
+            List<double> weights = new List<double>();
+            List<double> distances = new List<double>();
+            List<double> attens = new List<double>();
+
+            if (!DA.GetDataList(0, geometry)) { return; }
+            if (!DA.GetDataList(1, weights)) { return; }
+            if (!DA.GetDataList(2, distances)) { return; }
+            if (!DA.GetDataList(3, attens)) { return; }
+
+            List<IFieldElement> pts = new List<IFieldElement>();
+
+            for (int i = 0; i < geometry.Count; i++)
+            {
+                IGH_GeometricGoo g = geometry[i];
+                if (g is GH_Point)
+                {
+                    Point3d pp= ((GH_Point)g).Value;
+                    pts.Add(new DistanceFieldElement(
+                        new Toxiclibs.core.Vec3D((float)pp.X, (float)pp.Y, (float)pp.Z),
+                        (float)weights[Math.Min(i, weights.Count - 1)],
+                        (float)distances[Math.Min(i, distances.Count - 1)],
+                        (float)attens[Math.Min(i, attens.Count - 1)]
+                        ));
+                }
+            }
+
+            DA.SetDataList(0, pts);
+
+        }
+    }
+
+    public class CreateMeshFieldElementComponent : GH_Component
+    {
+        public CreateMeshFieldElementComponent() : base("Create Mesh Field Element", "CreateMeshElement", "Create mesh field elements", "SlowRobotics", "Field") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{df15c4b0-10b3-4aa1-baac-ce85323bf87f}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddMeshParameter("Meshes", "M", "Mesh defining field", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Weight", "W", "Field element weight", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Distance for field element", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Attenuation", "A", "Attenuation of field element", GH_ParamAccess.list);
+
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new FieldElementParameter(), "Field Elements", "F", "Field ELements", GH_ParamAccess.list);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            List<IGH_GeometricGoo> geometry = new List<IGH_GeometricGoo>();
+            List<double> weights = new List<double>();
+            List<double> distances = new List<double>();
+            List<double> attens = new List<double>();
+
+            if (!DA.GetDataList(0, geometry)) { return; }
+            if (!DA.GetDataList(1, weights)) { return; }
+            if (!DA.GetDataList(2, distances)) { return; }
+            if (!DA.GetDataList(3, attens)) { return; }
+
+            List<IFieldElement> pts = new List<IFieldElement>();
+
+            for (int i = 0; i < geometry.Count; i++)
+            {
+                IGH_GeometricGoo g = geometry[i];
+                if (g is GH_Mesh)
+                {
+                    Mesh mesh = ((GH_Mesh)g).Value;
+                    pts.Add(new MeshFieldElement(
+                        mesh,
+                        (float)weights[Math.Min(i, weights.Count - 1)],
+                        (float)distances[Math.Min(i, distances.Count - 1)],
+                        (float)attens[Math.Min(i, attens.Count - 1)]
+                        ));
+                }
+            }
+            DA.SetDataList(0, pts);
+        }
+    }
+
+    public class CreateBitmapFieldElementComponent : GH_Component
+    {
+        public CreateBitmapFieldElementComponent() : base("Create Bitmap Field Element", "CreateBitmapElement", "Create 2D bitmap field elements", "SlowRobotics", "Field") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{6cc8ba1f-c21b-4bdf-9ea7-98d98c14bb8c}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddTextParameter("Image File", "F", "Location of image to load as bitmap", GH_ParamAccess.list);
+            pManager.AddPointParameter("Locations", "L", "Point defining 0,0 corner of bitmap", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Scale", "S", "Scale the image", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Weight", "W", "Field element weight", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Distance for field element", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Attenuation", "A", "Attenuation of field element", GH_ParamAccess.list);
+
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new FieldElementParameter(), "Field Elements", "F", "Field ELements", GH_ParamAccess.list);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            List<String> files = new List<String>();
+            List<Point3d> locs = new List<Point3d>();
+            List<double> scales = new List<double>();
+            List<double> weights = new List<double>();
+            List<double> distances = new List<double>();
+            List<double> attens = new List<double>();
+
+            if (!DA.GetDataList(0, files)) { return; }
+            if (!DA.GetDataList(1, locs)) { return; }
+            if (!DA.GetDataList(2, scales)) { return; }
+            if (!DA.GetDataList(3, weights)) { return; }
+            if (!DA.GetDataList(3, distances)) { return; }
+            if (!DA.GetDataList(3, attens)) { return; }
+
+            List<IFieldElement> pts = new List<IFieldElement>();
+
+            for (int i = 0; i < locs.Count; i++)
+            {
+                string s = files[i];
+
+                Bitmap bmp = new Bitmap(s);
+                if (bmp != null)
+                {
+                    pts.Add(new BitmapFieldElement(
+                        bmp,
+                        IO.ToVec3D(locs[Math.Min(i, weights.Count - 1)]),
+                        (float)scales[Math.Min(i, weights.Count - 1)],
+                        (float)weights[Math.Min(i, weights.Count - 1)],
+                        (float)distances[Math.Min(i, distances.Count - 1)],
+                        (float)attens[Math.Min(i, attens.Count - 1)]
+                        ));
+                }
+            }
+            DA.SetDataList(0, pts);
+        }
+    }
+
+    public class CreatePolarFieldElementComponent : GH_Component
+    {
+        public CreatePolarFieldElementComponent() : base("Create Polar Field Element", "CreatePolarElement", "Create polar field elements (spin forces)", "SlowRobotics", "Field") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{8795cd34-4b1e-49e1-a613-9405b8676b40}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddPlaneParameter("Planes", "P", "Plane defining polar field Z axis", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Weight", "W", "Field element weight", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Distance for field element", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Attenuation", "A", "Attenuation of field element", GH_ParamAccess.list);
+
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new FieldElementParameter(), "Field Elements", "F", "Field ELements", GH_ParamAccess.list);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            List<IGH_GeometricGoo> geometry = new List<IGH_GeometricGoo>();
+            List<double> weights = new List<double>();
+            List<double> distances = new List<double>();
+            List<double> attens = new List<double>();
+
+            if (!DA.GetDataList(0, geometry)) { return; }
+            if (!DA.GetDataList(1, weights)) { return; }
+            if (!DA.GetDataList(2, distances)) { return; }
+            if (!DA.GetDataList(3, attens)) { return; }
+
+            List<IFieldElement> pts = new List<IFieldElement>();
+
+            for (int i = 0; i < geometry.Count; i++)
+            {
+                IGH_GeometricGoo g = geometry[i];
+                if (g is GH_Plane)
+                {
+                    pts.Add(new PolarFieldElement(
+                        IO.ToPlane3D(((GH_Plane)g).Value),
+                        (float)weights[Math.Min(i, weights.Count - 1)],
+                        (float)distances[Math.Min(i, distances.Count - 1)],
+                        (float)attens[Math.Min(i, attens.Count - 1)]
+                        ));
+                }
+            }
+
+            DA.SetDataList(0, pts);
+
+        }
+    }
+
+    public class CreateNoiseFieldElement : GH_Component
+    {
+        public CreateNoiseFieldElement() : base("Create Noise Field Element", "CreateNoiseElement", "Create noise field elements", "SlowRobotics", "Field") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{c6e17c04-e71f-4a3f-85fd-ba822dd25136}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddPointParameter("Noise Location", "L", "Location of noise for doing falloff", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Weight", "W", "Field element weight", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Distance for field element", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Attenuation", "A", "Attenuation of field element", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Noise Scale", "N", "Scale of noise ", GH_ParamAccess.list);
+
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new FieldElementParameter(), "Field Elements", "F", "Field ELements", GH_ParamAccess.list);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            List<Point3d> locations = new List<Point3d>();
+            List<double> weights = new List<double>();
+            List<double> distances = new List<double>();
+            List<double> attens = new List<double>();
+            List<double> scales = new List<double>();
+
+            if (!DA.GetDataList(0, locations)) { return; }
+            if (!DA.GetDataList(1, weights)) { return; }
+            if (!DA.GetDataList(2, distances)) { return; }
+            if (!DA.GetDataList(3, attens)) { return; }
+            if (!DA.GetDataList(4, scales)) { return; }
+
+            List<IFieldElement> pts = new List<IFieldElement>();
+
+            for (int i = 0; i < locations.Count; i++)
+            {
+                Point3d g = locations[i];
+
+                    pts.Add(new NoiseFieldElement(
+                        new Toxiclibs.core.Vec3D((float)g.X, (float)g.Y, (float)g.Z),
+                        (float)weights[Math.Min(i, weights.Count - 1)],
+                        (float)distances[Math.Min(i, distances.Count - 1)],
+                        (float)attens[Math.Min(i, attens.Count - 1)],
+                        (float)scales[Math.Min(i, scales.Count - 1)]
+                        ));
+            }
+
+            DA.SetDataList(0, pts);
+
+        }
+    }
+
+    public class CreateFieldComponent : GH_Component
+    {
+        public CreateFieldComponent() : base("Create Field", "CreateField", "Create Field from planes", "SlowRobotics", "Field") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{32709dc6-16dc-4038-98b2-e76e565def1b}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddPlaneParameter("Plane", "P", "Node Plane", GH_ParamAccess.item);
-            pManager[0].Optional = true;
+            pManager.AddParameter(new FieldElementParameter(),"Field Elements", "E", "Field Elements", GH_ParamAccess.list);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddParameter(new NodeParameter(), "Node", "N", "Node", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Field", "F", "Field", GH_ParamAccess.item);
         }
-
-        public Node node = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            Plane p = Plane.Unset;
+            List<GH_FieldElement> geometry = new List<GH_FieldElement>();
 
-            if (!DA.GetData(0, ref p))
-            {   
-                p = Plane.WorldXY;
-            }
-            if(node!= null)
-            {
-                node.set(IO.ConvertToPlane3D(p));
-            }
-            else
-            {
-                node = new Node(IO.ConvertToPlane3D(p));
-            }
+            if (!DA.GetDataList(0, geometry)) { return; }
 
-            DA.SetData(0, new GH_Node(node));
+            GenericField field = new GenericField();
+
+            for(int i = 0;i<geometry.Count;i++)
+            {
+                
+                field.insertElement(geometry[i].Value);
+
+                /*
+                if (g.Value is List<IFieldElement>)
+                {
+                    foreach (IFieldElement fe in (List<IFieldElement>)g.Value) field.insertElement(fe);
+                }
+                if (g.Value is List<PlaneFieldElement>)
+                {
+                    foreach (IFieldElement fe in (List<PlaneFieldElement>)g.Value) field.insertElement(fe);
+                }
+                if (g.Value is List<NoiseFieldElement>)
+                {
+                    foreach (IFieldElement fe in (List<NoiseFieldElement>)g.Value) field.insertElement(fe);
+                }
+
+                if (g.Value is List<PolarFieldElement>)
+                {
+                    foreach (IFieldElement fe in (List<PolarFieldElement>)g.Value) field.insertElement(fe);
+                }*/
+            }
+            field.updateBounds();
+
+            DA.SetData(0, field);
 
         }
     }
@@ -221,15 +553,7 @@ namespace SlowRoboticsGH
         public CreateLinkMeshComponent() : base("Create LinkMesh", "CreateLinkMesh", "Creates a Link Mesh", "SlowRobotics", "Agent") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{b79c2e7d-22d4-4696-905c-d7e76a0cbec0}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -280,15 +604,7 @@ namespace SlowRoboticsGH
         public CreateSimpleWorldComponent() : base("Create World", "CreateWorld", "Creates a simple world", "SlowRobotics", "Simulation") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{e66c21d6-b0ad-4d81-8013-67fff231e5e4}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {

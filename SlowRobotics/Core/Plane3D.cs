@@ -16,6 +16,8 @@ namespace SlowRobotics.Core
 
         protected ExponentialInterpolation interp = new ExponentialInterpolation(2);
 
+        public Plane3D() : this(new Vec3D()) { }
+
         public Plane3D(Vec3D _origin, Vec3D _x, Vec3D _y) :base(_origin)
         {
             xx = _x.getNormalized();

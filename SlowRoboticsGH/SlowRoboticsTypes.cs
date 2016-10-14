@@ -3,10 +3,13 @@ using Rhino.Geometry;
 using SlowRobotics.Agent;
 using SlowRobotics.Agent.Behaviours;
 using SlowRobotics.Core;
+using SlowRobotics.Field;
+using SlowRobotics.Rhino.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Toxiclibs.core;
 
 namespace SlowRoboticsGH
 {
@@ -37,6 +40,69 @@ namespace SlowRoboticsGH
         }
     }
 
+    public class GH_FieldElement : GH_Goo<IFieldElement>
+    {
+        public GH_FieldElement() { this.Value = null; }
+        public GH_FieldElement(GH_FieldElement goo) { this.Value = goo.Value; }
+        public GH_FieldElement(IFieldElement native) { this.Value = native; }
+        public override IGH_Goo Duplicate() => new GH_FieldElement(this);
+        public override bool IsValid => true;
+        public override string TypeName => "FieldElement";
+        public override string TypeDescription => "FieldElement";
+        public override string ToString() => this.Value.ToString();
+        public override object ScriptVariable() => Value;
+
+        public override bool CastFrom(object source)
+        {
+            if (source is IFieldElement)
+            {
+                Value = source as IFieldElement;
+                return true;
+            }
+            if (source is GH_FieldElement)
+            {
+                Value = ((GH_FieldElement)source).Value;
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public class GH_Plane3D : GH_Goo<Plane3D>
+    {
+        public GH_Plane3D() { this.Value = null; }
+        public GH_Plane3D(GH_Plane3D goo) { this.Value = goo.Value; }
+        public GH_Plane3D(Plane3D native) { this.Value = native; }
+      //  public GH_Plane3D(Plane native) { this.Value = new Plane3D(new Vec3D()); }
+        public override IGH_Goo Duplicate() => new GH_Plane3D(this);
+        public override bool IsValid => true;
+        public override string TypeName => "Plane3D";
+        public override string TypeDescription => "Plane3D";
+        public override string ToString() => this.Value.ToString();
+        public override object ScriptVariable() => Value;
+
+        public override bool CastFrom(object source)
+        {
+            if (source is GH_Plane)
+            {
+                Value = IO.ToPlane3D(((GH_Plane)source).Value);
+                return true;
+            }
+            if (source is Plane3D)
+            {
+                Value = source as Plane3D;
+                return true;
+            }
+            if (source is GH_Plane3D)
+            {
+                Value = ((GH_Plane3D)source).Value;
+                return true;
+            }
+            return false;
+        }
+
+    }
+
     public class GH_Node : GH_Goo<Node>
     {
         public GH_Node() { this.Value = null; }
@@ -51,6 +117,23 @@ namespace SlowRoboticsGH
         public override object ScriptVariable() => Value;
         public override bool CastFrom(object source)
         {
+
+            if (source is GH_Plane)
+            {
+                Value = new Node(IO.ToPlane3D(((GH_Plane)source).Value));
+                return true;
+            }
+
+            if (source is Plane3D)
+            {
+                Value = new Node((Plane3D)source);
+                return true;
+            }
+            if (source is GH_Plane3D)
+            {
+                Value = new Node(((GH_Plane3D)source).Value);
+                return true;
+            }
             if (source is Node)
             {
                 Value = source as Node;

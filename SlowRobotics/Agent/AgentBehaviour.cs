@@ -71,13 +71,5 @@ namespace SlowRobotics.Agent
 
         public virtual void test(LinkMesh a, Plane3D p) { }
 
-        public Vec3D repel(Vec3D a, Vec3D b, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
-        {
-            Vec3D ab = b.sub(a);
-            float d = ab.magnitude();
-            float f = -(maxForce - SR_Math.normalizeDistance(ab, minDist, maxDist, maxForce, interpolator));
-            return (d>minDist && d<maxDist) ? ab.normalizeTo(f) :new Vec3D();
-        }
-
     }
 }

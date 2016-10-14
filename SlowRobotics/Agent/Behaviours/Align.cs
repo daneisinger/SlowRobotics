@@ -1,4 +1,5 @@
 ﻿using SlowRobotics.Core;
+using SlowRobotics.Field;
 using SlowRobotics.Utils;
 using System;
 using System.Collections;
@@ -83,6 +84,22 @@ namespace SlowRobotics.Agent.Behaviours
                 }
             }
 
+        }
+
+        public class AxisToField : Axis
+        {
+            public IField field { get; set; }
+            public AxisToField(int _priority, IField _field, float _strength, int _axis) : base(_priority, _strength, _axis)
+            {
+                field = _field;
+            }
+
+            public override void run(PlaneAgent a)
+            {
+                FieldData d = field.evaluate(a);
+                if(d.hasPlaneData()) interpolateToVector(a, getAxis(d.planeData), strength * scaleFactor);
+                if (d.hasVectorData()) interpolateToVector(a, d.vectorData, strength * scaleFactor);
+            }
         }
 
         public class AxisToLinks : Axis

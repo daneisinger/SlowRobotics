@@ -9,6 +9,10 @@ namespace SlowRobotics.Rhino.MeshTools
 {
     public static class Mesher
     {
+        public static Mesh weldVertices(Mesh mesh)
+        {
+            return mesh;
+        }
 
         public static Mesh pipeCurve(Curve curve, int numSections, float radius, int numSides)
         {

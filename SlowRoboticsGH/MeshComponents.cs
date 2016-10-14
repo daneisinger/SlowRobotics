@@ -20,15 +20,7 @@ namespace SlowRoboticsGH
         public MeshPipeComponent() : base("Mesh Pipe", "MeshPipe", "Create a mesh by piping a curve", "SlowRobotics", "Mesh") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{06a11782-d367-4cdd-98c6-b24c22bef473}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -64,7 +56,7 @@ namespace SlowRoboticsGH
         public MeshPolylineSectionsComponent() : base("Mesh Loft", "MeshLoft", "Create a mesh by lofting polyline sections", "SlowRobotics", "Mesh") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{99aafd2f-df87-4795-9596-448274e5a107}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.meshPipe;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {

@@ -88,7 +88,7 @@ namespace SlowRobotics.Rhino.VoxelTools
             return grid;
         }
 
-        public static void voxeliseMesh(FloatGrid grid, int wallThickness, float value, Mesh mesh)
+        public static void voxeliseMesh<T>(VoxelGridT<T> grid, int wallThickness, T wallValue, T insideValue, Mesh mesh) where T :struct,IComparable
         {
             Vector3d v1 = new Vector3d(grid.w * 4, 0, 0);
             for (int z = 1; z < grid.d; z++)
@@ -114,7 +114,14 @@ namespace SlowRobotics.Rhino.VoxelTools
                             {
                                 for (int x = current; x <= next; x++)
                                 {
-                                    grid.set(x, y, z, value);
+                                    if ((x-current)<=wallThickness || (next-x) <= wallThickness)
+                                    {
+                                        grid.set(x, y, z, wallValue);
+                                    }
+                                    else
+                                    {
+                                        grid.set(x, y, z, insideValue);
+                                    }
                                 }
                             }
                             f = !f;

@@ -10,23 +10,60 @@ using SlowRobotics.Rhino.IO;
 using SlowRobotics.Agent;
 using SlowRobotics.Core;
 using Grasshopper.Kernel.Types;
+using SlowRobotics.Field;
 
 namespace SlowRoboticsGH
 {
+    /*
+    public class TraverseFieldComponent : GH_Component
+    {
+        public TraverseFieldComponent() : base("Traverse Field", "TraverseField", "Iteratively moves a plane through a field", "SlowRobotics", "Simulation") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{bf39b7f6-7a88-490e-846a-5a7d57654c8a}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Field", "F", "Field to traverse", GH_ParamAccess.item);
+            pManager.AddParameter(new Plane3DParameter(), "Initial Planes", "P", "Initialise planes to traverse field", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("Steps", "S", "Number of steps through the field", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Planes", "P", "Path through field", GH_ParamAccess.item);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            IField field = null;
+            List<GH_Plane3D> inputPlanes = new List<GH_Plane3D>();
+            int steps = 0;
+
+            if (!DA.GetData(0, ref field)) { return; }
+            if (!DA.GetDataList(1,  inputPlanes)) { return; }
+            if (!DA.GetData(2, ref steps)) { return; }
+
+            List<GH_ObjectWrapper> trails = new List<GH_ObjectWrapper>();
+
+            foreach (GH_Plane3D gh_p in inputPlanes)
+            {
+                List<Plane3D> pts = new List<Plane3D>();
+
+            }
+            world.Value.run();
+
+            DA.SetData(0, world);
+
+        }
+    }*/
+
     public class SimulateWorldComponent : GH_Component
     {
         public SimulateWorldComponent() : base("Simulate World", "SimWorld", "Updates all particles and links in the world", "SlowRobotics", "Simulation") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{6d564eab-11d8-4dd7-af01-f7cfc5d435e7}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -57,15 +94,7 @@ namespace SlowRoboticsGH
         public AddToWorldComponent() : base("Add Nodes To World", "AddWorld", "Add wrapped list of nodes to a world", "SlowRobotics", "Agent") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{25adadd2-b209-4f16-9f3b-75c5e38ec22c}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -140,15 +169,7 @@ namespace SlowRoboticsGH
         public AddBehavioursToAgents() : base("Add Behaviours", "AddBehaviours", "Add behaviours to agents", "SlowRobotics", "Agent") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{674aab77-4e92-4260-b23d-01656da24a08}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {

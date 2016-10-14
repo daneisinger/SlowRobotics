@@ -1,4 +1,5 @@
 ﻿using SlowRobotics.Core;
+using SlowRobotics.Field;
 using SlowRobotics.Utils;
 using System;
 using System.Collections.Generic;
@@ -8,25 +9,20 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class Attract : ScaledAgentBehaviour
+    public class Move : ScaledAgentBehaviour
     {
         
         public float strength { get; set; }
         public float minDist { get; set; }
         public float maxDist { get; set; }
 
-        public Attract(int _priority, float _strength, float _maxDist) : this(_priority, _strength, 0, _maxDist) { }
+        public Move(int _priority, float _strength, float _maxDist) : this(_priority, _strength, 0, _maxDist) { }
 
-        public Attract(int _priority, float _strength, float _minDist, float _maxDist) : base(_priority)
+        public Move(int _priority, float _strength, float _minDist, float _maxDist) : base(_priority)
         {
             strength = _strength;
             maxDist = _maxDist;
             minDist = _minDist;
-        }
-
-        public override void test(PlaneAgent a, Plane3D p)
-        {
-            a.addForce(attract(a, p, minDist, maxDist, strength*scaleFactor, ExponentialInterpolation.Squared));
         }
 
         public Vec3D attract(Vec3D a, Vec3D b, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
@@ -37,23 +33,124 @@ namespace SlowRobotics.Agent.Behaviours
             return (d > minDist && d < maxDist) ? ab.normalizeTo(f) : new Vec3D();
         }
 
-
-        public class InXY  : Attract
+        public Vec3D repel(Vec3D a, Vec3D b, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
         {
-            public InXY(int _priority, float _strength, float _minDist, float _maxDist) : base(_priority, _strength, _minDist, _maxDist) { }
+            Vec3D ab = b.sub(a);
+            float d = ab.magnitude();
+            float f = -(maxForce - SR_Math.normalizeDistance(ab, minDist, maxDist, maxForce, interpolator));
+            return (d > minDist && d < maxDist) ? ab.normalizeTo(f) : new Vec3D();
+        }
 
-            public override void test(PlaneAgent a, Plane3D p)
+        public class InAxis : Move
+        {
+            public int axis { get; set; }
+
+            public InAxis(int _priority, float _strength, int _axis) : this(_priority, _strength, 0, _axis) { }
+
+            public InAxis(int _priority, float _strength, float _maxDist, int _axis) : base(_priority, _strength, _maxDist)
             {
-                ToxiPlane tp = new ToxiPlane(a, a.zz);
-                Vec3D op = tp.getProjectedPoint(p);
-                a.addForce(attract(a, op, minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
+                axis = _axis;
+            }
+
+            public override void run(PlaneAgent a)
+            {
+                a.addForce(getAxis(a).scale(strength * scaleFactor));
+            }
+
+            public Vec3D getAxis(Plane3D a)
+            {
+                switch (axis)
+                {
+                    case 0:
+                        return a.xx;
+                    case 1:
+                        return a.yy;
+                    case 2:
+                        return a.zz;
+                    default:
+                        return a.xx;
+                }
+            }
+
+        }
+
+        public class InField : Move
+        {
+            public IField field { get; set; }
+            public InField(int _priority, IField _field, float _strength) : base(_priority, _strength, 1000)
+            {
+                field = _field;
+            }
+
+            public override void run(PlaneAgent a)
+            {
+                FieldData d = field.evaluate(a);
+                if (d.hasVectorData()) a.addForce(d.vectorData.scale(strength * scaleFactor));
             }
         }
 
-        public class InZAxis : Attract
+        public class Apart : Move
+        {
+            public bool inXY { get; set; }
+
+            public Vec3D force;
+
+            public Apart(int _priority, float _strength, float _minDist, float _maxDist, bool _inXY) : base(_priority, _strength, _minDist,_maxDist)
+            {
+                inXY = _inXY;
+                reset();
+            }
+
+            public void reset()
+            {
+                force = new Vec3D();
+            }
+
+            public override void test(PlaneAgent a, Plane3D p)
+            {
+                if (!inXY)
+                {
+                    force.addSelf(repel(a, p, minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
+                }
+                else
+                {
+                    ToxiPlane tp = new ToxiPlane(a, a.zz);
+                    Vec3D op = tp.getProjectedPoint(p);
+                    force.addSelf(repel(a, op, minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
+                }
+            }
+
+            public override void run(PlaneAgent a)
+            {
+                a.addForce(force);
+                reset();
+            }
+        }
+
+        public class Together  : Apart
         {
 
-            public InZAxis(int _priority, float _strength, float _maxDist) : base(_priority,_strength, _maxDist) {}
+            public Together(int _priority, float _strength, float _minDist, float _maxDist, bool _inXY) : base(_priority, _strength, _minDist, _maxDist, _inXY){ }
+
+            public override void test(PlaneAgent a, Plane3D p)
+            {
+                if (!inXY)
+                {
+                    force.addSelf(attract(a, p, minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
+                }
+                else
+                {
+                    ToxiPlane tp = new ToxiPlane(a, a.zz);
+                    Vec3D op = tp.getProjectedPoint(p);
+                    force.addSelf(attract(a, op, minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
+                }
+            }
+        }
+
+        public class TogetherInZ : Move
+        {
+
+            public TogetherInZ(int _priority, float _strength, float _maxDist) : base(_priority,_strength, _maxDist) {}
 
             public override void test(PlaneAgent a, Plane3D p)
             {
@@ -71,7 +168,7 @@ namespace SlowRobotics.Agent.Behaviours
             }
         }
 
-        public class ToNearestLink : Attract
+        public class ToNearestLink : Move
         {
 
             public LinkMesh parent { get; set; }

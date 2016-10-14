@@ -18,7 +18,7 @@ namespace SlowRobotics.Rhino.IO
         {
             Plane startPlane;
             c.FrameAt(0, out startPlane);
-            PlaneAgent a = new PlaneAgent(ConvertToPlane3D(startPlane), world);
+            PlaneAgent a = new PlaneAgent(ToPlane3D(startPlane), world);
             lm = new LinkMesh(a, world);
             a.parent = lm;
 
@@ -31,7 +31,7 @@ namespace SlowRobotics.Rhino.IO
             {
                 Plane currentPlane;
                 c.FrameAt(pts[i], out currentPlane);
-                PlaneAgent b = new PlaneAgent(ConvertToPlane3D(currentPlane), world);
+                PlaneAgent b = new PlaneAgent(ToPlane3D(currentPlane), world);
                 b.parent = lm;
 
                 agents.Add(b);
@@ -45,7 +45,7 @@ namespace SlowRobotics.Rhino.IO
         public static List<IAgent> ConvertMeshToLinkMesh(Mesh m, IWorld world, float stiffness, out LinkMesh lm)
         {
             List<PlaneAgent> agents = new List<PlaneAgent>();
-            PlaneAgent a = new PlaneAgent(new Plane3D(ConvertToVec3D(m.TopologyVertices[0])), world);
+            PlaneAgent a = new PlaneAgent(new Plane3D(ToVec3D(m.TopologyVertices[0])), world);
             lm = new LinkMesh(a, world);
             a.parent = lm;
             agents.Add(a);
@@ -53,7 +53,7 @@ namespace SlowRobotics.Rhino.IO
             for (int i = 1; i < m.TopologyVertices.Count; i++)
             {
                 Point3f p = m.TopologyVertices[i];
-                PlaneAgent aa = new PlaneAgent(new Plane3D(ConvertToVec3D(p)), world);
+                PlaneAgent aa = new PlaneAgent(new Plane3D(ToVec3D(p)), world);
                 aa.parent = lm;
                 agents.Add(aa);
             }
@@ -68,29 +68,38 @@ namespace SlowRobotics.Rhino.IO
 
         }
 
-        public static PlaneAgent ConvertToPlaneAgent(Plane p, IWorld world)
+        public static PlaneAgent ToPlaneAgent(Plane p, IWorld world)
         {
-            return new PlaneAgent(ConvertToPlane3D(p), world);
+            return new PlaneAgent(ToPlane3D(p), world);
         }
 
-        public static Plane3D ConvertToPlane3D(Plane p)
+        public static Plane3D ToPlane3D(Plane p)
         {
             return new Plane3D(new Vec3D((float)p.Origin.X, (float)p.Origin.Y, (float)p.Origin.Z),
               new Vec3D((float)p.XAxis.X, (float)p.XAxis.Y, (float)p.XAxis.Z),
               new Vec3D((float)p.YAxis.X, (float)p.YAxis.Y, (float)p.YAxis.Z));
         }
 
-        public static Vec3D ConvertToVec3D(Point3f p)
+        public static Vec3D ToVec3D(Point3f p)
         {
             return new Vec3D(p.X,p.Y,p.Z);
         }
 
-        public static Vec3D ConvertToVec3D(Vector3d p)
+        public static Vec3D ToVec3D(Vector3d p)
         {
             return new Vec3D((float)p.X, (float)p.Y, (float)p.Z);
         }
 
-        public static Plane ConvertPlane3DToPlane(Plane3D p)
+        public static Vec3D ToVec3D(Point3d p)
+        {
+            return new Vec3D((float)p.X, (float)p.Y, (float)p.Z);
+        }
+
+        public static Point3d ToPoint3d(Vec3D p)
+        {
+            return new Point3d(p.x, p.y, p.z);
+        }
+        public static Plane ToPlane(Plane3D p)
         {
             Point3d origin = new Point3d(p.x, p.y, p.z);
             Vector3d xx = new Vector3d(p.xx.x, p.xx.y, p.xx.z);

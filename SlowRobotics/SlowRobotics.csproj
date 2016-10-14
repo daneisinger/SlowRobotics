@@ -73,22 +73,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Agent\Behaviours\Add.cs" />
     <Compile Include="Agent\Behaviours\Align.cs" />
+    <Compile Include="Agent\Behaviours\Arrest.cs" />
     <Compile Include="Agent\Behaviours\Scale.cs" />
     <Compile Include="Agent\IAgent.cs" />
     <Compile Include="Agent\IScaledBehaviour.cs" />
     <Compile Include="Agent\AgentBehaviour.cs" />
     <Compile Include="Agent\IBehaviour.cs" />
-    <Compile Include="Agent\Behaviours\AddLink.cs" />
-    <Compile Include="Agent\Behaviours\Attract.cs" />
-    <Compile Include="Agent\Behaviours\Friction.cs" />
-    <Compile Include="Agent\Behaviours\InertiaLock.cs" />
+    <Compile Include="Agent\Behaviours\Move.cs" />
     <Compile Include="Agent\Behaviours\Interact.cs" />
     <Compile Include="Agent\Behaviours\Newton.cs" />
     <Compile Include="Agent\Behaviours\Search.cs" />
-    <Compile Include="Agent\Behaviours\Separate.cs" />
     <Compile Include="Agent\Behaviours\Spring.cs" />
-    <Compile Include="Agent\Behaviours\ZLock.cs" />
     <Compile Include="Agent\LinkMesh.cs" />
     <Compile Include="Agent\PlaneAgent.cs" />
     <Compile Include="Agent\ScaledAgentBehaviour.cs" />
@@ -99,6 +96,18 @@
     <Compile Include="Core\Plane3DOctree.cs" />
     <Compile Include="Core\SimpleWorld.cs" />
     <Compile Include="Core\IWorld.cs" />
+    <Compile Include="Field\Elements\BitmapFieldElement.cs" />
+    <Compile Include="Field\Elements\DistanceFieldElement.cs" />
+    <Compile Include="Field\Elements\MeshFieldElement.cs" />
+    <Compile Include="Field\Elements\NoiseFieldElement.cs" />
+    <Compile Include="Field\Elements\PlaneFieldElement.cs" />
+    <Compile Include="Field\Elements\PolarFieldElement.cs" />
+    <Compile Include="Field\Elements\VectorFieldElement.cs" />
+    <Compile Include="Field\FieldData.cs" />
+    <Compile Include="Field\IField.cs" />
+    <Compile Include="Field\IFieldElement.cs" />
+    <Compile Include="Field\GenericField.cs" />
+    <Compile Include="Field\WeightedPlane3D.cs" />
     <Compile Include="GPGPU\GPUTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rhino\GraphTools\Graph.cs" />

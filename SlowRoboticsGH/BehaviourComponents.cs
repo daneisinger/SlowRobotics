@@ -8,12 +8,14 @@ using SlowRobotics.Agent.Behaviours;
 using Grasshopper.Kernel.Parameters;
 using SlowRobotics.Rhino.IO;
 using SlowRobotics.Agent;
+using SlowRobotics.Field;
+using SlowRobotics.Core;
 
 namespace SlowRoboticsGH
 {
     public class SpringComponent : GH_Component
     {
-        public SpringComponent() : base("Spring Behaviour", "Spring", "Verlet Spring Behaviours", "SlowRobotics", "Behaviours") { }
+        public SpringComponent() : base("Springs", "Spring", "Adds verlet springs to links", "SlowRobotics", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{c9a35ba6-b679-446b-860e-d28244cd6360}");
        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
@@ -68,9 +70,9 @@ namespace SlowRoboticsGH
         }
     }
 
-    public class AlignXXToNearLinksComponent : GH_Component
+    public class AlignAxisToNearLinksComponent : GH_Component
     {
-        public AlignXXToNearLinksComponent() : base("Align XX With Near Links", "AlignNearLinks", "Align the X axis of a plane with the direction of neighbouring links", "SlowRobotics", "Behaviours") { }
+        public AlignAxisToNearLinksComponent() : base("Align XX With Near Links", "AlignNearLinks", "Align the X axis of a plane with the direction of neighbouring links", "SlowRobotics", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{d612542b-e64f-4249-8a77-7c04fbe4028c}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
@@ -156,7 +158,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public Attract.InZAxis cZAxis = null;
+        public Move.TogetherInZ cZAxis = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -178,7 +180,7 @@ namespace SlowRoboticsGH
             }
             else
             {
-                cZAxis = new Attract.InZAxis(priority, (float)strength, (float)maxDist);
+                cZAxis = new Move.TogetherInZ(priority, (float)strength, (float)maxDist);
                 
             }
 
@@ -214,7 +216,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public Attract.ToNearestLink cLink = null;
+        public Move.ToNearestLink cLink = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -239,7 +241,7 @@ namespace SlowRoboticsGH
             }
             else
             {
-                cLink = new Attract.ToNearestLink(priority, parent, (float)strength, (float)maxDist);
+                cLink = new Move.ToNearestLink(priority, parent, (float)strength, (float)maxDist);
                 
             }
             DA.SetData(0, cLink);
@@ -250,7 +252,7 @@ namespace SlowRoboticsGH
     public class AddLinkComponent : GH_Component
     {
         public AddLinkComponent() : base("Add Link Behaviour", "AddLink", "Duplicate an agent and create a braced link", "SlowRobotics", "Behaviours") { }
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override GH_Exposure Exposure => GH_Exposure.tertiary;
         public override Guid ComponentGuid => new Guid("{2962c6c8-c190-4a81-835f-b3b489349199}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
         protected override Bitmap Icon
@@ -281,7 +283,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public AddLink addLink = null;
+        public Add.BracedLinks addLink = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -312,7 +314,7 @@ namespace SlowRoboticsGH
                 addLink.parent = parent;
                 addLink.stiffness = (float)stiffness;
                 addLink.braceStiffness = (float)braceStiffness;
-                addLink.offset = IO.ConvertToVec3D(offset);
+                addLink.offset = IO.ToVec3D(offset);
                 addLink.frequency = freq;
                 addLink.dynamic = dynamic;
                 addLink.tryToBrace = brace;
@@ -320,7 +322,7 @@ namespace SlowRoboticsGH
             }
             else
             {
-                addLink = new AddLink(priority, parent, brace, freq, IO.ConvertToVec3D(offset), (float)stiffness, (float) braceStiffness, behaviours.ConvertAll(b => { return b.Value; }),dynamic);
+                addLink = new Add.BracedLinks(priority, parent, brace, freq, IO.ToVec3D(offset), (float)stiffness, (float) braceStiffness, behaviours.ConvertAll(b => { return b.Value; }),dynamic);
                 
             }
             DA.SetData(0, addLink);
@@ -354,7 +356,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public Friction friction = null;
+        public Arrest.Friction friction = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -376,16 +378,16 @@ namespace SlowRoboticsGH
             }
             else
             {
-                friction = new Friction(priority, (float)maxDist, (float)frictionCof);
+                friction = new Arrest.Friction(priority, (float)maxDist, (float)frictionCof);
                 
             }
             DA.SetData(0, friction);
         }
     }
 
-    public class InertiaLockComponent : GH_Component
+    public class FreezeComponent : GH_Component
     {
-        public InertiaLockComponent() : base("Inertia Lock Behaviour", "InertiaLock", "Lock agents with low inertia value", "SlowRobotics", "Behaviours") { }
+        public FreezeComponent() : base("Freeze Behaviour", "Freeze", "Freeze agents with low inertia and velocity", "SlowRobotics", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{1cf1d232-9f49-40d3-97e5-02dd4dc769cf}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
@@ -411,7 +413,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public InertiaLock iLock = null;
+        public Arrest.Freeze iLock = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -436,16 +438,16 @@ namespace SlowRoboticsGH
             }
             else
             {
-                iLock = new InertiaLock(priority, (float)minInertia, (float)speedFactor, minAge);
+                iLock = new Arrest.Freeze(priority, (float)minInertia, (float)speedFactor, minAge);
                 
             }
             DA.SetData(0, iLock);
         }
     }
 
-    public class ZLockComponent : GH_Component
+    public class ArrestZBehaviour : GH_Component
     {
-        public ZLockComponent() : base("ZLock Behaviour", "ZLock", "Lock agents below Z value", "SlowRobotics", "Behaviours") { }
+        public ArrestZBehaviour() : base("ArrestZ Behaviour", "ArrestZ", "Freeze agents below Z value", "SlowRobotics", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{94d9995e-bb05-4172-9e9d-a4d40d3cbfbb}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
@@ -469,7 +471,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public ZLock zLock = null;
+        public Arrest.Z zLock = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -488,7 +490,7 @@ namespace SlowRoboticsGH
             }
             else
             {
-                zLock = new ZLock(priority, (float)minZ);
+                zLock = new Arrest.Z(priority, (float)minZ);
                 
             }
             DA.SetData(0, zLock);
@@ -549,7 +551,7 @@ namespace SlowRoboticsGH
     public class NewtonComponent : GH_Component
     {
         public NewtonComponent() : base("Newton Behaviour", "Newton", "Move particle with a force", "SlowRobotics", "Behaviours") { }
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{8974b28e-b8d7-4783-9b9f-3d4adc85e36a}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
         protected override Bitmap Icon
@@ -584,18 +586,183 @@ namespace SlowRoboticsGH
 
             if (newton != null)
             {
-                newton.force = IO.ConvertToVec3D(force);
+                newton.force = IO.ToVec3D(force);
                 newton.priority = priority;
             }
             else
             {
-                newton = new Newton(priority, IO.ConvertToVec3D(force));
-                
+                newton = new Newton(priority, IO.ToVec3D(force));
+
             }
             DA.SetData(0, newton);
         }
     }
 
+    public class TraverseFieldComponent : GH_Component
+    {
+        public TraverseFieldComponent() : base("Travers Field Behaviour", "TraverseField", "Move an agent through a field", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override Guid ComponentGuid => new Guid("{f21c5bee-d4b2-47f6-875c-1ce463657a02}");
+        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
+        protected override Bitmap Icon
+        {
+            get
+            {
+                //Return a 24x24 pixel bitmap to represent this GHA library.
+                return null;
+            }
+        }
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Field", "F", "Field to evaluate", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Strength", "S", "Strength of effect", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
+        }
+
+        public Move.InField fieldf = null;
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            IField field = null;
+            double strength = 0;
+            int priority = 5;
+
+            if (!DA.GetData(0, ref field)) { return; }
+            if (!DA.GetData(1, ref strength)) { return; }
+            if (!DA.GetData(2, ref priority)) { return; }
+
+            if (fieldf != null)
+            {
+                fieldf.field = field;
+                fieldf.strength = (float)strength;
+                fieldf.priority = priority;
+            }
+            else
+            {
+                fieldf = new Move.InField(priority, field, (float)strength);
+
+            }
+            DA.SetData(0, fieldf);
+        }
+    }
+
+    public class AlignFieldComponent : GH_Component
+    {
+        public AlignFieldComponent() : base("Align Field Behaviour", "AlignField", "Align an agent with a field", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override Guid ComponentGuid => new Guid("{66de0eb8-09c2-4fc7-bd61-724e7d70442e}");
+        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
+        protected override Bitmap Icon
+        {
+            get
+            {
+                //Return a 24x24 pixel bitmap to represent this GHA library.
+                return null;
+            }
+        }
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Field", "F", "Field to evaluate", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Axis", "A", "Axis of field plane", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Strength", "S", "Strength of effect", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
+        }
+
+        public Align.AxisToField fieldf = null;
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            IField field = null;
+            int axis = 0;
+            double strength = 0;
+            int priority = 5;
+
+            if (!DA.GetData(0, ref field)) { return; }
+            if (!DA.GetData(1, ref axis)) { return; }
+            if (!DA.GetData(2, ref strength)) { return; }
+            if (!DA.GetData(3, ref priority)) { return; }
+            
+            if (fieldf != null)
+            {
+                fieldf.field = field;
+                fieldf.axis = axis;
+                fieldf.strength = (float)strength;
+                fieldf.priority = priority;
+            }
+            else
+            {
+                fieldf = new Align.AxisToField(priority, field, (float)strength, axis);
+                
+            }
+            DA.SetData(0, fieldf);
+        }
+    }
+
+    public class MoveInAxisComponent : GH_Component
+    {
+        public MoveInAxisComponent() : base("Move Axis Behaviour", "MoveAxis", "Move an agent with one of its axes", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{e8e65855-a4ec-46b2-b9e3-ee4fb426353f}");
+        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
+        protected override Bitmap Icon
+        {
+            get
+            {
+                //Return a 24x24 pixel bitmap to represent this GHA library.
+                return null;
+            }
+        }
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddIntegerParameter("Axis", "A", "Axis of field plane", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Strength", "S", "Strength of effect", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
+        }
+
+        public Move.InAxis move = null;
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            int axis = 0;
+            double strength = 0;
+            int priority = 5;
+
+            if (!DA.GetData(0, ref axis)) { return; }
+            if (!DA.GetData(1, ref strength)) { return; }
+            if (!DA.GetData(2, ref priority)) { return; }
+
+            if (move != null)
+            {
+                move.axis = axis;
+                move.strength = (float)strength;
+                move.priority = priority;
+            }
+            else
+            {
+                move = new Move.InAxis(priority,  (float)strength, axis);
+
+            }
+            DA.SetData(0, move);
+        }
+    }
     public class AlignAxisToLinksComponent : GH_Component
     {
 
@@ -859,7 +1026,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public Attract attract = null;
+        public Move.Together attract = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -880,17 +1047,18 @@ namespace SlowRoboticsGH
                 attract.strength = (float)strength;
                 attract.minDist = (float)minDist;
                 attract.maxDist = (float)maxDist;
+                attract.inXY = inXY;
                 attract.priority = priority;
             }
             else
             {
                 if (!inXY)
                 {
-                    attract = new Attract(priority, (float)minDist, (float)maxDist, (float)strength);
+                    attract = new Move.Together(priority, (float)minDist, (float)maxDist, (float)strength, inXY);
                 }
                 else
                 {
-                    attract = new Attract.InXY(priority, (float)minDist, (float)maxDist, (float)strength);
+                    attract = new Move.Together(priority, (float)minDist, (float)maxDist, (float)strength, inXY);
                 }
             }
             DA.SetData(0, attract);
@@ -928,7 +1096,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public Separate separate = null;
+        public Move.Apart separate = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -955,7 +1123,7 @@ namespace SlowRoboticsGH
             }
             else
             {
-                separate = new Separate(priority, (float)minDist, (float)maxDist, inXY, (float)strength);
+                separate = new Move.Apart(priority, (float)strength, (float)minDist, (float)maxDist, inXY);
             }
             DA.SetData(0, separate);
         }
@@ -1037,6 +1205,65 @@ namespace SlowRoboticsGH
                 searchBehaviour = new Search(priority, (float)radius, search);
             } 
             DA.SetData(0, searchBehaviour);
+        }
+    }
+
+    public class AddStateToListComponent : GH_Component
+    {
+        public AddStateToListComponent() : base("Add State Behaviour", "AddState", "Store past agent states in a list", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.tertiary;
+        public override Guid ComponentGuid => new Guid("{03a7d3c3-5494-4654-bb3c-e685b9c3a7a9}");
+        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
+        protected override Bitmap Icon
+        {
+            get
+            {
+                //Return a 24x24 pixel bitmap to represent this GHA library.
+                return null;
+            }
+        }
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+
+            pManager.AddBooleanParameter("Reset", "R", "Reset stored states", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Frequency", "F", "Save frequency", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
+            pManager.AddParameter(new Plane3DParameter(), "States", "S", "States", GH_ParamAccess.list);
+        }
+
+        public Add.StateToList addBehaviour = null;
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            int frequency = 2;
+            bool reset = false;
+            int priority = 0;
+
+            if (!DA.GetData(0, ref reset)) { return; }
+            if (!DA.GetData(1, ref frequency)) { return; }
+            if (!DA.GetData(2, ref priority)) { return; }
+
+
+            if (addBehaviour != null && reset)
+            {
+                addBehaviour.frequency = frequency;
+                addBehaviour.states = new List<Plane3D>();
+                addBehaviour.priority = priority;
+            }
+            else
+            {
+                List<Plane3D> planes = new List<Plane3D>();
+                addBehaviour = new Add.StateToList(priority, ref planes,frequency);
+            }
+            DA.SetData(0, addBehaviour);
+            DA.SetDataList(1, addBehaviour.states);
         }
     }
 
