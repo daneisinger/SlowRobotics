@@ -13,6 +13,8 @@ using Grasshopper.Kernel.Types;
 using SlowRobotics.Rhino.MeshTools;
 using SlowRobotics.Field;
 using SlowRobotics.Field.Elements;
+using System.Linq;
+using Toxiclibs.core;
 
 namespace SlowRoboticsGH
 {
@@ -29,7 +31,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviours", "B", "Behaviours for agents", GH_ParamAccess.list);
             pManager.AddParameter(new WorldParameter(), "World", "W", "World to contain agents", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Create Agents", "C", "Create the agents", GH_ParamAccess.item);
-           
+
             pManager[1].Optional = true;
         }
 
@@ -49,11 +51,11 @@ namespace SlowRoboticsGH
             bool create = false;
 
             if (!DA.GetDataList(0, planes)) { return; }
-            
+
             if (!DA.GetData(2, ref world)) { return; }
             if (!DA.GetData(3, ref create)) { return; }
 
-            if(!DA.GetDataList(1, behaviours))
+            if (!DA.GetDataList(1, behaviours))
             {
                 behaviours = new List<GH_Behaviour>();
             }
@@ -73,10 +75,113 @@ namespace SlowRoboticsGH
         }
     }
 
-    public class CreateAgentsFromCurveComponent : GH_Component
+    public class MeshToLinkMeshComponent : GH_Component
     {
-        public CreateAgentsFromCurveComponent() : base("Agents From Curve", "CreateAgents", "Create Linked agents by dividing a curve", "SlowRobotics", "Agent") { }
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public MeshToLinkMeshComponent() : base("Convert Mesh to LinkMesh", "MeshToLinkMesh", "Converts mesh edges and vertices to links", "SlowRobotics", "Agent") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override Guid ComponentGuid => new Guid("{899106fc-bc8b-405c-bab3-21d3063b9ef9}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddMeshParameter("Mesh", "M", "Mesh To Convert", GH_ParamAccess.item);
+            pManager.AddParameter(new WorldParameter(), "World", "W", "World to contain agents", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Agents", "A", "Wrapped list of agents", GH_ParamAccess.item);
+            pManager.AddGenericParameter("LinkMesh", "L", "LinkMesh", GH_ParamAccess.item);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            double stiffness = 0.1;
+            Mesh m = null;
+            GH_World world = null;
+
+            if (!DA.GetData(0, ref m)) { return; }
+            if (!DA.GetData(1, ref world)) { return; }
+            if (!DA.GetData(2, ref stiffness)) { return; }
+
+            LinkMesh lm = new LinkMesh(new Node(new Vec3D()),world.Value);
+            GH_ObjectWrapper agents = new GH_ObjectWrapper(IO.ConvertMeshToLinkMesh(m, world.Value, (float)stiffness, out lm));
+
+            DA.SetData(0, agents);
+            DA.SetData(1, new GH_ObjectWrapper(lm));
+        }
+    }
+
+    public class InterconnectNodesComponent : GH_Component
+    {
+        public InterconnectNodesComponent() : base("Interconnect Nodes", "Interconnect", "Interconnect all nodes in a link mesh", "SlowRobotics", "Agent") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override Guid ComponentGuid => new Guid("{a1cac11b-f74a-4546-befd-88a304ff3eeb}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddParameter(new LinkMeshParameter(), "LinkMesh", "L", "LinkMesh to contain links", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddGenericParameter("LinkMesh", "L", "LinkMesh", GH_ParamAccess.list);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            double stiffness = 0.1;
+            GH_LinkMesh linkMesh = null;
+
+            if (!DA.GetData(0, ref linkMesh)) { return; }
+            if (!DA.GetData(1, ref stiffness)) { return; }
+
+            LinkMesh lm = linkMesh.Value;
+            lm.interconnectTertiaryNodes(lm.getNodes().ToList(), (float)stiffness);
+
+            DA.SetData(0, new GH_ObjectWrapper(lm));
+        }
+    }
+
+    public class ConnectNthNodesComponent : GH_Component
+    {
+        public ConnectNthNodesComponent() : base("Connect Nth Nodes", "ConnectNth", "Connect nth nodes in a link mesh", "SlowRobotics", "Agent") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override Guid ComponentGuid => new Guid("{9310194c-fbb8-4a29-9ae4-c58733cd75b0}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddParameter(new LinkMeshParameter(), "LinkMesh", "L", "LinkMesh to contain links", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddGenericParameter("LinkMesh", "L", "LinkMesh", GH_ParamAccess.list);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            double stiffness = 0.1;
+            GH_LinkMesh linkMesh = null;
+
+            if (!DA.GetData(0, ref linkMesh)) { return; }
+            if (!DA.GetData(1, ref stiffness)) { return; }
+
+            LinkMesh lm = linkMesh.Value;
+            lm.braceNthLinks(lm.getLinks(), (float)stiffness);
+
+            DA.SetData(0, new GH_ObjectWrapper(lm));
+        }
+    }
+    public class CurveToLinkMeshComponent : GH_Component
+    {
+        public CurveToLinkMeshComponent() : base("Converts curve to LinkMesh", "CurveToLinkMesh", "Create Linked agents by dividing a curve", "SlowRobotics", "Agent") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{67691d26-05ad-4680-a28d-666f0b83e939}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
@@ -109,7 +214,10 @@ namespace SlowRoboticsGH
             List<GH_Behaviour> behaviours = new List<GH_Behaviour>();
             GH_World world = null;
             double stiffness = 0.1;
-           // GH_LinkMesh linkMesh = null;
+            //TODO - use link mesh!
+
+
+            // GH_LinkMesh linkMesh = null;
             int res = 0;
             bool create = false;
 
@@ -123,6 +231,7 @@ namespace SlowRoboticsGH
                 behaviours = new List<GH_Behaviour>();
             }
 
+           
             if (create)
             {
                 //reset agent list and behaviours
@@ -551,7 +660,7 @@ namespace SlowRoboticsGH
     public class CreateLinkMeshComponent : GH_Component
     {
         public CreateLinkMeshComponent() : base("Create LinkMesh", "CreateLinkMesh", "Creates a Link Mesh", "SlowRobotics", "Agent") { }
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{b79c2e7d-22d4-4696-905c-d7e76a0cbec0}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 

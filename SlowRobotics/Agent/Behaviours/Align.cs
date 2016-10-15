@@ -100,6 +100,21 @@ namespace SlowRobotics.Agent.Behaviours
                 if(d.hasPlaneData()) interpolateToVector(a, getAxis(d.planeData), strength * scaleFactor);
                 if (d.hasVectorData()) interpolateToVector(a, d.vectorData, strength * scaleFactor);
             }
+
+            public Vec3D getAxis(WeightedPlane3D a)
+            {
+                switch (axis)
+                {
+                    case 0:
+                        return a.wx;
+                    case 1:
+                        return a.wy;
+                    case 2:
+                        return a.wz;
+                    default:
+                        return a.wx;
+                }
+            }
         }
 
         public class AxisToLinks : Axis

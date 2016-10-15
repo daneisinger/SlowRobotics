@@ -600,7 +600,7 @@ namespace SlowRoboticsGH
 
     public class TraverseFieldComponent : GH_Component
     {
-        public TraverseFieldComponent() : base("Travers Field Behaviour", "TraverseField", "Move an agent through a field", "SlowRobotics", "Behaviours") { }
+        public TraverseFieldComponent() : base("Traverse Field Behaviour", "TraverseField", "Move an agent through a field", "SlowRobotics", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{f21c5bee-d4b2-47f6-875c-1ce463657a02}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
@@ -1208,9 +1208,10 @@ namespace SlowRoboticsGH
         }
     }
 
-    public class AddStateToListComponent : GH_Component
+   
+    public class StateCaptureComponent : GH_Component
     {
-        public AddStateToListComponent() : base("Add State Behaviour", "AddState", "Store past agent states in a list", "SlowRobotics", "Behaviours") { }
+        public StateCaptureComponent() : base("State Capture Behaviour", "Capture State", "Store past agent states in a list (retrieve using retrive states)", "SlowRobotics", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
         public override Guid ComponentGuid => new Guid("{03a7d3c3-5494-4654-bb3c-e685b9c3a7a9}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
@@ -1226,7 +1227,6 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
 
-            pManager.AddBooleanParameter("Reset", "R", "Reset stored states", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Frequency", "F", "Save frequency", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
 
@@ -1235,36 +1235,31 @@ namespace SlowRoboticsGH
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
-            pManager.AddParameter(new Plane3DParameter(), "States", "S", "States", GH_ParamAccess.list);
         }
 
-        public Add.StateToList addBehaviour = null;
+        public Add.StateToWorld addBehaviour = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             int frequency = 2;
-            bool reset = false;
             int priority = 0;
 
-            if (!DA.GetData(0, ref reset)) { return; }
-            if (!DA.GetData(1, ref frequency)) { return; }
-            if (!DA.GetData(2, ref priority)) { return; }
+            if (!DA.GetData(0, ref frequency)) { return; }
+            if (!DA.GetData(1, ref priority)) { return; }
 
 
-            if (addBehaviour != null && reset)
+            if (addBehaviour != null)
             {
                 addBehaviour.frequency = frequency;
-                addBehaviour.states = new List<Plane3D>();
                 addBehaviour.priority = priority;
             }
             else
             {
-                List<Plane3D> planes = new List<Plane3D>();
-                addBehaviour = new Add.StateToList(priority, ref planes,frequency);
+                addBehaviour = new Add.StateToWorld(priority,frequency);
             }
             DA.SetData(0, addBehaviour);
-            DA.SetDataList(1, addBehaviour.states);
         }
     }
+    
 
 }

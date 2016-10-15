@@ -12,6 +12,7 @@ namespace SlowRobotics.Core
 
         public HashSet<Link> links;
         public Node parent { get; set; }
+        public int age = 0;
 
         public Node(float _x, float _y, float _z) : this(new Vec3D(_x,_y,_z)){ }
         public Node(Vec3D _o) : this(new Plane3D(_o)) { }
@@ -19,15 +20,17 @@ namespace SlowRobotics.Core
         public Node(Plane3D plane) : base(plane)
         {
             links = new HashSet<Link>();
+            age = 0;
         }
 
         public Node(Node n) : base(n)
         {
             links = n.links;
             parent = n.parent;
+            age = n.age;
         }
 
-        virtual public void step(float damping) { }
+        virtual public void step(float damping) { age++; }
 
         public void connect(Link l)
         {

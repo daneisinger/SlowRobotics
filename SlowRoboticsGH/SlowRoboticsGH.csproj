@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="BehaviourComponents.cs" />
     <Compile Include="CreationComponents.cs" />
+    <Compile Include="IOComponents.cs" />
     <Compile Include="MeshComponents.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

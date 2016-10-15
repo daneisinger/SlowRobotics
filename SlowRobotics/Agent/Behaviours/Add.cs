@@ -10,26 +10,35 @@ namespace SlowRobotics.Agent.Behaviours
     public class Add
     {
 
-        public class StateToList : AgentBehaviour
+        public class StateToWorld : AgentBehaviour
         {
-            public List<Plane3D> states { get; set; }
             public int frequency { get; set;}
 
             int c;
 
-            public StateToList(int _priority, ref List<Plane3D> _states, int _frequency) :base(_priority)
+            public StateToWorld(int _priority, int _frequency) :base(_priority)
             {
-                states = _states;
+
                 frequency = _frequency;
                 c = 0;
             }
 
             public override void run(PlaneAgent a)
             {
-                if (c % frequency == 0) states.Add(new Plane3D(a));
-            }
+                if (c % frequency == 0)
+                {
+                    Node n = new Node((Plane3D)a);
+                    n.parent = a;
+                    n.age = a.age;
+                    a.world.addStatic(n);
 
+                }
+                c++;
+            }
         }
+
+        
+
 
         public class BracedLinks : ScaledAgentBehaviour
         {

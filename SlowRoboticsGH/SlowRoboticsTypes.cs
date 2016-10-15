@@ -81,6 +81,8 @@ namespace SlowRoboticsGH
         public override string ToString() => this.Value.ToString();
         public override object ScriptVariable() => Value;
 
+        //todo - do casts
+
         public override bool CastFrom(object source)
         {
             if (source is GH_Plane)
@@ -115,6 +117,7 @@ namespace SlowRoboticsGH
         public override string TypeDescription => "Node";
         public override string ToString() => this.Value.ToString();
         public override object ScriptVariable() => Value;
+
         public override bool CastFrom(object source)
         {
 
@@ -191,11 +194,22 @@ namespace SlowRoboticsGH
         public override string TypeDescription => "Agent";
         public override string ToString() => this.Value.ToString();
         public override object ScriptVariable() => Value;
+
         public override bool CastFrom(object source)
         {
             if (source is IAgent)
             {
                 Value = source as IAgent;
+                return true;
+            }
+            if (source is Node)
+            {
+                Value = new PlaneAgent((Node)source);
+                return true;
+            }
+            if (source is GH_Node)
+            {
+                Value = new PlaneAgent(((GH_Node)source).Value);
                 return true;
             }
             if (source is GH_Agent)

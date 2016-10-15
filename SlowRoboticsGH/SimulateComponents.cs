@@ -11,6 +11,7 @@ using SlowRobotics.Agent;
 using SlowRobotics.Core;
 using Grasshopper.Kernel.Types;
 using SlowRobotics.Field;
+using Toxiclibs.core;
 
 namespace SlowRoboticsGH
 {
@@ -164,6 +165,130 @@ namespace SlowRoboticsGH
         }
     }
 
+    /*
+
+        TODO = make this retrieve all nodes for a given parent
+
+    public class RetrieveStatesComponent : GH_Component
+    {
+        public RetrieveStatesComponent() : base("Retrieve States", "RetrieveStates", "Get any captured agent states", "SlowRobotics", "Agent") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{65722cdd-63e9-4f87-85e4-205b09a56390}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Agents", "A", "Retrieve states from agents", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddGenericParameter("States", "S", "States", GH_ParamAccess.list);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            GH_ObjectWrapper wrapper = null;
+
+            if (!DA.GetData(0, ref wrapper)) { return; }
+
+            List<GH_ObjectWrapper> states = new List<GH_ObjectWrapper>();
+
+            if (wrapper.Value is List<IAgent>)
+            {
+                List<IAgent> agents = (List<IAgent>)wrapper.Value;
+                foreach (IAgent a in agents)
+                {
+                    foreach(IBehaviour cap in a.behaviours.getData())
+                    {
+                        if (cap is ICaptureBehaviour<Plane3D>)
+                        {
+                            List<Plane3D> planes = ((ICaptureBehaviour<Plane3D>)cap).get();
+                            states.Add(new GH_ObjectWrapper(planes));
+                        }
+                    }
+                }
+            }
+            else if (wrapper.Value is IAgent)
+            {
+                foreach (IBehaviour cap in ((IAgent)wrapper.Value).behaviours.getData())
+                {
+                    if(cap is ICaptureBehaviour<Plane3D>)
+                    {
+                        List<Plane3D> planes = ((ICaptureBehaviour < Plane3D > )cap).get();
+                        states.Add(new GH_ObjectWrapper(planes));
+                    }
+                    
+                }
+            }
+
+            DA.SetDataList(0, states);
+        }
+    }*/
+
+    public class FixParticlesComponent : GH_Component
+    {
+        public FixParticlesComponent() : base("Fix Particles", "FixParticles", "Fix particles by proximity to a list of points", "SlowRobotics", "Simulation") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override Guid ComponentGuid => new Guid("{e90f5cb9-f76d-4ec9-bb73-c93b3210cc40}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Particles", "P", "Particles (agents) to fix", GH_ParamAccess.list);
+            pManager.AddPointParameter("Points", "P", "Fix Points", GH_ParamAccess.list);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Agents", "A", "Agents", GH_ParamAccess.list);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            List<Point3d> points = new List<Point3d>();
+            List<GH_ObjectWrapper> wlist = new List<GH_ObjectWrapper>();
+
+            if (!DA.GetDataList(0, wlist)) { return; }
+            if (!DA.GetDataList(1, points)) { return; }
+
+            List<IAgent> outAgents = new List<IAgent>();
+
+            foreach(GH_ObjectWrapper wrapper in wlist)
+            {
+                if (wrapper.Value is List<IAgent>)
+                {
+                    List<IAgent> agents = (List<IAgent>)wrapper.Value;
+                    foreach (IAgent a in agents)
+                    {
+                        testPt(a, points);
+                        outAgents.Add(a);
+                    }
+                }
+                else if (wrapper.Value is IAgent)
+                {
+                    testPt((IAgent)wrapper.Value, points);
+                    outAgents.Add((IAgent)wrapper.Value);
+                }
+            }
+
+            DA.SetData(0, new GH_ObjectWrapper(outAgents));
+        }
+
+        public void testPt(IAgent agent, List<Point3d> pts)
+        {
+                foreach (Point3d p in pts)
+                {
+                    if (agent.getPos().distanceTo(new Vec3D((float)p.X, (float)p.Y, (float)p.Z)) < 1)
+                    {
+                        agent.setBehaviours(new List<IBehaviour>());
+                        if (agent is SlowRobotics.Core.Particle) ((SlowRobotics.Core.Particle)agent).f = true;
+                        return;
+                    }
+                }
+        }
+    }
+
     public class AddBehavioursToAgents : GH_Component
     {
         public AddBehavioursToAgents() : base("Add Behaviours", "AddBehaviours", "Add behaviours to agents", "SlowRobotics", "Agent") { }
@@ -195,12 +320,12 @@ namespace SlowRoboticsGH
                 List<IAgent> agents = (List<IAgent>)wrapper.Value;
                 foreach (IAgent a in agents)
                 {
-                    ((IAgent)a).setBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
+                    ((IAgent)a).addBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
                 }
             }
             else if (wrapper.Value is IAgent)
             {
-                ((IAgent)wrapper.Value).setBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
+                ((IAgent)wrapper.Value).addBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
             }
 
             DA.SetData(0, wrapper.Value);

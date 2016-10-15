@@ -18,6 +18,7 @@ namespace SlowRobotics.Agent
         void step(float damping);
 
         void addBehaviour(IBehaviour b);
+        void addBehaviours(List<IBehaviour> behaviours);
 
         void setBehaviours(List<IBehaviour> behaviours);
 
