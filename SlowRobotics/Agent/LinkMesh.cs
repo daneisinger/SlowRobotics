@@ -15,9 +15,12 @@ namespace SlowRobotics.Agent
 
         HashSet<Link> tertiaryLinks;
 
-        public LinkMesh(Node n, IWorld _world):base(n){
-            behaviours = new PriorityQueue<IBehaviour>();
+        public LinkMesh(Node n, IWorld _world):this(n){
             world = _world;
+        }
+        public LinkMesh(Node n) : base(n)
+        {
+            behaviours = new PriorityQueue<IBehaviour>();
             tertiaryLinks = new HashSet<Link>();
         }
 
@@ -76,6 +79,27 @@ namespace SlowRobotics.Agent
                 foreach(Node b in toConnect)
                 {
                     if (a != b) connectTertiaryNodes(a, b, stiffness);
+                }
+            }
+        }
+
+        public void connectByProximity(List<Node> toConnect,float minDist, float maxDist,float stiffness)
+        {
+            Plane3DOctree dynamicTree = new Plane3DOctree(new Vec3D(-200, -200, -200), 200 * 2);
+            foreach(Node n in toConnect) dynamicTree.addPoint(n);
+
+            foreach (Node n in toConnect)
+            {
+                List<Vec3D> inProx = dynamicTree.getPointsWithinSphere(n, maxDist);
+                foreach (Vec3D v in inProx)
+                {
+                    if(v.distanceTo(n)> minDist)
+                    {
+                        if(v is Node)
+                        {
+                            if(n != (Node)v) connectTertiaryNodes(n, (Node)v, stiffness);
+                        }
+                    }
                 }
             }
         }

@@ -10,12 +10,13 @@ using SlowRobotics.Rhino.IO;
 using SlowRobotics.Agent;
 using SlowRobotics.Field;
 using SlowRobotics.Core;
+using Toxiclibs.core;
 
 namespace SlowRoboticsGH
 {
     public class SpringComponent : GH_Component
     {
-        public SpringComponent() : base("Springs", "Spring", "Adds verlet springs to links", "SlowRobotics", "Behaviours") { }
+        public SpringComponent() : base("Springs", "Spring", "Adds hookes law springs to links", "SlowRobotics", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{c9a35ba6-b679-446b-860e-d28244cd6360}");
        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
@@ -31,7 +32,7 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddNumberParameter("Damping", "D", "Spring Damping", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Verlet", "V", "Update Both Particles", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Hookes", "H", "Update Both Particles", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
         }
 
@@ -72,8 +73,8 @@ namespace SlowRoboticsGH
 
     public class AlignAxisToNearLinksComponent : GH_Component
     {
-        public AlignAxisToNearLinksComponent() : base("Align XX With Near Links", "AlignNearLinks", "Align the X axis of a plane with the direction of neighbouring links", "SlowRobotics", "Behaviours") { }
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public AlignAxisToNearLinksComponent() : base("Align to near links", "AlignLinks", "Align the X axis of a plane with the direction of neighbouring links (interaction behaviour)", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{d612542b-e64f-4249-8a77-7c04fbe4028c}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
         protected override Bitmap Icon
@@ -133,8 +134,8 @@ namespace SlowRoboticsGH
 
     public class CohereInZAxisComponent : GH_Component
     {
-        public CohereInZAxisComponent() : base("Cohere in ZAxis Behaviour", "CohereZ", "Cohere with neighbours by moving in ZAxis", "SlowRobotics", "Behaviours") { }
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public CohereInZAxisComponent() : base("Attract in Z", "AttractZ", "Cohere with neighbours by moving in ZAxis (interaction behaviour)", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{a2d895cf-bf77-4ec1-955d-dbb5151c4884}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
         protected override Bitmap Icon
@@ -190,8 +191,8 @@ namespace SlowRoboticsGH
 
     public class CohereToNearestLinkComponent : GH_Component
     {
-        public CohereToNearestLinkComponent() : base("Cohere to Links Behaviour", "CohereLinks", "Cohere to nearest point on links", "SlowRobotics", "Behaviours") { }
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public CohereToNearestLinkComponent() : base("Attract to near links", "AttractLinks", "Cohere to nearest point on links (interaction behaviour)", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{f23407b5-4513-4f52-97da-6b36b3ecc514}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
         protected override Bitmap Icon
@@ -251,8 +252,8 @@ namespace SlowRoboticsGH
     //TODO - too much overlap between this and the duplicate behaviour
     public class AddLinkComponent : GH_Component
     {
-        public AddLinkComponent() : base("Add Link Behaviour", "AddLink", "Duplicate an agent and create a braced link", "SlowRobotics", "Behaviours") { }
-        public override GH_Exposure Exposure => GH_Exposure.tertiary;
+        public AddLinkComponent() : base("Add link", "AddLink", "Duplicate an agent and create a braced link", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.quarternary;
         public override Guid ComponentGuid => new Guid("{2962c6c8-c190-4a81-835f-b3b489349199}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
         protected override Bitmap Icon
@@ -331,8 +332,8 @@ namespace SlowRoboticsGH
 
     public class FrictionComponent : GH_Component
     {
-        public FrictionComponent() : base("Friction Behaviour", "Friction", "Add inertia from nearby particles", "SlowRobotics", "Behaviours") { }
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public FrictionComponent() : base("Friction", "Friction", "Add inertia from nearby particles (interaction behaviour)", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{e75e117d-6662-49d2-a06e-e38a09f9a4a6}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
         protected override Bitmap Icon
@@ -387,7 +388,7 @@ namespace SlowRoboticsGH
 
     public class FreezeComponent : GH_Component
     {
-        public FreezeComponent() : base("Freeze Behaviour", "Freeze", "Freeze agents with low inertia and velocity", "SlowRobotics", "Behaviours") { }
+        public FreezeComponent() : base("Freeze", "Freeze", "Freeze agents with low inertia and velocity", "SlowRobotics", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{1cf1d232-9f49-40d3-97e5-02dd4dc769cf}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
@@ -445,9 +446,9 @@ namespace SlowRoboticsGH
         }
     }
 
-    public class ArrestZBehaviour : GH_Component
+    public class ArrestGroundBehaviour : GH_Component
     {
-        public ArrestZBehaviour() : base("ArrestZ Behaviour", "ArrestZ", "Freeze agents below Z value", "SlowRobotics", "Behaviours") { }
+        public ArrestGroundBehaviour() : base("Freeze ground", "Ground", "Freeze agents below Z value", "SlowRobotics", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{94d9995e-bb05-4172-9e9d-a4d40d3cbfbb}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
@@ -500,7 +501,7 @@ namespace SlowRoboticsGH
     public class InteractComponent : GH_Component
     {
 
-        public InteractComponent() : base("Interact Behaviour", "Interact", "Interact with neighbouring nodes", "SlowRobotics", "Behaviours") { }
+        public InteractComponent() : base("Interact", "Interact", "Interact with neighbouring nodes", "SlowRobotics", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{9327e8c7-a048-49af-aaaa-3c29bd5201c5}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
@@ -550,8 +551,8 @@ namespace SlowRoboticsGH
 
     public class NewtonComponent : GH_Component
     {
-        public NewtonComponent() : base("Newton Behaviour", "Newton", "Move particle with a force", "SlowRobotics", "Behaviours") { }
-        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public NewtonComponent() : base("Newton", "Newton", "Move particle with a force", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{8974b28e-b8d7-4783-9b9f-3d4adc85e36a}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
         protected override Bitmap Icon
@@ -600,8 +601,8 @@ namespace SlowRoboticsGH
 
     public class TraverseFieldComponent : GH_Component
     {
-        public TraverseFieldComponent() : base("Traverse Field Behaviour", "TraverseField", "Move an agent through a field", "SlowRobotics", "Behaviours") { }
-        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public TraverseFieldComponent() : base("Traverse field", "TraverseField", "Move an agent through a field", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.tertiary;
         public override Guid ComponentGuid => new Guid("{f21c5bee-d4b2-47f6-875c-1ce463657a02}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
         protected override Bitmap Icon
@@ -654,8 +655,8 @@ namespace SlowRoboticsGH
 
     public class AlignFieldComponent : GH_Component
     {
-        public AlignFieldComponent() : base("Align Field Behaviour", "AlignField", "Align an agent with a field", "SlowRobotics", "Behaviours") { }
-        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public AlignFieldComponent() : base("Align to field", "AlignField", "Align an agent with a field", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.tertiary;
         public override Guid ComponentGuid => new Guid("{66de0eb8-09c2-4fc7-bd61-724e7d70442e}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
         protected override Bitmap Icon
@@ -712,7 +713,7 @@ namespace SlowRoboticsGH
 
     public class MoveInAxisComponent : GH_Component
     {
-        public MoveInAxisComponent() : base("Move Axis Behaviour", "MoveAxis", "Move an agent with one of its axes", "SlowRobotics", "Behaviours") { }
+        public MoveInAxisComponent() : base("Move in axis", "MoveAxis", "Move an agent with one of its axes", "SlowRobotics", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{e8e65855-a4ec-46b2-b9e3-ee4fb426353f}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
@@ -766,7 +767,7 @@ namespace SlowRoboticsGH
     public class AlignAxisToLinksComponent : GH_Component
     {
 
-        public AlignAxisToLinksComponent() : base("Align Links Behaviour", "AlignLinks", "Align Plane with connected links", "SlowRobotics", "Behaviours") { }
+        public AlignAxisToLinksComponent() : base("Align to connected links", "AlignLinks", "Align Plane with connected links", "SlowRobotics", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{3d1a1fdf-84ce-41dc-822c-87484b9acf5f}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
@@ -827,7 +828,7 @@ namespace SlowRoboticsGH
     public class AlignAxisToVelocityComponent : GH_Component
     {
 
-        public AlignAxisToVelocityComponent() : base("Align Velocity Behaviour", "AlignVelocity", "Align Plane with velocity", "SlowRobotics", "Behaviours") { }
+        public AlignAxisToVelocityComponent() : base("Align to velocity", "AlignVelocity", "Align Plane with velocity", "SlowRobotics", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{f8540ae4-0554-427f-9c2f-4017d060285e}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
@@ -888,8 +889,8 @@ namespace SlowRoboticsGH
     public class AlignPlanesComponent : GH_Component
     {
 
-        public AlignPlanesComponent() : base("Align Planes Behaviour", "AlignPlanes", "Align Plane with neighbours", "SlowRobotics", "Behaviours") { }
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public AlignPlanesComponent() : base("Align to planes", "AlignPlanes", "Align Plane with neighbours (interaction behaviour)", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{d6ff6e8b-5e96-44f8-a7c8-71069f9d7bf5}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
         protected override Bitmap Icon
@@ -943,8 +944,8 @@ namespace SlowRoboticsGH
     public class AlignZZToBestFitComponent : GH_Component
     {
 
-        public AlignZZToBestFitComponent() : base("Align Best Fit Behaviour", "AlignBestFit", "Align Plane Z Axis to best fit plane of nearest neighbours", "SlowRobotics", "Behaviours") { }
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public AlignZZToBestFitComponent() : base("Align to best fit plane", "AlignBestFit", "Align Plane Z Axis to best fit plane of nearest neighbours (interaction behaviour)", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{3e0578d3-7cd5-4764-9c4d-04aa7bf0013a}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
         protected override Bitmap Icon
@@ -968,7 +969,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public Align.AxisToBestFit bestFit = null;
+        public Align.AxisTo3PtTri bestFit = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -989,7 +990,7 @@ namespace SlowRoboticsGH
             }
             else
             {
-                bestFit = new Align.AxisToBestFit(priority, (float)maxDist, (float)strength);
+                bestFit = new Align.AxisTo3PtTri(priority, (float)maxDist, (float)strength);
                 
             }
             DA.SetData(0,bestFit);
@@ -999,8 +1000,8 @@ namespace SlowRoboticsGH
     public class AttractComponent: GH_Component
     {
 
-        public AttractComponent() : base("Attract Behaviour", "Attract", "Attract Agents", "SlowRobotics", "Behaviours") { }
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public AttractComponent() : base("Attract", "Attract", "Attract Agents (interaction behaviour)", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{d3e8a92e-16f3-4de0-98aa-73ce5d948723}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
         protected override Bitmap Icon
@@ -1065,12 +1066,12 @@ namespace SlowRoboticsGH
         }
     }
 
-    public class SeparateComponent : GH_Component
+    public class RepelComponent : GH_Component
     {
        
 
-        public SeparateComponent() : base("Separate Behaviour", "Separate", "Separate Agents", "SlowRobotics", "Behaviours") { }
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public RepelComponent() : base("Repel", "Repel", "Repel Agents (interaction behaviour)", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{38563a34-1be4-4c68-bd94-cb4b2e15a4f2}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
         protected override Bitmap Icon
@@ -1131,7 +1132,7 @@ namespace SlowRoboticsGH
 
     public class SearchComponent : GH_Component
     {
-        public SearchComponent() : base("Search Behaviour", "Search", "Search Nodes", "SlowRobotics", "Behaviours") { }
+        public SearchComponent() : base("Search", "Search", "Search Nodes", "SlowRobotics", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{0979e24f-914b-46cc-986a-6638ffedba71}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
@@ -1208,11 +1209,74 @@ namespace SlowRoboticsGH
         }
     }
 
-   
-    public class StateCaptureComponent : GH_Component
+    public class ScaleBehaviourByDistanceToBoxComponent : GH_Component
     {
-        public StateCaptureComponent() : base("State Capture Behaviour", "Capture State", "Store past agent states in a list (retrieve using retrive states)", "SlowRobotics", "Behaviours") { }
-        public override GH_Exposure Exposure => GH_Exposure.tertiary;
+        public ScaleBehaviourByDistanceToBoxComponent() : base("Scale box", "ScaleBox", "Scales a list of behaviours by distance to a box", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.quinary;
+        public override Guid ComponentGuid => new Guid("{6e557a31-193a-4f9a-8d94-9de59f74c03d}");
+        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
+        protected override Bitmap Icon
+        {
+            get
+            {
+                //Return a 24x24 pixel bitmap to represent this GHA library.
+                return null;
+            }
+        }
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+
+            pManager.AddBoxParameter("Box", "Bx", "Box to scale behaviours", GH_ParamAccess.item);
+            pManager.AddParameter(new BehaviourParameter(), "Behaviours", "Be", "Behaviours to scale", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Maximum Distance", "Mx", "Maximum distance from box for scaling effect", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour priority", GH_ParamAccess.item);
+
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
+        }
+
+        public Scale.ByDistToBoundingBox scaleBox = null;
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            List<GH_Behaviour> ghBehaviours = new List<GH_Behaviour>();
+            Box b = Box.Unset;
+            double maxDist = 10;
+            int priority = 0;
+
+            if (!DA.GetData(0, ref b)) { return; }
+            if (!DA.GetDataList(1, ghBehaviours)) { return; }
+            if (!DA.GetData(2, ref maxDist)) { return; }
+            if (!DA.GetData(3, ref priority)) { return; }
+
+            List<IScaledBehaviour> behaviours = new List<IScaledBehaviour>();
+            foreach (GH_Behaviour _b in ghBehaviours) if (_b.Value is IScaledBehaviour)behaviours.Add((IScaledBehaviour)_b.Value);
+
+            AABB bounds = IO.ToAABB(b);
+
+            if (scaleBox != null)
+            {
+                scaleBox.box = bounds;
+                scaleBox.behaviours = behaviours;
+                scaleBox.maxDist = (float)maxDist;
+                scaleBox.priority = priority;
+            }
+            else
+            {
+                scaleBox = new Scale.ByDistToBoundingBox(priority,behaviours,bounds,(float)maxDist);
+            }
+            DA.SetData(0, scaleBox);
+        }
+    }
+
+    public class LeaveTraceComponent : GH_Component
+    {
+        public LeaveTraceComponent() : base("Leave trace", "Leave Trace", "Creates a static copy of the agent plane", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.quarternary;
         public override Guid ComponentGuid => new Guid("{03a7d3c3-5494-4654-bb3c-e685b9c3a7a9}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
         protected override Bitmap Icon

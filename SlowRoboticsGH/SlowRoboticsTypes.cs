@@ -5,6 +5,7 @@ using SlowRobotics.Agent.Behaviours;
 using SlowRobotics.Core;
 using SlowRobotics.Field;
 using SlowRobotics.Rhino.IO;
+using SlowRobotics.Voxels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -228,15 +229,23 @@ namespace SlowRoboticsGH
         public GH_World(GH_World goo) { this.Value = goo.Value; }
         public GH_World(IWorld native) { this.Value = native; }
         public GH_World(float extents) { this.Value = new SimpleWorld(extents); }
-
+        
         public override IGH_Goo Duplicate() => new GH_World(this);
         public override bool IsValid => true;
         public override string TypeName => "World";
         public override string TypeDescription => "World";
         public override string ToString() => this.Value.ToString();
         public override object ScriptVariable() => Value;
+
+
         public override bool CastFrom(object source)
         {
+            if (typeof(IWorld).IsAssignableFrom(source.GetType()))
+            {
+                Value = (IWorld)source;
+                return true;
+            }
+            
             if (source is IWorld)
             {
                 Value = source as IWorld;
@@ -245,6 +254,36 @@ namespace SlowRoboticsGH
             if (source is GH_World)
             {
                 Value = ((GH_World)source).Value;
+                return true;
+            }
+            return false;
+        }
+
+    }
+
+    public class GH_VoxelGrid : GH_Goo<IVoxelGrid> 
+    {
+        public GH_VoxelGrid() { this.Value = null; }
+        public GH_VoxelGrid(GH_VoxelGrid goo) { this.Value = goo.Value; }
+        public GH_VoxelGrid(IVoxelGrid native) { this.Value = native; }
+        public GH_VoxelGrid(int num) { this.Value = new FloatGrid(num, num, num, new float[] { 0, 0, 0 }, new float []{num,num,num }); }
+
+        public override IGH_Goo Duplicate() => new GH_VoxelGrid(this);
+        public override bool IsValid => true;
+        public override string TypeName => "VoxelGrid";
+        public override string TypeDescription => "VoxelGrid";
+        public override string ToString() => this.Value.ToString();
+        public override object ScriptVariable() => Value;
+        public override bool CastFrom(object source)
+        {
+            if (source is IVoxelGrid)
+            {
+                Value = source as IVoxelGrid;
+                return true;
+            }
+            if (source is GH_VoxelGrid)
+            {
+                Value = ((GH_VoxelGrid)source).Value;
                 return true;
             }
             return false;

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SlowRobotics.Voxels
 {
-    public class VoxelGrid
+    public abstract class VoxelGrid
     {
 
         public int w, h, d;

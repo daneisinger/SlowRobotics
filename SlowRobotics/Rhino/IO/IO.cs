@@ -95,6 +95,13 @@ namespace SlowRobotics.Rhino.IO
             return new Vec3D((float)p.X, (float)p.Y, (float)p.Z);
         }
 
+        public static AABB ToAABB(Box b)
+        {
+            Vec3D min = ToVec3D(b.BoundingBox.Min);
+            Vec3D max = ToVec3D(b.BoundingBox.Max);
+            return AABB.fromMinMax(min,max);
+        }
+
         public static Point3d ToPoint3d(Vec3D p)
         {
             return new Point3d(p.x, p.y, p.z);
@@ -107,5 +114,6 @@ namespace SlowRobotics.Rhino.IO
 
             return new Plane(origin, xx, yy);
         }
+       
     }
 }

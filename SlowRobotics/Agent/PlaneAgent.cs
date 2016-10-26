@@ -45,19 +45,23 @@ namespace SlowRobotics.Agent
             behaviours = new PriorityQueue<IBehaviour>();
         }
 
+        /*
         public void Lock()
         {
             Node staticNode = new Node(this);
             world.addStatic(staticNode);
             world.removeDynamic(this);
         }
+        */
 
         public override void step(float damping)
         {
             foreach (IBehaviour b in behaviours.getData()) b.run(this);
             if (getInertia() == 0)
             {
-                Lock();
+
+                //TODO - have world manage this
+                //Lock();
             }
             else
             {

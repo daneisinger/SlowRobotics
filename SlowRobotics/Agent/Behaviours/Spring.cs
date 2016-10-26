@@ -29,7 +29,7 @@ namespace SlowRobotics.Agent.Behaviours
                 if (l.a is Particle)
                 {
                     Particle p = (Particle)l.a;
-                    p.addForce(ab.scale(-d * l.stiffness * damping * scaleFactor));
+                    p.addForce(ab.scale(-d * l.stiffness * damping * scaleFactor));//hookes law restorative force
                 }
                 if (l.b is Particle && verlet)
                 {

@@ -34,10 +34,10 @@ namespace SlowRobotics.Rhino.MeshTools
                 }
             }
 
-            return buildClosedMeshFromPolylineSections(sections);
+            return buildClosedMeshFromPolylineSections(sections, true , true);
         }
 
-        public static Mesh buildClosedMeshFromPolylineSections(List<Polyline> sections)
+        public static Mesh buildClosedMeshFromPolylineSections(List<Polyline> sections, bool capStart, bool capEnd)
         {
             Mesh chunk = new Mesh();
             int numVertsPerPoly = 0;
@@ -46,18 +46,18 @@ namespace SlowRobotics.Rhino.MeshTools
             {
                 if (p != null)
                 {
-                    if (numVertsPerPoly == 0) numVertsPerPoly = p.Count; //set num verts
-                    if (p.Count != numVertsPerPoly) return chunk; //exit if using uneven sections
-
-                    chunk.Vertices.AddVertices(p); //add verts
-
-                    if (p == sections.First())
+                    if (numVertsPerPoly == 0)
                     {
-                        Polyline flip = new Polyline(p); //sort out normals
-                        flip.Reverse();
-                        chunk.Faces.AddFaces(flip.TriangulateClosedPolyline()); //cap start
+                        numVertsPerPoly = (p.IsClosed) ? p.Count - 1 : p.Count; //set num verts
                     }
-                    if (p == sections.Last())
+
+                    chunk.Vertices.AddVertices(p.Take(numVertsPerPoly)); //add verts
+
+                    if (p == sections.First() && capStart)
+                    {
+                        foreach (MeshFace f in p.TriangulateClosedPolyline()) chunk.Faces.AddFace(f.Flip());
+                    }
+                    if (p == sections.Last() && capEnd)
                     {
                         MeshFace[] end = p.TriangulateClosedPolyline();
                         for (int i = 0; i < end.Length; i++)
@@ -69,14 +69,22 @@ namespace SlowRobotics.Rhino.MeshTools
                         }
                         chunk.Faces.AddFaces(end); //cap end
                     }
-                    
+
                     vertexCounter += numVertsPerPoly; //count verts
                 }
             }
 
-            for (int i = 0; i < (numVertsPerPoly * (sections.Count - 1)) - 1; i++)
+            for (int i = 0; i <= (numVertsPerPoly * (sections.Count - 1)) - 1; i++)
             {
-                chunk.Faces.AddFace(i, i + 1, i + numVertsPerPoly + 1, i + numVertsPerPoly);
+                if (i % (numVertsPerPoly) == numVertsPerPoly - 1)
+                {
+                    chunk.Faces.AddFace(i, i - numVertsPerPoly + 1, i + 1, i + numVertsPerPoly);
+                }
+                else
+                {
+                    chunk.Faces.AddFace(i, i + 1, i + numVertsPerPoly + 1, i + numVertsPerPoly);
+                }
+
             }
 
             return chunk;

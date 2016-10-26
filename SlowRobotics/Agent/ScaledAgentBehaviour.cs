@@ -17,6 +17,18 @@ namespace SlowRobotics.Agent
             scaleFactor = 1;
         }
 
+        public override void run(IAgent a)
+        {
+            if (a is PlaneAgent) run((PlaneAgent)a);
+            if (a is LinkMesh) run((LinkMesh)a);
+            reset(); //scale agents reset scale factor
+        }
+
+        public virtual void reset()
+        {
+            scaleFactor = 1; //reset scale factor
+        }
+
         public void scale(float factor)
         {
             scaleFactor = factor;

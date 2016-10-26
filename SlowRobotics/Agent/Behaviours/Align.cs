@@ -33,8 +33,13 @@ namespace SlowRobotics.Agent.Behaviours
             public override void test(PlaneAgent a, Plane3D p)
             {
                 Vec3D ab = p.sub(a);
-                float sf = (strength * scaleFactor) - SR_Math.normalizeDistance(ab, minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared); //invert
-                a.interpolateToPlane3D(p, sf);
+                float d = ab.magnitude();
+                if (d > minDist && d < maxDist)
+                {
+                    float f = SR_Math.map(d, minDist, maxDist, 1, 0);
+                    float sf = ExponentialInterpolation.Squared.interpolate(0, strength, f);
+                    a.interpolateToPlane3D(p, sf*scaleFactor);
+                }
             }
 
         }
@@ -166,30 +171,37 @@ namespace SlowRobotics.Agent.Behaviours
                     foreach (Link l in p.parent.getLinks())
                     {
                         Vec3D ab = l.closestPt(a).sub(a);
-                        float f = SR_Math.normalizeDistance(ab, 0, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared);
-                        interpolateToVector(a, l.getDir(), f);
+                        float d = ab.magnitude();
+
+                        if (d > minDist && d < maxDist)
+                        {
+                            float f = SR_Math.map(d, minDist, maxDist, 1, 0);
+                            float sf = ExponentialInterpolation.Squared.interpolate(0, strength, f);
+                            interpolateToVector(a, l.getDir(), f);
+                        }               
                     }
                 }
             }
         }
 
-        public class AxisToBestFit : Axis
+        public class AxisTo3PtTri : Axis
         {
 
             private SortedList closestPts;
             private Vec3D n;
 
-            public AxisToBestFit(int _priority, float _strength, float _maxDist) : this(_priority, _strength, _maxDist, 2) { }
+            public AxisTo3PtTri(int _priority, float _strength, float _maxDist) : this(_priority, _strength, _maxDist, 2) { }
 
-            public AxisToBestFit(int _priority, float _strength, float _maxDist, int _axis) : base(_priority,_strength,_maxDist,_axis)
+            public AxisTo3PtTri(int _priority, float _strength, float _maxDist, int _axis) : base(_priority,_strength,_maxDist,_axis)
             {
                 reset();
             }
 
-            public void reset()
+            public override void reset()
             {
                 closestPts = new SortedList();
                 n = new Vec3D();
+                scaleFactor = 1;
             }
 
             public override void test(PlaneAgent a, Plane3D p)
@@ -211,5 +223,29 @@ namespace SlowRobotics.Agent.Behaviours
             }
         }
 
+        public class AxisToBestFitPlane : Axis
+        {
+
+            public AxisToBestFitPlane(int _priority, float _strength, float _maxDist) : this(_priority, _strength, _maxDist, 2) { }
+
+            public AxisToBestFitPlane(int _priority, float _strength, float _maxDist, int _axis) : base(_priority, _strength, _maxDist, _axis)
+            {
+                reset();
+            }
+
+            public override void run(PlaneAgent a)
+            {
+                if (a.neighbours.Count >= 3)
+                {
+                    Vec3D centroid = new Vec3D();
+
+                    Vec3D n = SR_Math.getPlaneNormal(a.neighbours, out centroid);
+
+                    if (getAxis(a).angleBetween(n) > (float)Math.PI / 2) n.invert();
+                    interpolateToVector(a, n, strength * scaleFactor);
+                }
+                reset();
+            }
+        }
     }
 }

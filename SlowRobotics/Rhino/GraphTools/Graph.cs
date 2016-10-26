@@ -56,8 +56,8 @@ namespace SlowRobotics.Rhino.GraphTools
             foreach(Node n in world.getPop())
             {
 
-                List<Vec3D> neighbours = world.getDynamicPoints(n, maxDist);
-                neighbours.AddRange(world.getStaticPoints(n, maxDist));
+                List<Vec3D> neighbours = world.searchDynamic(n, maxDist);
+                neighbours.AddRange(world.searchStatic(n, maxDist));
                 foreach (Vec3D v in neighbours){
                     if(v.distanceTo(n)> minDist)
                     {

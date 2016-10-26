@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SlowRobotics.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -60,6 +61,30 @@ namespace SlowRobotics.Utils
             _pts.Average(x => x.z));
         }
 
+
+        public static Vec3D getPlaneNormal(List<Vec3D> planeVerts, out Vec3D centroid)
+        {
+            centroid = averageVectors(planeVerts);
+            double[,] dataMat = new double[3, planeVerts.Count];
+            int i = 0;
+            foreach(Vec3D v in planeVerts)
+            {
+                dataMat[0, i] = v.x-centroid.x;
+                dataMat[1, i] = v.y - centroid.y;
+                dataMat[2, i] = v.z - centroid.z;
+                i++;
+            }
+
+            double[] w = new double[3];
+            double[,] u = new double[3, 3];
+            double[,] t = new double[3, 3];
+
+            bool a = alglib.svd.rmatrixsvd(dataMat, 3, planeVerts.Count, 1, 0, 2, ref w, ref u, ref t);
+
+            return new Vec3D((float)u[2, 0], (float) u[2, 1], (float)u[2, 2]);
+
+        }
+        /*
         public static float normalizeDistance(Vec3D ab, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
         {
             float dist = ab.magnitude();
@@ -70,6 +95,6 @@ namespace SlowRobotics.Utils
                 sf = interpolator.interpolate(0, maxForce, f);
             }
             return sf;
-        }
+        }*/
     }
-}
+    }

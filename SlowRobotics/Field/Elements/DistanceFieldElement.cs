@@ -35,7 +35,6 @@ namespace SlowRobotics.Field.Elements
             d.numberData += w;
 
             Vec3D scaledVal = location.sub(loc).scale(w);
-
             if (d.hasVectorData())
             {
                 d.vectorData.addSelf(scaledVal);

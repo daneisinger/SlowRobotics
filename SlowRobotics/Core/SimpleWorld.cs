@@ -60,7 +60,7 @@ namespace SlowRobotics.Core
 
         }
 
-        public List<Vec3D> getDynamicPoints(Vec3D pos, float radius)
+        public List<Vec3D> searchDynamic(Vec3D pos, float radius)
         {
             List<Vec3D> dynamicPts = dynamicTree.getPointsWithinSphere(pos, radius);
             if (dynamicPts == null)
@@ -69,7 +69,7 @@ namespace SlowRobotics.Core
             }
             else return dynamicPts;
         }
-        public List<Vec3D> getStaticPoints(Vec3D pos, float radius)
+        public List<Vec3D> searchStatic(Vec3D pos, float radius)
         {
             List<Vec3D> staticPts = staticTree.getPointsWithinSphere(pos, radius);
             if (staticPts == null)
@@ -78,7 +78,13 @@ namespace SlowRobotics.Core
             }
             else return staticPts;
         }
-
+        public List<Vec3D> search(Vec3D pos, float radius)
+        {
+            List<Vec3D> dpts = searchDynamic(pos, radius);
+            List<Vec3D> spts = searchStatic(pos, radius);
+            dpts.AddRange(spts);
+            return dpts;
+        }
         public void addStatic(Node p)
         {
             if (p is IAgent) pop.Add((IAgent)p); 
@@ -99,7 +105,12 @@ namespace SlowRobotics.Core
         public void run(float damping)
         {
             Random r = new Random();
-            foreach (IAgent a in pop.OrderBy(n => r.Next())) a.step(damping);
+            int steps = (int) (1 / damping);
+            for (int i=0;i< steps; i++)
+            {
+                foreach (IAgent a in pop.OrderBy(n => r.Next())) a.step(damping);
+            }
+            
             //rebuild octrees
             dynamicTree = new Plane3DOctree(new Vec3D(-bounds, -bounds, -bounds), bounds * 2);
             foreach (IAgent a in pop)

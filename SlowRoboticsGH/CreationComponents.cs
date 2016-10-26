@@ -146,6 +146,44 @@ namespace SlowRoboticsGH
         }
     }
 
+    public class ConnectByProximityComponent : GH_Component
+    {
+        public ConnectByProximityComponent() : base("Connect by proximity", "ConnectProximity", "Connect proximate nodes", "SlowRobotics", "Agent") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override Guid ComponentGuid => new Guid("{ff9181ca-01c3-4743-ac72-362777938324}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddParameter(new LinkMeshParameter(), "LinkMesh", "L", "LinkMesh to contain links", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Minimum Distance", "Mn", "Minimum connection distance", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Maximum Distance", "Mx", "Maximum connection distance", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddGenericParameter("LinkMesh", "L", "LinkMesh", GH_ParamAccess.list);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            double stiffness = 0.1;
+            GH_LinkMesh linkMesh = null;
+            double minD = 0;
+            double maxD = 10;
+
+            if (!DA.GetData(0, ref linkMesh)) { return; }
+            if (!DA.GetData(1, ref stiffness)) { return; }
+            if (!DA.GetData(2, ref minD)) { return; }
+            if (!DA.GetData(3, ref maxD)) { return; }
+            LinkMesh lm = linkMesh.Value;
+            lm.connectByProximity(lm.getNodes().ToList(), (float)minD, (float)maxD,(float)stiffness);
+
+            DA.SetData(0, new GH_ObjectWrapper(lm));
+        }
+    }
+
     public class ConnectNthNodesComponent : GH_Component
     {
         public ConnectNthNodesComponent() : base("Connect Nth Nodes", "ConnectNth", "Connect nth nodes in a link mesh", "SlowRobotics", "Agent") { }
@@ -559,6 +597,7 @@ namespace SlowRoboticsGH
             pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Distance for field element", GH_ParamAccess.list);
             pManager.AddNumberParameter("Attenuation", "A", "Attenuation of field element", GH_ParamAccess.list);
             pManager.AddNumberParameter("Noise Scale", "N", "Scale of noise ", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Rotation Scale", "R", "Scale of noise ", GH_ParamAccess.list);
 
         }
 
@@ -574,12 +613,14 @@ namespace SlowRoboticsGH
             List<double> distances = new List<double>();
             List<double> attens = new List<double>();
             List<double> scales = new List<double>();
+            List<double> rScales = new List<double>();
 
             if (!DA.GetDataList(0, locations)) { return; }
             if (!DA.GetDataList(1, weights)) { return; }
             if (!DA.GetDataList(2, distances)) { return; }
             if (!DA.GetDataList(3, attens)) { return; }
             if (!DA.GetDataList(4, scales)) { return; }
+            if (!DA.GetDataList(5, rScales)) { return; }
 
             List<IFieldElement> pts = new List<IFieldElement>();
 
@@ -592,7 +633,8 @@ namespace SlowRoboticsGH
                         (float)weights[Math.Min(i, weights.Count - 1)],
                         (float)distances[Math.Min(i, distances.Count - 1)],
                         (float)attens[Math.Min(i, attens.Count - 1)],
-                        (float)scales[Math.Min(i, scales.Count - 1)]
+                        (float)scales[Math.Min(i, scales.Count - 1)],
+                        (float)rScales[Math.Min(i, rScales.Count - 1)]
                         ));
             }
 
@@ -628,27 +670,7 @@ namespace SlowRoboticsGH
 
             for(int i = 0;i<geometry.Count;i++)
             {
-                
                 field.insertElement(geometry[i].Value);
-
-                /*
-                if (g.Value is List<IFieldElement>)
-                {
-                    foreach (IFieldElement fe in (List<IFieldElement>)g.Value) field.insertElement(fe);
-                }
-                if (g.Value is List<PlaneFieldElement>)
-                {
-                    foreach (IFieldElement fe in (List<PlaneFieldElement>)g.Value) field.insertElement(fe);
-                }
-                if (g.Value is List<NoiseFieldElement>)
-                {
-                    foreach (IFieldElement fe in (List<NoiseFieldElement>)g.Value) field.insertElement(fe);
-                }
-
-                if (g.Value is List<PolarFieldElement>)
-                {
-                    foreach (IFieldElement fe in (List<PolarFieldElement>)g.Value) field.insertElement(fe);
-                }*/
             }
             field.updateBounds();
 

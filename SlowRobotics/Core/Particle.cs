@@ -57,7 +57,7 @@ namespace SlowRobotics.Core
             }
 
             accel = new Vec3D();
-            inertia = 1; 
+            inertia = 0.97f; //add default inertia to slow everything down
         }
 
         public void setSpeed(float s)

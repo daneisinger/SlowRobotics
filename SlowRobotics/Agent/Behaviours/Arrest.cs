@@ -25,7 +25,15 @@ namespace SlowRobotics.Agent.Behaviours
 
             public override void test(PlaneAgent a, Plane3D p)
             {
-                inertiaMod += (frictionCof - SR_Math.normalizeDistance(p.sub(a), 0, maxDist, frictionCof, ExponentialInterpolation.Squared)) * scaleFactor;
+                Vec3D ab = p.sub(a);
+                float d = ab.magnitude();
+                if (d > 0 && d < maxDist)
+                {
+                    float f = SR_Math.map(d, 0, maxDist, 1, 0);
+                    float sf = ExponentialInterpolation.Squared.interpolate(0, frictionCof, f);
+                    inertiaMod += frictionCof * scaleFactor;
+                }
+
             }
 
             public override void run(PlaneAgent a)

@@ -88,7 +88,61 @@ namespace SlowRobotics.Rhino.VoxelTools
             return grid;
         }
 
-        public static void voxeliseMesh<T>(VoxelGridT<T> grid, int wallThickness, T wallValue, T insideValue, Mesh mesh) where T :struct,IComparable
+        //better method here http://web.eecs.utk.edu/~huangj/papers/polygon.pdf
+
+        public static void voxeliseMeshShell<T>(VoxelGridT<T> grid, T wallValue, Mesh mesh) where T : struct, IComparable
+        {
+            for (int f = 0; f< mesh.Faces.Count;f++)
+            {
+                BoundingBox b = mesh.Faces.GetFaceBoundingBox(f);
+                foreach (VoxelGridT<T>.Voxel v in grid.getRegion(
+                    new Vec3D((float)b.Min.X, (float)b.Min.Y, (float)b.Min.Z), new Vec3D((float)b.Max.X, (float)b.Max.Y, (float)b.Max.Z)))
+                {
+                    if(v!= null)
+                    {
+                        v.Data = wallValue;
+                    }
+                }
+            }
+        }
+
+        public static void scanLineFill(ColourGrid grid, ColourVoxel insideValue)
+        {
+            for (int z = 1; z < grid.d; z++)
+            {
+                for (int y = 1; y < grid.h; y++)
+                {
+                    bool inside = false;
+                    bool filled = false;
+                    for (int x = 1; x < grid.w; x++)
+                    {
+
+                        ColourVoxel val = grid.getValue(x, y, z);
+                        ColourVoxel next = grid.getValue(x + 1, y, z);
+
+                        if (inside && filled && next.R == 255)
+                        {
+                            inside = false;
+                            filled = false;
+                        }
+                        else {
+
+                            if (inside && val.R == 0)
+                            {
+                                val = insideValue;
+                                grid.set(x, y, z, val);
+                                filled = true;
+                            }
+
+                            if (!inside && next.R == 255 && val.R == 0) inside = true;
+                        }
+
+                    }
+                }
+            }
+        }
+
+        public static void voxeliseMeshScanLineX<T>(VoxelGridT<T> grid, int wallThickness, T wallValue, T insideValue, Mesh mesh, bool accurate) where T :struct,IComparable
         {
             Vector3d v1 = new Vector3d(grid.w * 4, 0, 0);
             for (int z = 1; z < grid.d; z++)

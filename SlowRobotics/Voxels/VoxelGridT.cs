@@ -4,14 +4,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Toxiclibs.core;
 
 namespace SlowRobotics.Voxels
 {
+
+    //TODO - need to make this more generic to work with GH. 
+    //could have a voxel class?
+    //or could accept a list of data?
+    //need an interface to figure out what the base functions are that are needed
+    //(e.g. testing for values when reading/writing, averageing values etc)
+
     /// <summary>
     /// Generic voxel class
     /// </summary>
     /// <typeparam name="T">Voxel data type</typeparam>
-    public abstract class VoxelGridT<T> : VoxelGrid where T : struct, IComparable
+    /// 
+    public abstract class VoxelGridT<T> : VoxelGrid, IVoxelGrid where T : struct, IComparable
     {
         private Voxel[] vals;      // The array of data
 
@@ -158,6 +167,8 @@ namespace SlowRobotics.Voxels
                 }
             }
         }
+
+        public virtual void blur() { }
         #endregion
 
 
@@ -230,7 +241,21 @@ namespace SlowRobotics.Voxels
               });
         }
 
-
+        public List<Voxel> getRegion(Vec3D min, Vec3D max)
+        {
+            List<Voxel> n = new List<Voxel>();
+            for (int x = (int)min.x; x <= (int)max.x; x++)
+            {
+                for (int y = (int)min.y; y <= (int)max.y; y++)
+                {
+                    for (int z = (int)min.z; z<= (int)max.z; z++)
+                    {
+                        n.Add(get(x, y, z));
+                    }
+                }
+            }
+            return n;
+        }
 
         public List<Voxel> getRegion(int[] pt, int rad)
         {

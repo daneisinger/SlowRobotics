@@ -25,20 +25,11 @@ namespace SlowRobotics.Agent.Behaviours
             minDist = _minDist;
         }
 
-        public Vec3D attract(Vec3D a, Vec3D b, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
+        public Vec3D calcForce(Vec3D a, Vec3D ab, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
         {
-            Vec3D ab = b.sub(a);
             float d = ab.magnitude();
-            float f = maxForce - SR_Math.normalizeDistance(ab, minDist, maxDist, maxForce, interpolator);
-            return (d > minDist && d < maxDist) ? ab.normalizeTo(f) : new Vec3D();
-        }
-
-        public Vec3D repel(Vec3D a, Vec3D b, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
-        {
-            Vec3D ab = b.sub(a);
-            float d = ab.magnitude();
-            float f = -(maxForce - SR_Math.normalizeDistance(ab, minDist, maxDist, maxForce, interpolator));
-            return (d > minDist && d < maxDist) ? ab.normalizeTo(f) : new Vec3D();
+            float f = SR_Math.map(d, minDist, maxDist, 1, 0);
+            return (d > minDist && d < maxDist) ? ab.normalizeTo(interpolator.interpolate(0, maxForce, f)) : new Vec3D();
         }
 
         public class InAxis : Move
@@ -54,7 +45,7 @@ namespace SlowRobotics.Agent.Behaviours
 
             public override void run(PlaneAgent a)
             {
-                a.addForce(getAxis(a).scale(strength * scaleFactor));
+                if(scaleFactor>0)a.addForce(getAxis(a).scale(strength * scaleFactor));
             }
 
             public Vec3D getAxis(Plane3D a)
@@ -101,23 +92,28 @@ namespace SlowRobotics.Agent.Behaviours
                 reset();
             }
 
-            public void reset()
+            public override void reset()
             {
                 force = new Vec3D();
+                scaleFactor = 1;
             }
 
             public override void test(PlaneAgent a, Plane3D p)
             {
                 if (!inXY)
                 {
-                    force.addSelf(repel(a, p, minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
+                    force.addSelf(calcForce(a, a.sub(p), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
                 }
                 else
                 {
                     ToxiPlane tp = new ToxiPlane(a, a.zz);
                     Vec3D op = tp.getProjectedPoint(p);
-                    force.addSelf(repel(a, op, minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
+                    float d = a.distanceTo(p);
+                    float f = SR_Math.map(d, minDist, maxDist, 1, 0);
+                    float sf = ExponentialInterpolation.Squared.interpolate(0, strength, f);
+                    if (d > minDist && d < maxDist) force.addSelf(a.sub(op).normalizeTo(sf));
                 }
+
             }
 
             public override void run(PlaneAgent a)
@@ -136,13 +132,16 @@ namespace SlowRobotics.Agent.Behaviours
             {
                 if (!inXY)
                 {
-                    force.addSelf(attract(a, p, minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
+                    force.addSelf(calcForce(a, p.sub(a), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
                 }
                 else
                 {
                     ToxiPlane tp = new ToxiPlane(a, a.zz);
                     Vec3D op = tp.getProjectedPoint(p);
-                    force.addSelf(attract(a, op, minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
+                    float d = a.distanceTo(p);
+                    float f = SR_Math.map(d, minDist, maxDist, 1, 0);
+                    float sf = ExponentialInterpolation.Squared.interpolate(0, strength, f);
+                    if (d > minDist && d < maxDist) force.addSelf(op.sub(a).normalizeTo(sf));
                 }
             }
         }
@@ -154,15 +153,15 @@ namespace SlowRobotics.Agent.Behaviours
 
             public override void test(PlaneAgent a, Plane3D p)
             {
-                Vec3D toPlane3D = p.sub(a);
-                float d = toPlane3D.magnitude();
+                Vec3D ab = p.sub(a);
+                float d = ab.magnitude();
                 if (d > minDist && d < maxDist)
                 {
-                    float ratio = 1-(d / maxDist); //NOTE! I inverted this ratio. Seems to have a pretty dramatic effect
-                    float f = ExponentialInterpolation.Squared.interpolate(0, strength * scaleFactor, ratio);
-                    Vec3D zt = a.zz.scale(f);
-                    float ab = toPlane3D.angleBetween(a.zz, true);
-                    if (ab > (float)Math.PI / 2) zt.invert();
+                    float f = SR_Math.map(d, 0, maxDist, 1, 0);
+                    float sf = ExponentialInterpolation.Squared.interpolate(0, strength, f);
+                    Vec3D zt = a.zz.scale(sf * scaleFactor);
+                    float angle = ab.angleBetween(a.zz, true);
+                    if (angle > (float)Math.PI / 2) zt.invert();
                     a.addForce(zt);
                 }
             }
@@ -188,7 +187,7 @@ namespace SlowRobotics.Agent.Behaviours
             Vec3D targetB;
             List<LinkMesh> used;
 
-            public void reset()
+            public override void reset()
             {
                 closestL = null;
                 closestO = null;
@@ -198,6 +197,7 @@ namespace SlowRobotics.Agent.Behaviours
                 b_l = new Vec3D();
                 minD = 1000;
                 used = new List<LinkMesh>();
+                scaleFactor = 1;
             }
 
             public override void test(LinkMesh a, Plane3D p)
@@ -259,7 +259,7 @@ namespace SlowRobotics.Agent.Behaviours
             {
                 if (targetA != null && minD > 0.2)
                 {
-                    a.addForce(attract(a, targetB, 0.25f, maxDist, strength, ExponentialInterpolation.Squared));
+                    a.addForce(calcForce(a, targetB.sub(a), 0.25f, maxDist, strength, ExponentialInterpolation.Squared));
 
                     if (minD < 0.5)
                     {
@@ -274,7 +274,7 @@ namespace SlowRobotics.Agent.Behaviours
             {
                 if (targetA != null && minD > 0.2)
                 {
-                    a.addForce(attract(a, targetB, 0.25f, maxDist, strength, ExponentialInterpolation.Squared));
+                    a.addForce(calcForce(a, targetB.sub(a), 0.25f, maxDist, strength, ExponentialInterpolation.Squared));
                     if (minD < 0.5)
                     {
                         //if (targetA.distanceTo(closestL.a) > 2 && targetA.distanceTo(closestL.b) > 2) split(a, closestL, targetA);

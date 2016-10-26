@@ -70,5 +70,34 @@ namespace SlowRobotics.Agent.Behaviours
                 return f > maxDist ? 1 : f / maxDist;
             }
         }
+
+        public class ByDistToBoundingBox : Scale
+        {
+            public float maxDist { get; set; }
+            public AABB box { get; set; }
+
+            public ByDistToBoundingBox(int _priority, List<IScaledBehaviour> _behaviours, AABB _box, float _maxDist) : base(_priority, _behaviours)
+            {
+                maxDist = _maxDist;
+                box = _box;
+            }
+
+            public override void run(IAgent a)
+            {
+                float f = getFactor(a.getPos(), box);
+                foreach (IScaledBehaviour b in behaviours)
+                {
+                    b.scale(f);
+                }
+            }
+
+            public float getFactor(Vec3D a, AABB _box)
+            {
+                if (_box.containsPoint(a)) return 1;
+                Vec3D p = _box.closestPointOnAABB(a);
+                float f = a.distanceTo(p);
+                return (f < maxDist) ? 1-(f / maxDist): 0.0f;
+            }
+        }
     }
 }

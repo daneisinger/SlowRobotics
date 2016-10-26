@@ -52,7 +52,7 @@ namespace SlowRobotics.Voxels
         /// <summary>
         /// Average voxel values with its 6 axis aligned neighbours
         /// </summary>
-        public void blur()
+        public override void blur()
         {
             Function((int x, int y, int z) =>
             {

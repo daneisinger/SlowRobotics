@@ -112,15 +112,8 @@ namespace SlowRoboticsGH
                     {
                         l.Add(new Line(new Point3d(li.a.x, li.a.y, li.a.z), new Point3d(li.b.x, li.b.y, li.b.z)));
                     }
-                }
-            });
-
-            world.Value.getPop().ForEach(agent => {
-                if (agent is LinkMesh)
-                {
-                    LinkMesh lm = (LinkMesh)agent;
-                    List<Link> springs = lm.getTertiaryLinks();
-                    foreach (Link li in springs)
+                    List<Link> tertiarySprings = lm.getTertiaryLinks();
+                    foreach (Link li in tertiarySprings)
                     {
                         lb.Add(new Line(new Point3d(li.a.x, li.a.y, li.a.z), new Point3d(li.b.x, li.b.y, li.b.z)));
                     }

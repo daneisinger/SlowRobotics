@@ -61,6 +61,8 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddCurveParameter("Polylines", "P", "Polylines to loft", GH_ParamAccess.list);
+            pManager.AddBooleanParameter("Cap Start", "Cs", "Mesh the first section", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Cap End", "Ce", "Mesh the last section", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -71,9 +73,12 @@ namespace SlowRoboticsGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             List<Curve> curves = new List<Curve>();
+            bool cS = true;
+            bool cE = true;
 
             if (!DA.GetDataList(0, curves)) { return; }
-
+            if (!DA.GetData(1, ref cS)) { return; }
+            if (!DA.GetData(2, ref cE)) { return; }
             List<Polyline> polylines = new List<Polyline>();
             foreach (Curve c in curves)
             {
@@ -81,7 +86,7 @@ namespace SlowRoboticsGH
                 if (c.TryGetPolyline(out p)) polylines.Add(p);
             }
 
-            DA.SetData(0, Mesher.buildClosedMeshFromPolylineSections(polylines));
+            DA.SetData(0, Mesher.buildClosedMeshFromPolylineSections(polylines, cS, cE));
         }
     }
 }

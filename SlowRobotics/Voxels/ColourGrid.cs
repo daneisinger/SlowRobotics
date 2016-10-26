@@ -89,9 +89,30 @@ namespace SlowRobotics.Voxels
             });
         }
 
-        public void blur()
+        public override void blur()
         {
+            Function((int x, int y, int z) =>
+            {
+                int sumR = 0;
+                int sumG = 0;
+                int sumB = 0;
 
+                int ctr = 0;
+
+                foreach (ColourVoxel v in getAxisNeighbours(x, y, z))
+                {
+                    if (v.A >= 0) //using alpha to check for default values
+                    {
+                        sumR += v.R;
+                        sumG += v.G;
+                        sumB += v.B;
+                        ctr++;
+                    }
+                }
+
+                return new ColourVoxel((byte)(sumR / ctr), (byte)(sumG/ ctr), (byte)(sumB/ ctr),255);
+
+            });
 
         }
 

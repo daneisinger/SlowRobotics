@@ -166,4 +166,39 @@ namespace SlowRoboticsGH
             return GH_GetterResult.success;
         }
     }
+
+    public class VoxelGridParameter : GH_PersistentParam<GH_VoxelGrid>
+    {
+        public VoxelGridParameter() : base("Voxel Grid", "VoxelGrid", "This is a Voxel Grid", "SlowRobotics", "Parameters") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        public override System.Guid ComponentGuid => new Guid("{1fa71f8b-dd8c-4345-9a08-0e5f6c75d423}");
+
+        protected override GH_GetterResult Prompt_Singular(ref GH_VoxelGrid value)
+        {
+
+            Rhino.Input.Custom.GetNumber go = new Rhino.Input.Custom.GetNumber();
+            go.SetCommandPrompt("Grid size");
+            go.AcceptNothing(true);
+
+            switch (go.Get())
+            {
+                case Rhino.Input.GetResult.Number:
+                    value = new GH_VoxelGrid((int)go.Number());
+                    return GH_GetterResult.success;
+
+                case Rhino.Input.GetResult.Nothing:
+                    return GH_GetterResult.accept;
+
+                default:
+                    return GH_GetterResult.cancel;
+            }
+        }
+
+        protected override GH_GetterResult Prompt_Plural(ref List<GH_VoxelGrid> values)
+        {
+            values = new List<GH_VoxelGrid>();
+            return GH_GetterResult.success;
+        }
+    }
 }

@@ -48,6 +48,9 @@
       <HintPath>..\packages\Alea.IL.2.2.0.3307\lib\net40\Alea.IL.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="alglibnet2">
+      <HintPath>..\packages\alglibnet2.dll</HintPath>
+    </Reference>
     <Reference Include="FSharp.Core, Version=4.3.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\FSharp.Core.3.1.2.1\lib\net40\FSharp.Core.dll</HintPath>
       <Private>True</Private>
@@ -128,6 +131,7 @@
     <Compile Include="Voxels\ColourGrid.cs" />
     <Compile Include="Voxels\ColourVoxel.cs" />
     <Compile Include="Voxels\FloatGrid.cs" />
+    <Compile Include="Voxels\IVoxelGrid.cs" />
     <Compile Include="Voxels\VoxelGrid.cs" />
     <Compile Include="Voxels\VoxelGridT.cs" />
   </ItemGroup>

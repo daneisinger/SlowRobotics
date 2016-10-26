@@ -12,7 +12,7 @@ namespace SlowRobotics.Voxels
         public byte R,G,B,A;
         public static readonly ColourVoxel White = new ColourVoxel(255,255,255,255);
         public static readonly ColourVoxel Red = new ColourVoxel(255, 0, 0, 255);
-        public static readonly ColourVoxel Black = new ColourVoxel(0, 0, 0, 0);
+        public static readonly ColourVoxel Black = new ColourVoxel(0, 0, 0, 255);
 
         public ColourVoxel(byte _r, byte _g, byte _b, byte _a)
         {

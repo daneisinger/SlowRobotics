@@ -10,9 +10,9 @@ namespace SlowRobotics.Core
     public interface IWorld
     {
 
-        List<Vec3D> getDynamicPoints(Vec3D pos, float radius);
-        List<Vec3D> getStaticPoints(Vec3D pos, float radius);
-
+        List<Vec3D> searchDynamic(Vec3D pos, float radius);
+        List<Vec3D> searchStatic(Vec3D pos, float radius);
+        List<Vec3D> search(Vec3D pos, float radius);
         List<Vec3D> getPoints();
 
         void addDynamic(Particle p);
@@ -21,6 +21,7 @@ namespace SlowRobotics.Core
         bool removeStatic(Node p);
 
         void run();
+        void run(float damping);
 
         List<IAgent> getPop();
 
