@@ -16,9 +16,9 @@ namespace SlowRobotics.Core
         List<Vec3D> getPoints();
 
         void addDynamic(Particle p);
-        void addStatic(Node p);
+        void addStatic(IState p);
         bool removeDynamic(Particle p);
-        bool removeStatic(Node p);
+        bool removeStatic(IState p);
 
         void run();
         void run(float damping);

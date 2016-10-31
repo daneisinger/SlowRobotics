@@ -19,14 +19,24 @@ namespace SlowRobotics.Agent
 
         public override void run(IAgent a)
         {
-            if (a is PlaneAgent) run((PlaneAgent)a);
-            if (a is LinkMesh) run((LinkMesh)a);
-            reset(); //scale agents reset scale factor
+            IStateAgent a_s = a as IStateAgent;
+            if (a_s != null) run(a_s);
+
+            IDiscreteAgent a_d = a as IDiscreteAgent;
+            if (a_d != null) run(a_d);
+
+            IGraphAgent a_g = a as IGraphAgent;
+            if (a_g != null) run(a_g);
+
+            IParticleAgent a_p = a as IParticleAgent;
+            if (a_p != null) run(a_p);
+
+            reset();
         }
 
         public virtual void reset()
         {
-            scaleFactor = 1; //reset scale factor
+            scaleFactor = 1;
         }
 
         public void scale(float factor)

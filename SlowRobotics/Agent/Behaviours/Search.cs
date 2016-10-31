@@ -7,7 +7,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class Search : ScaledAgentBehaviour
+    public class Search : ScaledAgentBehaviour, IWorldBehaviour
     {
         public struct SearchMethod
         {
@@ -27,58 +27,55 @@ namespace SlowRobotics.Agent.Behaviours
             }
 
         }
-
+        
         public SearchMethod method;
         public float dynamicRadius;
         public float staticRadius;
+        public IWorld world { get; set; }
 
-        public Search(int _priority, float _radius, SearchMethod _method) : base(_priority)
-        {
-            method = _method;
-            dynamicRadius = _radius;
-            staticRadius = dynamicRadius;
-        }
-        public Search(int _priority, float _dynamicRadius, float _staticRadius, SearchMethod _method) : base(_priority)
+        public Search(int _priority, float _radius, SearchMethod _method, IWorld _world) : this(_priority, _radius,_radius,_method,_world) { }
+        public Search(int _priority, float _dynamicRadius, float _staticRadius, SearchMethod _method, IWorld _world) : base(_priority)
         {
             method = _method;
             dynamicRadius = _dynamicRadius;
             staticRadius = _staticRadius;
+            world = _world;
         }
 
-        public override void run(PlaneAgent a)
+        public override void run(IGraphAgent a)
         {
-            a.setNeighbours(new List<Vec3D>());
+            a.neighbours = (new List<Vec3D>());
             switch (method.m)
             {
                 case (0):
-                    a.addNeighbours(searchDynamic(a, dynamicRadius));
+                    a.addNeighbours(searchDynamic(a.getNode(), dynamicRadius));
                     break;
                 case (1):
-                    a.addNeighbours(searchStatic(a, dynamicRadius));
+                    a.addNeighbours(searchStatic(a.getNode(), dynamicRadius));
                     break;
                 case (2):
-                    a.addNeighbours(searchAll(a, dynamicRadius, staticRadius));
+                    a.addNeighbours(searchAll(a.getNode(), dynamicRadius, staticRadius));
                     break;
             }
         }
 
-        public List<Vec3D> searchDynamic(PlaneAgent a, float radius)
+        public List<Vec3D> searchDynamic(Vec3D a, float radius)
         {
-            List<Vec3D> n = a.world.searchDynamic(a, radius * scaleFactor);
+            List<Vec3D> n = world.searchDynamic(a, radius * scaleFactor);
             n.Remove(a);
             return n;
         }
 
-        public List<Vec3D> searchStatic(PlaneAgent a, float radius)
+        public List<Vec3D> searchStatic(Vec3D a, float radius)
         {
-            List<Vec3D> n = a.world.searchStatic(a, radius * scaleFactor);
+            List<Vec3D> n = world.searchStatic(a, radius * scaleFactor);
             n.Remove(a);
             return n;
         }
 
-        public List<Vec3D> searchAll(PlaneAgent a, float dynamicRadius, float staticRadius)
+        public List<Vec3D> searchAll(Vec3D a, float dynamicRadius, float staticRadius)
         {
-            List<Vec3D> n = a.world.searchDynamic(a, dynamicRadius * scaleFactor);
+            List<Vec3D> n = world.searchDynamic(a, dynamicRadius * scaleFactor);
             n.AddRange(searchStatic(a, staticRadius * scaleFactor));
             n.Remove(a);
             return n;

@@ -28,11 +28,6 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddPlaneParameter("Planes", "P", "Agent Planes", GH_ParamAccess.list);
-            pManager.AddParameter(new BehaviourParameter(), "Behaviours", "B", "Behaviours for agents", GH_ParamAccess.list);
-            pManager.AddParameter(new WorldParameter(), "World", "W", "World to contain agents", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Create Agents", "C", "Create the agents", GH_ParamAccess.item);
-
-            pManager[1].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -45,31 +40,16 @@ namespace SlowRoboticsGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             List<Plane> planes = new List<Plane>();
-            List<GH_Behaviour> behaviours = new List<GH_Behaviour>();
-            GH_World world = null;
-
-            bool create = false;
 
             if (!DA.GetDataList(0, planes)) { return; }
-
-            if (!DA.GetData(2, ref world)) { return; }
-            if (!DA.GetData(3, ref create)) { return; }
-
-            if (!DA.GetDataList(1, behaviours))
-            {
-                behaviours = new List<GH_Behaviour>();
-            }
-
-            if (create)
-            {
+          
                 agents = new List<IAgent>();
                 foreach (Plane3D p in planes.ConvertAll(x => { return IO.ToPlane3D(x); }))
                 {
-                    IAgent a = new PlaneAgent(p, world.Value);
-                    foreach (GH_Behaviour b in behaviours) a.addBehaviour(b.Value);
+                    IAgent a = new PlaneAgent(p);
                     agents.Add(a);
                 }
-            }
+
             DA.SetData(0, new GH_ObjectWrapper(agents));
 
         }
@@ -85,7 +65,6 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddMeshParameter("Mesh", "M", "Mesh To Convert", GH_ParamAccess.item);
-            pManager.AddParameter(new WorldParameter(), "World", "W", "World to contain agents", GH_ParamAccess.item);
             pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item);
         }
 
@@ -99,14 +78,12 @@ namespace SlowRoboticsGH
         {
             double stiffness = 0.1;
             Mesh m = null;
-            GH_World world = null;
 
             if (!DA.GetData(0, ref m)) { return; }
-            if (!DA.GetData(1, ref world)) { return; }
-            if (!DA.GetData(2, ref stiffness)) { return; }
+            if (!DA.GetData(1, ref stiffness)) { return; }
 
-            LinkMesh lm = new LinkMesh(new Node(new Vec3D()),world.Value);
-            GH_ObjectWrapper agents = new GH_ObjectWrapper(IO.ConvertMeshToLinkMesh(m, world.Value, (float)stiffness, out lm));
+            LinkMesh lm = new LinkMesh(new Node(new Vec3D()));
+            GH_ObjectWrapper agents = new GH_ObjectWrapper(IO.ConvertMeshToLinkMesh(m, (float)stiffness, out lm));
 
             DA.SetData(0, agents);
             DA.SetData(1, new GH_ObjectWrapper(lm));
@@ -227,14 +204,7 @@ namespace SlowRoboticsGH
         {
             pManager.AddCurveParameter("Curve", "C", "Curve to Divide", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Res", "R", "Number of division points", GH_ParamAccess.item);
-            pManager.AddParameter(new BehaviourParameter(), "Behaviours", "B", "Behaviours for agents", GH_ParamAccess.list);
-            pManager.AddParameter(new WorldParameter(), "World", "W", "World to contain agents", GH_ParamAccess.item);
-            pManager.AddParameter(new LinkMeshParameter(), "LinkMesh", "L", "LinkMesh to contain links", GH_ParamAccess.item);
             pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Create Agents", "C", "Create the agents", GH_ParamAccess.item);
-
-            pManager[1].Optional = true;
-            pManager[4].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -249,56 +219,35 @@ namespace SlowRoboticsGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             Curve curve = null;
-            List<GH_Behaviour> behaviours = new List<GH_Behaviour>();
-            GH_World world = null;
             double stiffness = 0.1;
-            //TODO - use link mesh!
-
-
-            // GH_LinkMesh linkMesh = null;
             int res = 0;
-            bool create = false;
 
             if (!DA.GetData(0, ref curve)) { return; }
             if (!DA.GetData(1, ref res)) { return; }
-            if (!DA.GetData(3, ref world)) { return; }
-            if (!DA.GetData(6, ref create)) { return; }
-            if (!DA.GetData(5, ref stiffness)) { return; }
-            if (!DA.GetDataList(2, behaviours))
-            {
-                behaviours = new List<GH_Behaviour>();
-            }
 
-           
-            if (create)
-            {
+            if (!DA.GetData(5, ref stiffness)) { return; }
+
                 //reset agent list and behaviours
                 agents = new List<IAgent>();
-                List<IBehaviour> agentBehaviours= new List<IBehaviour>();
-                foreach (GH_Behaviour ghb in behaviours) agentBehaviours.Add(ghb.Value);
                 
                 //first agent
                 Plane currentPlane;
                 curve.FrameAt(0, out currentPlane);
-                PlaneAgent a = new PlaneAgent(IO.ToPlane3D(currentPlane), world.Value);
-                foreach (IBehaviour _b in agentBehaviours) a.addBehaviour(_b);
+                PlaneAgent a = new PlaneAgent(IO.ToPlane3D(currentPlane));
                 agents.Add(a);
 
-                linkMesh = new LinkMesh(a, world.Value);
+                linkMesh = new LinkMesh(a);
                 //all other agents
                 double[] pts = curve.DivideByCount(res, true);
 
                 for (int i = 1; i < pts.Length; i++)
                 {
                     curve.FrameAt(pts[i], out currentPlane);
-                    PlaneAgent b = new PlaneAgent(IO.ToPlane3D(currentPlane), world.Value);
-                    foreach (IBehaviour _b in agentBehaviours) b.addBehaviour(_b);
-
+                    PlaneAgent b = new PlaneAgent(IO.ToPlane3D(currentPlane));
                     linkMesh.connectNodes(a, b, (float)stiffness);
                     agents.Add(b);
                     a = b;
                 }
-            }
 
             DA.SetData(0, new GH_ObjectWrapper(agents));
             DA.SetData(1, new GH_ObjectWrapper(linkMesh));
@@ -688,11 +637,7 @@ namespace SlowRoboticsGH
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddParameter(new NodeParameter(), "Parent Node", "N", "Parent node of the LinkMesh", GH_ParamAccess.item);
-            pManager.AddParameter(new BehaviourParameter(), "Behaviours", "B", "Behaviours for agents", GH_ParamAccess.list);
-            pManager.AddParameter(new WorldParameter(), "World", "W", "World containing the linkMesh", GH_ParamAccess.item);
-
-            pManager[1].Optional = true;
+            pManager.AddGenericParameter("Parent Node", "N", "Parent node of the LinkMesh", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -704,27 +649,26 @@ namespace SlowRoboticsGH
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            GH_Node node = null;
-            GH_World world = null;
-            List<GH_Behaviour> behaviours = new List<GH_Behaviour>();
+            GH_ObjectWrapper node = null;
 
             if (!DA.GetData(0, ref node)) { return; }
-            if (!DA.GetData(2, ref world)) { return; }
 
-            if (!DA.GetDataList(1, behaviours))
+            if (node.Value is IAgent)
             {
-                behaviours = new List<GH_Behaviour>();
+                linkMesh = new LinkMesh((Node)node.Value);
             }
 
-            if (linkMesh != null)
+            else if (node.Value is Node)
             {
-                linkMesh.setBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
+                linkMesh = new LinkMesh((Node)node.Value);
             }
-            else
+
+            else if (node.Value is Plane3D)
             {
-                linkMesh = new LinkMesh(node.Value, world.Value);
-                foreach (GH_Behaviour b in behaviours) linkMesh.addBehaviour(b.Value);
-            }
+                linkMesh = new LinkMesh(new Node((Plane3D)node.Value));
+
+            } 
+
 
             DA.SetData(0, new GH_ObjectWrapper(linkMesh));
         }

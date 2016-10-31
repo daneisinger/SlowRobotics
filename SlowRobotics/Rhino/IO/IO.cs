@@ -14,12 +14,12 @@ namespace SlowRobotics.Rhino.IO
 {
     public static class IO
     {
-        public static List<PlaneAgent> ConvertCurveToLinkMesh(Curve c, int res, IWorld world, float stiffness, out LinkMesh lm)
+        public static List<PlaneAgent> ConvertCurveToLinkMesh(Curve c, int res, float stiffness, out LinkMesh lm)
         {
             Plane startPlane;
             c.FrameAt(0, out startPlane);
-            PlaneAgent a = new PlaneAgent(ToPlane3D(startPlane), world);
-            lm = new LinkMesh(a, world);
+            PlaneAgent a = new PlaneAgent(ToPlane3D(startPlane));
+            lm = new LinkMesh(a);
             a.parent = lm;
 
             List<PlaneAgent> agents = new List<PlaneAgent>();
@@ -31,7 +31,7 @@ namespace SlowRobotics.Rhino.IO
             {
                 Plane currentPlane;
                 c.FrameAt(pts[i], out currentPlane);
-                PlaneAgent b = new PlaneAgent(ToPlane3D(currentPlane), world);
+                PlaneAgent b = new PlaneAgent(ToPlane3D(currentPlane));
                 b.parent = lm;
 
                 agents.Add(b);
@@ -42,18 +42,18 @@ namespace SlowRobotics.Rhino.IO
             return agents;
         }
 
-        public static List<IAgent> ConvertMeshToLinkMesh(Mesh m, IWorld world, float stiffness, out LinkMesh lm)
+        public static List<IAgent> ConvertMeshToLinkMesh(Mesh m, float stiffness, out LinkMesh lm)
         {
             List<PlaneAgent> agents = new List<PlaneAgent>();
-            PlaneAgent a = new PlaneAgent(new Plane3D(ToVec3D(m.TopologyVertices[0])), world);
-            lm = new LinkMesh(a, world);
+            PlaneAgent a = new PlaneAgent(new Plane3D(ToVec3D(m.TopologyVertices[0])));
+            lm = new LinkMesh(a);
             a.parent = lm;
             agents.Add(a);
 
             for (int i = 1; i < m.TopologyVertices.Count; i++)
             {
                 Point3f p = m.TopologyVertices[i];
-                PlaneAgent aa = new PlaneAgent(new Plane3D(ToVec3D(p)), world);
+                PlaneAgent aa = new PlaneAgent(new Plane3D(ToVec3D(p)));
                 aa.parent = lm;
                 agents.Add(aa);
             }
@@ -68,9 +68,9 @@ namespace SlowRobotics.Rhino.IO
 
         }
 
-        public static PlaneAgent ToPlaneAgent(Plane p, IWorld world)
+        public static PlaneAgent ToPlaneAgent(Plane p)
         {
-            return new PlaneAgent(ToPlane3D(p), world);
+            return new PlaneAgent(ToPlane3D(p));
         }
 
         public static Plane3D ToPlane3D(Plane p)

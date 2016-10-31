@@ -23,23 +23,28 @@ namespace SlowRobotics.Agent.Behaviours
                 inertiaMod = 0;
             }
 
-            public override void test(PlaneAgent a, Plane3D p)
+            public override void interact(IParticleAgent a, IAgent b)
             {
-                Vec3D ab = p.sub(a);
-                float d = ab.magnitude();
-                if (d > 0 && d < maxDist)
+                Vec3D b_v = b as Vec3D;
+                if (b_v != null)
                 {
-                    float f = SR_Math.map(d, 0, maxDist, 1, 0);
-                    float sf = ExponentialInterpolation.Squared.interpolate(0, frictionCof, f);
-                    inertiaMod += frictionCof * scaleFactor;
+                    Vec3D ab = b_v.sub(a.getParticle());
+                    float d = ab.magnitude();
+                    if (d > 0 && d < maxDist)
+                    {
+                        float f = SR_Math.map(d, 0, maxDist, 1, 0);
+                        float sf = ExponentialInterpolation.Squared.interpolate(0, frictionCof, f);
+                        inertiaMod += frictionCof * scaleFactor;
+                    }
                 }
 
             }
 
-            public override void run(PlaneAgent a)
+            public override void run(IParticleAgent a)
             {
-                a.addInertia(inertiaMod);
-                inertiaMod = 0;
+
+                    a.getParticle().addInertia(inertiaMod);
+                    inertiaMod = 0;
             }
         }
 
@@ -57,12 +62,13 @@ namespace SlowRobotics.Agent.Behaviours
                 minAge = _minAge;
             }
 
-            public override void run(PlaneAgent a)
+            public override void run(IParticleAgent a)
             {
-                if (a.getInertia() + (a.getSpeed() * speedFactor * scaleFactor) < minInertia && a.age > minAge)
-                {
-                    a.setInertia(0);
-                }
+                Particle p = a.getParticle();
+                    if (p.getInertia() + (p.getSpeed() * speedFactor * scaleFactor) < minInertia && p.age > minAge)
+                    {
+                        p.setInertia(0);
+                    }
             }
         }
 
@@ -78,9 +84,10 @@ namespace SlowRobotics.Agent.Behaviours
                 minZ = _minZ;
             }
 
-            public override void run(PlaneAgent a)
+            public override void run(IParticleAgent a)
             {
-                if (a.z < minZ) a.setInertia(0);
+                Particle a_p = a.getParticle();
+                if (a_p.z < minZ) a_p.setInertia(0);
             }
         }
 

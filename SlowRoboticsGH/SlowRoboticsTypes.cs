@@ -157,7 +157,7 @@ namespace SlowRoboticsGH
         public GH_LinkMesh() { this.Value = null; }
         public GH_LinkMesh(GH_LinkMesh goo) { this.Value = goo.Value; }
         public GH_LinkMesh(LinkMesh native) { this.Value = native; }
-        public GH_LinkMesh(Node parent, IWorld world) { this.Value = new LinkMesh(parent,world); }
+        public GH_LinkMesh(Node parent) { this.Value = new LinkMesh(parent); }
 
         public override IGH_Goo Duplicate() => new GH_LinkMesh(this);
         public override bool IsValid => true;
@@ -176,6 +176,16 @@ namespace SlowRoboticsGH
             if (source is GH_LinkMesh)
             {
                 Value = ((GH_LinkMesh)source).Value;
+                return true;
+            }
+            if(source is GH_Agent)
+            {
+                Value = new LinkMesh((Node)((GH_Agent)source).Value);
+                return true;
+            }
+            if (source is GH_Plane3D)
+            {
+                Value = new LinkMesh(new Node(((GH_Plane3D)source).Value));
                 return true;
             }
             return false;
@@ -216,6 +226,21 @@ namespace SlowRoboticsGH
             if (source is GH_Agent)
             {
                 Value = ((GH_Agent)source).Value;
+                return true;
+            }
+            if (source is GH_Plane)
+            {
+                Value = new PlaneAgent(IO.ToPlane3D(((GH_Plane)source).Value));
+                return true;
+            }
+            if (source is Plane3D)
+            {
+                Value = new PlaneAgent(source as Plane3D);
+                return true;
+            }
+            if (source is GH_Plane3D)
+            {
+                Value = new PlaneAgent(((GH_Plane3D)source).Value);
                 return true;
             }
             return false;

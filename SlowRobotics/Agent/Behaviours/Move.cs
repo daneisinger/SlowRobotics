@@ -43,9 +43,10 @@ namespace SlowRobotics.Agent.Behaviours
                 axis = _axis;
             }
 
-            public override void run(PlaneAgent a)
+            public override void run(IParticleAgent a)
             {
-                if(scaleFactor>0)a.addForce(getAxis(a).scale(strength * scaleFactor));
+                Particle a_p = a.getParticle();
+                if (scaleFactor > 0) a_p.addForce(getAxis(a_p).scale(strength * scaleFactor));
             }
 
             public Vec3D getAxis(Plane3D a)
@@ -73,10 +74,11 @@ namespace SlowRobotics.Agent.Behaviours
                 field = _field;
             }
 
-            public override void run(PlaneAgent a)
+            public override void run(IParticleAgent a)
             {
-                FieldData d = field.evaluate(a);
-                if (d.hasVectorData()) a.addForce(d.vectorData.scale(strength * scaleFactor));
+                Particle a_p = a.getParticle();
+                FieldData d = field.evaluate(a_p);
+                if (d.hasVectorData()) a_p.addForce(d.vectorData.scale(strength * scaleFactor));
             }
         }
 
@@ -98,27 +100,33 @@ namespace SlowRobotics.Agent.Behaviours
                 scaleFactor = 1;
             }
 
-            public override void test(PlaneAgent a, Plane3D p)
+            public override void interact(IParticleAgent a, IAgent b)
             {
-                if (!inXY)
-                {
-                    force.addSelf(calcForce(a, a.sub(p), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
-                }
-                else
-                {
-                    ToxiPlane tp = new ToxiPlane(a, a.zz);
-                    Vec3D op = tp.getProjectedPoint(p);
-                    float d = a.distanceTo(p);
-                    float f = SR_Math.map(d, minDist, maxDist, 1, 0);
-                    float sf = ExponentialInterpolation.Squared.interpolate(0, strength, f);
-                    if (d > minDist && d < maxDist) force.addSelf(a.sub(op).normalizeTo(sf));
+                Vec3D b_v = b as Vec3D;
+                if(b_v!= null) { 
+                Particle a_p = a.getParticle();
+                    
+                    if (!inXY)
+                    {
+                        force.addSelf(calcForce(a_p, a_p.sub(b_v), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
+                    }
+                    else
+                    {
+                        ToxiPlane tp = new ToxiPlane(a_p, a_p.zz);
+                        Vec3D op = tp.getProjectedPoint(b_v);
+                        float d = a_p.distanceTo(b_v);
+                        float f = SR_Math.map(d, minDist, maxDist, 1, 0);
+                        float sf = ExponentialInterpolation.Squared.interpolate(0, strength, f);
+                        if (d > minDist && d < maxDist) force.addSelf(a_p.sub(op).normalizeTo(sf));
+                    }
                 }
 
             }
 
-            public override void run(PlaneAgent a)
+            public override void run(IParticleAgent a)
             {
-                a.addForce(force);
+                Particle a_p = a.getParticle();
+                a_p.addForce(force);
                 reset();
             }
         }
@@ -128,20 +136,25 @@ namespace SlowRobotics.Agent.Behaviours
 
             public Together(int _priority, float _strength, float _minDist, float _maxDist, bool _inXY) : base(_priority, _strength, _minDist, _maxDist, _inXY){ }
 
-            public override void test(PlaneAgent a, Plane3D p)
+            public override void interact(IParticleAgent a, IAgent b)
             {
-                if (!inXY)
+                Vec3D b_v = b as Vec3D;
+                if (b_v != null)
                 {
-                    force.addSelf(calcForce(a, p.sub(a), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
-                }
-                else
-                {
-                    ToxiPlane tp = new ToxiPlane(a, a.zz);
-                    Vec3D op = tp.getProjectedPoint(p);
-                    float d = a.distanceTo(p);
-                    float f = SR_Math.map(d, minDist, maxDist, 1, 0);
-                    float sf = ExponentialInterpolation.Squared.interpolate(0, strength, f);
-                    if (d > minDist && d < maxDist) force.addSelf(op.sub(a).normalizeTo(sf));
+                    Particle a_p = a.getParticle();
+                    if (!inXY)
+                    {
+                        force.addSelf(calcForce(a_p, b_v.sub(a_p), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
+                    }
+                    else
+                    {
+                        ToxiPlane tp = new ToxiPlane(a_p, a_p.zz);
+                        Vec3D op = tp.getProjectedPoint(b_v);
+                        float d = a_p.distanceTo(b_v);
+                        float f = SR_Math.map(d, minDist, maxDist, 1, 0);
+                        float sf = ExponentialInterpolation.Squared.interpolate(0, strength, f);
+                        if (d > minDist && d < maxDist) force.addSelf(op.sub(a_p).normalizeTo(sf));
+                    }
                 }
             }
         }
@@ -151,18 +164,23 @@ namespace SlowRobotics.Agent.Behaviours
 
             public TogetherInZ(int _priority, float _strength, float _maxDist) : base(_priority,_strength, _maxDist) {}
 
-            public override void test(PlaneAgent a, Plane3D p)
+            public override void interact(IParticleAgent a, IAgent b)
             {
-                Vec3D ab = p.sub(a);
-                float d = ab.magnitude();
-                if (d > minDist && d < maxDist)
+                Vec3D b_v = b as Vec3D;
+                if (b_v != null)
                 {
-                    float f = SR_Math.map(d, 0, maxDist, 1, 0);
-                    float sf = ExponentialInterpolation.Squared.interpolate(0, strength, f);
-                    Vec3D zt = a.zz.scale(sf * scaleFactor);
-                    float angle = ab.angleBetween(a.zz, true);
-                    if (angle > (float)Math.PI / 2) zt.invert();
-                    a.addForce(zt);
+                    Particle a_p = a.getParticle();
+                    Vec3D ab = b_v.sub(a_p);
+                    float d = ab.magnitude();
+                    if (d > minDist && d < maxDist)
+                    {
+                        float f = SR_Math.map(d, 0, maxDist, 1, 0);
+                        float sf = ExponentialInterpolation.Squared.interpolate(0, strength, f);
+                        Vec3D zt = a_p.zz.scale(sf * scaleFactor);
+                        float angle = ab.angleBetween(a_p.zz, true);
+                        if (angle > (float)Math.PI / 2) zt.invert();
+                        a_p.addForce(zt);
+                    }
                 }
             }
         }
@@ -200,12 +218,22 @@ namespace SlowRobotics.Agent.Behaviours
                 scaleFactor = 1;
             }
 
-            public override void test(LinkMesh a, Plane3D p)
+            public override void interact(IAgent a, IAgent b)
             {
-                if (p is Node) test(a, (Node)p);
+                Node b_n = b as Node;
+                if (b_n != null)
+                {
+                    LinkMesh a_lm = a as LinkMesh;
+                    if (a_lm != null) interact(a_lm, b_n);
+
+                    PlaneAgent a_p = a as PlaneAgent;
+                    if (a_p != null) interact(a_p, b_n);
+                    
+                }
+
             }
 
-            public void test(LinkMesh lm, Node p)
+            public void interact(LinkMesh lm, Node p)
             {
                 if (!used.Contains(p.parent))
                 {
@@ -230,12 +258,7 @@ namespace SlowRobotics.Agent.Behaviours
                 }
             }
 
-            public override void test(PlaneAgent a, Plane3D p)
-            {
-                if (p is Node) test(a, (Node)p);
-            }
-
-            public void test(PlaneAgent a, Node p)
+            public void interact(PlaneAgent a, Node p)
             {
                 if (!used.Contains(p.parent))
                 {
@@ -245,7 +268,7 @@ namespace SlowRobotics.Agent.Behaviours
                         float d = a.distanceTo(pt);
                         if (d < minD && d > 0)
                         {
-                            targetA = a.copy();
+                            targetA = ((Vec3D)a).copy();
                             targetB = b_l.copy();
                             minD = d;
                             closestL = null;
@@ -255,35 +278,17 @@ namespace SlowRobotics.Agent.Behaviours
                 }
             }
 
-            public override void run(LinkMesh a)
+            public override void run(IParticleAgent a)
             {
                 if (targetA != null && minD > 0.2)
                 {
-                    a.addForce(calcForce(a, targetB.sub(a), 0.25f, maxDist, strength, ExponentialInterpolation.Squared));
-
-                    if (minD < 0.5)
-                    {
-                       // if (targetA.distanceTo(closestL.a) > 2 && targetA.distanceTo(closestL.b) > 2) split(a, closestL, targetA);
-                    }
+                    Particle a_p = a.getParticle();
+                    a.addForce(calcForce(a_p, targetB.sub(a_p), 0.25f, maxDist, strength, ExponentialInterpolation.Squared));
                 }
 
                 reset();
             }
-
-            public override void run(PlaneAgent a)
-            {
-                if (targetA != null && minD > 0.2)
-                {
-                    a.addForce(calcForce(a, targetB.sub(a), 0.25f, maxDist, strength, ExponentialInterpolation.Squared));
-                    if (minD < 0.5)
-                    {
-                        //if (targetA.distanceTo(closestL.a) > 2 && targetA.distanceTo(closestL.b) > 2) split(a, closestL, targetA);
-                    }
-                }
-
-                reset();
-            }
-
+            /*
             public void split(PlaneAgent a, Link l, Vec3D pt)
             {
                 PlaneAgent aa = new PlaneAgent(new Plane3D(pt), a.world);
@@ -301,7 +306,7 @@ namespace SlowRobotics.Agent.Behaviours
                 foreach (IBehaviour b in a.behaviours.getData()) aa.addBehaviour(b);
 
                 a.world.addDynamic(aa);
-            }
+            }*/
         }
 
     }

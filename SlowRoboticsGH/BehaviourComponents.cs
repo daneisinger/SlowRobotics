@@ -276,8 +276,9 @@ namespace SlowRoboticsGH
             pManager.AddBooleanParameter("Add Dynamic", "D", "Toggle between adding a static or dynamic node", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Brace", "B", "Try to add brace springs for bend resistance", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddParameter(new WorldParameter(), "World", "W", "World to add new agents to", GH_ParamAccess.item);
 
-    }
+        }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
@@ -289,7 +290,7 @@ namespace SlowRoboticsGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             List<GH_Behaviour> behaviours = new List<GH_Behaviour>();
-            LinkMesh parent = null;
+            GH_LinkMesh parent = null;
             Vector3d offset = Vector3d.Unset;
             double stiffness = 0.1;
             double braceStiffness = 0.05;
@@ -297,22 +298,24 @@ namespace SlowRoboticsGH
             bool dynamic = true;
             bool brace = true;
             int priority = 5;
+            GH_World world = null;
             //Object b = null;
 
             if (!DA.GetDataList(0, behaviours)) { return; }
-            if (!DA.GetData(2, ref parent)) { return; }
-            if (!DA.GetData(3, ref offset)) { return; }
-            if (!DA.GetData(4, ref stiffness)) { return; }
-            if (!DA.GetData(5, ref braceStiffness)) { return; }
-            if (!DA.GetData(6, ref freq)) { return; }
-            if (!DA.GetData(7, ref dynamic)) { return; }
-            if (!DA.GetData(8, ref brace)) { return; }
-            if (!DA.GetData(9, ref priority)) { return; }
+            if (!DA.GetData(1, ref parent)) { return; }
+            if (!DA.GetData(2, ref offset)) { return; }
+            if (!DA.GetData(3, ref stiffness)) { return; }
+            if (!DA.GetData(4, ref braceStiffness)) { return; }
+            if (!DA.GetData(5, ref freq)) { return; }
+            if (!DA.GetData(6, ref dynamic)) { return; }
+            if (!DA.GetData(7, ref brace)) { return; }
+            if (!DA.GetData(8, ref priority)) { return; }
+            if (!DA.GetData(9, ref world)) { return; }
 
             if (addLink != null)
             {
                 addLink.behaviours = (behaviours.ConvertAll(b => { return b.Value; }));
-                addLink.parent = parent;
+                addLink.parent = parent.Value;
                 addLink.stiffness = (float)stiffness;
                 addLink.braceStiffness = (float)braceStiffness;
                 addLink.offset = IO.ToVec3D(offset);
@@ -320,10 +323,11 @@ namespace SlowRoboticsGH
                 addLink.dynamic = dynamic;
                 addLink.tryToBrace = brace;
                 addLink.priority = priority;
+                addLink.world = world.Value;
             }
             else
             {
-                addLink = new Add.BracedLinks(priority, parent, brace, freq, IO.ToVec3D(offset), (float)stiffness, (float) braceStiffness, behaviours.ConvertAll(b => { return b.Value; }),dynamic);
+                addLink = new Add.BracedLinks(priority, parent.Value, brace, freq, IO.ToVec3D(offset), (float)stiffness, (float) braceStiffness, behaviours.ConvertAll(b => { return b.Value; }),dynamic, world.Value);
                 
             }
             DA.SetData(0, addLink);
@@ -1151,6 +1155,7 @@ namespace SlowRoboticsGH
             pManager.AddNumberParameter("Radius", "R", "Search Radius", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Search Method", "S", "Search Method", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddParameter(new WorldParameter(),"World", "W", "World to search", GH_ParamAccess.item);
 
             Param_Integer param = pManager[1] as Param_Integer;
             param.AddNamedValue("Dynamic", 0);
@@ -1170,12 +1175,13 @@ namespace SlowRoboticsGH
             double radius = 10;
             int method = 2;
             int priority = 5;
+            GH_World world = null;
 
             if (!DA.GetData(0, ref radius)) { return; }
             if (!DA.GetData(1, ref method)) { return; }
             if (!DA.GetData(2, ref priority)) { return; }
+            if (!DA.GetData(3, ref world)) { return; }
 
-            
             Search.SearchMethod search = Search.SearchMethod.All;
 
             switch (method)
@@ -1200,10 +1206,11 @@ namespace SlowRoboticsGH
                 searchBehaviour.staticRadius = (float)radius;
                 searchBehaviour.method = search;
                 searchBehaviour.priority = priority;
+                searchBehaviour.world = world.Value;
             }
             else
             {
-                searchBehaviour = new Search(priority, (float)radius, search);
+                searchBehaviour = new Search(priority, (float)radius, search,world.Value);
             } 
             DA.SetData(0, searchBehaviour);
         }
@@ -1293,7 +1300,7 @@ namespace SlowRoboticsGH
 
             pManager.AddIntegerParameter("Frequency", "F", "Save frequency", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
-
+            pManager.AddParameter(new WorldParameter(), "World", "W", "World to add to", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -1307,19 +1314,21 @@ namespace SlowRoboticsGH
         {
             int frequency = 2;
             int priority = 0;
+            GH_World world = null;
 
             if (!DA.GetData(0, ref frequency)) { return; }
             if (!DA.GetData(1, ref priority)) { return; }
-
+            if (!DA.GetData(2, ref world)) { return; }
 
             if (addBehaviour != null)
             {
                 addBehaviour.frequency = frequency;
                 addBehaviour.priority = priority;
+                addBehaviour.world = world.Value;
             }
             else
             {
-                addBehaviour = new Add.StateToWorld(priority,frequency);
+                addBehaviour = new Add.StateToWorld(priority,world.Value,frequency);
             }
             DA.SetData(0, addBehaviour);
         }

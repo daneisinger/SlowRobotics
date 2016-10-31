@@ -17,11 +17,11 @@ namespace SlowRobotics.Agent
         void run(IAgent a);
 
         /// <summary>
-        /// Method to test for conditions before updating
+        /// Method to interact with other agents
         /// </summary>
         /// <param name="a"></param>
         /// <param name="p"></param>
-        void test(IAgent a, Plane3D p);
+        void interact(IAgent a, IAgent b);
 
         /// <summary>
         /// Return priority of this behaviour

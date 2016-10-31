@@ -9,19 +9,17 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent
 {
-    public class PlaneAgent : Particle, IAgent
+    public class PlaneAgent : Particle, IGraphAgent, IParticleAgent, IStateAgent
     {
+        public List<Vec3D> neighbours { get; set; }
+        public PriorityQueue<IBehaviour> behaviours { get; set; }
 
-        public IWorld world { get; set; }
-        public List<Vec3D> neighbours;
-        public PriorityQueue<IBehaviour> behaviours {get; set; }
+        public PlaneAgent(Vec3D _o, Vec3D _x, Vec3D _y) : this(new Plane3D(_o, _x, _y)) { }
+        public PlaneAgent(Plane3D p) : this(new Node(p)) { }
 
-        public PlaneAgent(Vec3D _o, Vec3D _x, Vec3D _y,  IWorld _world) : this(new Plane3D(_o, _x, _y), _world) { }
-        public PlaneAgent(Plane3D p,  IWorld _world) : this(new Node(p),_world) { }
-
-        public PlaneAgent(Node n,  IWorld _world) : base(n)
+        public PlaneAgent(Node n) : base(n)
         {
-            world = _world;
+
             init();
             foreach (Link l in getLinks())
             {
@@ -29,12 +27,9 @@ namespace SlowRobotics.Agent
             }
         }
 
-        //empty world initialiser
-        public PlaneAgent(Plane3D p) : this(p, null) { }
-
-        public new PlaneAgent copy()
+        public new IGraphAgent copy()
         {
-            PlaneAgent b = new PlaneAgent(this, world);
+            PlaneAgent b = new PlaneAgent(this);
             b.behaviours = behaviours;
             return b;
         }
@@ -45,28 +40,10 @@ namespace SlowRobotics.Agent
             behaviours = new PriorityQueue<IBehaviour>();
         }
 
-        /*
-        public void Lock()
-        {
-            Node staticNode = new Node(this);
-            world.addStatic(staticNode);
-            world.removeDynamic(this);
-        }
-        */
-
         public override void step(float damping)
         {
             foreach (IBehaviour b in behaviours.getData()) b.run(this);
-            if (getInertia() == 0)
-            {
-
-                //TODO - have world manage this
-                //Lock();
-            }
-            else
-            {
-                update(damping);
-            }
+            update(damping);
         }
 
         public void addBehaviour(IBehaviour b)
@@ -90,11 +67,6 @@ namespace SlowRobotics.Agent
             foreach (IBehaviour b in newBehaviours) behaviours.Enqueue(b);
         }
 
-        public void setNeighbours(List<Vec3D> _neighbours)
-        {
-            neighbours = _neighbours;
-        }
-
         public void addNeighbours(List<Vec3D> _neighbours)
         {
             neighbours.AddRange(_neighbours);
@@ -105,5 +77,9 @@ namespace SlowRobotics.Agent
             return neighbours.Count > 0;
         }
 
+        public Particle getParticle()
+        {
+            return this;
+        }
     }
 }

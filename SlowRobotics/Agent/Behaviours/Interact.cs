@@ -17,15 +17,17 @@ namespace SlowRobotics.Agent.Behaviours
             foreach (IBehaviour b in _interactionBehaviours) behaviours.Enqueue(b);
         }
 
-        public override void run(PlaneAgent a)
+        public override void run(IGraphAgent a)
         {
+
             if (a.hasNeighbours())
             {
                 // Testing step - loop through all neighbours
                 // used for closest point search etc.
-                foreach (Plane3D p in a.neighbours)
+                foreach (IAgent p in a.neighbours)
                 {
-                    foreach (IBehaviour b in behaviours.getData()) b.test(a,p); 
+                    //TODO - neighbour search doesnt return IAgent
+                    foreach (IBehaviour b in behaviours.getData()) b.interact(a, p);
                 }
                 //update the agent using test data
                 foreach (IBehaviour b in behaviours.getData()) b.run(a);

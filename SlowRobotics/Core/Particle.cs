@@ -12,6 +12,7 @@ namespace SlowRobotics.Core
         protected Vec3D vel = new Vec3D();
         float spd = 1;
         float accLimit = 1;
+        public int age = 0;
         private float inertia = 1;
         public bool f { get; set; } = false; //TODO sort out better locking system
 
@@ -85,6 +86,10 @@ namespace SlowRobotics.Core
             return vel.copy();
         }
 
+        public float getDeltaForStep()
+        {
+            return vel.magnitude();
+        }
         public void scaleInertia(float factor)
         {
             setInertia(inertia *= factor);

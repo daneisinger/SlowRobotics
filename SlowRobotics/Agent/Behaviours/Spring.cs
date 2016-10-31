@@ -18,23 +18,26 @@ namespace SlowRobotics.Agent.Behaviours
             verlet = _verlet;
         }
 
-        public override void run(LinkMesh a)
+        public override void run(IStateAgent a)
         {
-            List<Link> springs = a.getLinks();
-            springs.AddRange(a.getTertiaryLinks());
-            foreach (Link l in springs)
-            {
-                float d = (l.l - (l.getLength()));
-                Vec3D ab = l.b.sub(l.a).getNormalized();
-                if (l.a is Particle)
+            LinkMesh a_lm = a as LinkMesh;
+            if(a_lm != null) { 
+                List<Link> springs = a_lm.getLinks();
+                springs.AddRange(a_lm.getTertiaryLinks());
+                foreach (Link l in springs)
                 {
-                    Particle p = (Particle)l.a;
-                    p.addForce(ab.scale(-d * l.stiffness * damping * scaleFactor));//hookes law restorative force
-                }
-                if (l.b is Particle && verlet)
-                {
-                    Particle p = (Particle)l.b;
-                    p.addForce(ab.scale(d * l.stiffness * damping * scaleFactor));
+                    float d = (l.l - (l.getLength()));
+                    Vec3D ab = l.b.sub(l.a).getNormalized();
+                    if (l.a is Particle)
+                    {
+                        Particle p = (Particle)l.a;
+                        p.addForce(ab.scale(-d * l.stiffness * damping * scaleFactor));//hookes law restorative force
+                    }
+                    if (l.b is Particle && verlet)
+                    {
+                        Particle p = (Particle)l.b;
+                        p.addForce(ab.scale(d * l.stiffness * damping * scaleFactor));
+                    }
                 }
             }
 

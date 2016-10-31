@@ -40,36 +40,44 @@ namespace SlowRobotics.Agent
             return priority;
         }
         
-
-        //TODO - rethink this to be more generic
-
-        /// <summary>
-        /// Cast to appropriate behaviour methods
-        /// </summary>
-        /// <param name="a"></param>
+        
         public virtual void run(IAgent a)
         {
-            if (a is PlaneAgent) run((PlaneAgent)a);
-            if (a is LinkMesh) run((LinkMesh)a);
+            IStateAgent a_s = a as IStateAgent;
+            if (a_s != null) run(a_s);
+
+            IDiscreteAgent a_d = a as IDiscreteAgent;
+            if (a_d != null) run(a_d);
+
+            IGraphAgent a_g = a as IGraphAgent;
+            if (a_g != null) run(a_g);
+
+            IParticleAgent a_p = a as IParticleAgent;
+            if (a_p != null) run(a_p);
         }
 
-        public virtual void test(IAgent a, Plane3D p)
+        public virtual void run(IStateAgent a) { }
+        public virtual void run(IGraphAgent a) { }
+        public virtual void run(IParticleAgent a) { }
+        public virtual void run(IDiscreteAgent a) { }
+
+        public virtual void interact(IAgent a, IAgent b)
         {
-            if (a is PlaneAgent) test((PlaneAgent)a, p);
-            if (a is LinkMesh) test((LinkMesh)a, p);
+            IStateAgent a_s = a as IStateAgent;
+            if (a_s != null) interact(a_s,b);
+
+            IDiscreteAgent a_d = a as IDiscreteAgent;
+            if (a_d != null) interact(a_d,b);
+
+            IGraphAgent a_g = a as IGraphAgent;
+            if (a_g != null) interact(a_g,b);
+
+            IParticleAgent a_p = a as IParticleAgent;
+            if (a_p != null) interact(a_p,b);
         }
-
-        /// <summary>
-        /// Function for behaviour to run. Override this function in new behaviours
-        /// </summary>
-        /// <param name="a">Current agent</param>
-        public virtual void run(PlaneAgent a) {}
-
-        public virtual void test(PlaneAgent a, Plane3D p) { }
-
-        public virtual void run(LinkMesh a) { }
-
-        public virtual void test(LinkMesh a, Plane3D p) { }
-
+        public virtual void interact(IStateAgent a, IAgent b) { }
+        public virtual void interact(IGraphAgent a, IAgent b) { }
+        public virtual void interact(IParticleAgent a, IAgent b) { }
+        public virtual void interact(IDiscreteAgent a, IAgent b) { }
     }
 }

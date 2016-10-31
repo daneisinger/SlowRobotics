@@ -85,16 +85,16 @@ namespace SlowRobotics.Core
             dpts.AddRange(spts);
             return dpts;
         }
-        public void addStatic(Node p)
+        public void addStatic(IState p)
         {
             if (p is IAgent) pop.Add((IAgent)p); 
-            staticTree.addPoint(p);
+            staticTree.addPoint(p.getPos());
         }
 
-        public bool removeStatic(Node p)
+        public bool removeStatic(IState p)
         {
             if (p is IAgent) pop.Remove((IAgent)p);
-            return staticTree.remove(p);
+            return staticTree.remove(p.getPos());
         }
 
         public void run()
@@ -104,19 +104,44 @@ namespace SlowRobotics.Core
 
         public void run(float damping)
         {
+            //run behaviours and measure average change in positions
+            float worldDelta = 0;
             Random r = new Random();
             int steps = (int) (1 / damping);
             for (int i=0;i< steps; i++)
             {
-                foreach (IAgent a in pop.OrderBy(n => r.Next())) a.step(damping);
+                foreach (IAgent a in pop.OrderBy(n => r.Next()))
+                {
+                    a.step(damping);
+                   // worldDelta+=a.getDelta();
+                }
             }
-            
+
+            //can use this if needed
+            worldDelta /= (steps * pop.Count);
+
             //rebuild octrees
+            List<IAgent> remove = new List<IAgent>();
             dynamicTree = new Plane3DOctree(new Vec3D(-bounds, -bounds, -bounds), bounds * 2);
             foreach (IAgent a in pop)
             {
-                if(a is Particle)dynamicTree.addPoint((Particle)a);
+                if (a is Particle)
+                {
+                    Particle p = (Particle)a;
+                    if (p.getInertia() != 0)
+                    {
+                        dynamicTree.addPoint(p);
+                    }
+                    else
+                    {
+                        staticTree.addPoint(p);
+                        remove.Add(a);
+                    }
+                }
             }
+
+            //cleanup
+            foreach (IAgent a in remove) pop.Remove(a);
         }
     }
 }

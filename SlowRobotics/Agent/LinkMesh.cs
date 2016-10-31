@@ -8,16 +8,12 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent
 {
-    public class LinkMesh : Node, IAgent
+    public class LinkMesh : Node, IStateAgent
     {
-        public IWorld world { get; set; }
         public PriorityQueue<IBehaviour> behaviours { get; set; }
 
         HashSet<Link> tertiaryLinks;
 
-        public LinkMesh(Node n, IWorld _world):this(n){
-            world = _world;
-        }
         public LinkMesh(Node n) : base(n)
         {
             behaviours = new PriorityQueue<IBehaviour>();
@@ -137,6 +133,15 @@ namespace SlowRobotics.Agent
             return false;
         }
 
+        public float getDeltaForStep()
+        {
+            return 0;
+            /*
+            return getNodes().Sum(x => {
+                return (x is Particle) ? ((Particle)x).getDelta() : 0;
+            });*/
+        }
+
         public HashSet<Node> getNodes()
         {
             HashSet<Node> nodes = new HashSet<Node>();
@@ -146,14 +151,6 @@ namespace SlowRobotics.Agent
                 nodes.Add(l.b);
             });
             return nodes;
-        }
-
-        public void addForce(Vec3D force)
-        {
-          foreach(Node n in getNodes())
-            {
-                if (n is Particle) ((Particle)n).addForce(force);
-            }
         }
 
         public void addBehaviour(IBehaviour b)
@@ -179,5 +176,7 @@ namespace SlowRobotics.Agent
         {
             foreach (IBehaviour b in behaviours.getData()) b.run(this);
         }
+
+        //TODO implement copying
     }
 }

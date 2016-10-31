@@ -20,7 +20,7 @@ namespace SlowRobotics.Agent.Behaviours
         /// Default scaling
         /// </summary>
         /// <param name="a"></param>
-        public override void run(IAgent a)
+        public override void run(IStateAgent a)
         {
             foreach (IScaledBehaviour b in behaviours) b.scale(1);
         }
@@ -37,7 +37,7 @@ namespace SlowRobotics.Agent.Behaviours
                 maxDist = _maxDist;
             }
 
-            public override void run(IAgent a)
+            public override void run(IStateAgent a)
             {
                 float f = getFactor(a.getPos(), pts);
                 foreach (IScaledBehaviour b in behaviours)
@@ -82,7 +82,7 @@ namespace SlowRobotics.Agent.Behaviours
                 box = _box;
             }
 
-            public override void run(IAgent a)
+            public override void run(IStateAgent a)
             {
                 float f = getFactor(a.getPos(), box);
                 foreach (IScaledBehaviour b in behaviours)

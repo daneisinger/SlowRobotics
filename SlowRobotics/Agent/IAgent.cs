@@ -9,20 +9,18 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent
 {
+
     public interface IAgent
     {
         PriorityQueue<IBehaviour> behaviours { get; set; }
 
-        IWorld world { get; set; }
-
         void step(float damping);
+
+        float getDeltaForStep();
 
         void addBehaviour(IBehaviour b);
         void addBehaviours(List<IBehaviour> behaviours);
-
         void setBehaviours(List<IBehaviour> behaviours);
-
-        Vec3D getPos();
 
     }
 }

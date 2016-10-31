@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SlowRobotics.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,9 +16,10 @@ namespace SlowRobotics.Agent.Behaviours
             force = _force;
         }
 
-        public override void run(PlaneAgent a)
+        public override void run(IParticleAgent a)
         {
-            a.addForce(force.scale(scaleFactor));
+            Particle a_p = a.getParticle();
+            a_p.addForce(force.scale(scaleFactor));
         }
 
     }

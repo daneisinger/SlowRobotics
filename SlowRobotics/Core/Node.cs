@@ -7,12 +7,11 @@ using Toxiclibs.core;
 namespace SlowRobotics.Core
 {
 
-    public class Node : Plane3D
+    public class Node : Plane3D, IState
     {
 
         public HashSet<Link> links;
         public Node parent { get; set; }
-        public int age = 0;
 
         public Node(float _x, float _y, float _z) : this(new Vec3D(_x,_y,_z)){ }
         public Node(Vec3D _o) : this(new Plane3D(_o)) { }
@@ -20,17 +19,15 @@ namespace SlowRobotics.Core
         public Node(Plane3D plane) : base(plane)
         {
             links = new HashSet<Link>();
-            age = 0;
         }
 
         public Node(Node n) : base(n)
         {
             links = n.links;
             parent = n.parent;
-            age = n.age;
         }
 
-        virtual public void step(float damping) { age++; }
+        virtual public void step(float damping) {}
 
         public void connect(Link l)
         {
@@ -79,12 +76,19 @@ namespace SlowRobotics.Core
             });
             return output;
         }
-
+        public Node getNode()
+        {
+            return this;
+        }
         public Vec3D getPos()
         {
             return this;
         }
-        
+        public IState copyState()
+        {
+            //TODO copy links
+            return new Node(this);
+        }
 
     }
 }
