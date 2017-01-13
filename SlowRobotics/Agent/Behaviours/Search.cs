@@ -7,7 +7,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class Search : ScaledAgentBehaviour, IWorldBehaviour
+    public class Search : ScaledBehaviour<Vec3D>, IWorldBehaviour
     {
         public struct SearchMethod
         {
@@ -42,19 +42,20 @@ namespace SlowRobotics.Agent.Behaviours
             world = _world;
         }
 
-        public override void run(IGraphAgent a)
+        public override void run(IAgentT<object> a)
         {
+            Vec3D n = (Vec3D)a.getData();
             a.neighbours = (new List<Vec3D>());
             switch (method.m)
             {
                 case (0):
-                    a.addNeighbours(searchDynamic(a.getNode(), dynamicRadius));
+                    a.addNeighbours(searchDynamic(n, dynamicRadius));
                     break;
                 case (1):
-                    a.addNeighbours(searchStatic(a.getNode(), dynamicRadius));
+                    a.addNeighbours(searchStatic(n, dynamicRadius));
                     break;
                 case (2):
-                    a.addNeighbours(searchAll(a.getNode(), dynamicRadius, staticRadius));
+                    a.addNeighbours(searchAll(n, dynamicRadius, staticRadius));
                     break;
             }
         }

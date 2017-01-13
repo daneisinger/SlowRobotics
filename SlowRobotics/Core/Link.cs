@@ -32,19 +32,31 @@ namespace SlowRobotics.Core
             stiffness = 0.08f;
         }
         
-        public bool replaceNode(Node oldN, Node newN)
+        public Link replaceNode(Node oldN, Node newN)
         {
             if(oldN== a)
             {
-                a = newN;
-                updateLength();
-                return true;
+                return new Link(newN, b);
             }else if(oldN== b)
             {
-                b = newN;
-                updateLength();
+                return new Link(a, newN);
+            }
+            return null;
+        }
+
+        public bool getNaked(out Node n)
+        {
+            if (a.links.Count <= 1)
+            {
+                n = a;
                 return true;
             }
+            if (b.links.Count <= 1)
+            {
+                n = b;
+                return true;
+            }
+            n = null;
             return false;
         }
 

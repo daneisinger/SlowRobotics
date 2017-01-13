@@ -2,6 +2,7 @@
 using Rhino.Geometry;
 using SlowRobotics.Agent;
 using SlowRobotics.Agent.Behaviours;
+using SlowRobotics.Agent.Types;
 using SlowRobotics.Core;
 using SlowRobotics.Field;
 using SlowRobotics.Rhino.IO;
@@ -104,6 +105,16 @@ namespace SlowRoboticsGH
             return false;
         }
 
+        //test castTo override
+        public override bool CastTo<Q>(ref Q target)
+        {
+            if (typeof(Q) == typeof(Plane3D))
+            {
+                target = (Q)(object)Value;
+                return true;
+            }
+            return base.CastTo<Q>(ref target);
+        }
     }
 
     public class GH_Node : GH_Goo<Node>
@@ -152,14 +163,64 @@ namespace SlowRoboticsGH
         }
 
     }
-    public class GH_LinkMesh : GH_Goo<LinkMesh>
-    {
-        public GH_LinkMesh() { this.Value = null; }
-        public GH_LinkMesh(GH_LinkMesh goo) { this.Value = goo.Value; }
-        public GH_LinkMesh(LinkMesh native) { this.Value = native; }
-        public GH_LinkMesh(Node parent) { this.Value = new LinkMesh(parent); }
 
-        public override IGH_Goo Duplicate() => new GH_LinkMesh(this);
+    public class GH_Particle : GH_Goo<SlowRobotics.Core.Particle>
+    {
+        public GH_Particle() { this.Value = null; }
+        public GH_Particle(GH_Particle goo) { this.Value = goo.Value; }
+        public GH_Particle(SlowRobotics.Core.Particle native) { this.Value = native; }
+
+        public override IGH_Goo Duplicate() => new GH_Particle(this);
+        public override bool IsValid => true;
+        public override string TypeName => "Node";
+        public override string TypeDescription => "Node";
+        public override string ToString() => this.Value.ToString();
+        public override object ScriptVariable() => Value;
+
+        public override bool CastFrom(object source)
+        {
+            if (source is Node)
+            {
+                Value = new SlowRobotics.Core.Particle((Node)source);
+                return true;
+            }
+            if (source is GH_Node)
+            {
+                Value = new SlowRobotics.Core.Particle(((GH_Node)source).Value);
+                return true;
+            }
+
+           
+            if (source is Plane3D)
+            {
+                Value = new SlowRobotics.Core.Particle(new Node((Plane3D)source));
+                return true;
+            }
+            if (source is GH_Plane3D)
+            {
+                Value = new SlowRobotics.Core.Particle(new Node(((GH_Plane3D)source).Value));
+                return true;
+            }
+
+            if (source is GH_Plane)
+            {
+                SlowRobotics.Core.Particle p = new SlowRobotics.Core.Particle(new Node(IO.ToPlane3D(((GH_Plane)source).Value)));
+                Value = p;
+                return true;
+            }
+
+            return false;
+        }
+
+    }
+    public class GH_Graph : GH_Goo<Graph>
+    {
+        public GH_Graph() { this.Value = null; }
+        public GH_Graph(GH_Graph goo) { this.Value = goo.Value; }
+        public GH_Graph(Graph native) { this.Value = native; }
+        public GH_Graph(Node parent) { this.Value = new Graph(parent); }
+
+        public override IGH_Goo Duplicate() => new GH_Graph(this);
         public override bool IsValid => true;
         public override string TypeName => "LinkMesh";
         public override string TypeDescription => "LinkMesh";
@@ -168,24 +229,24 @@ namespace SlowRoboticsGH
 
         public override bool CastFrom(object source)
         {
-            if (source is LinkMesh)
+            if (source is Graph)
             {
-                Value = source as LinkMesh;
+                Value = source as Graph;
                 return true;
             }
-            if (source is GH_LinkMesh)
+            if (source is GH_Graph)
             {
-                Value = ((GH_LinkMesh)source).Value;
+                Value = ((GH_Graph)source).Value;
                 return true;
             }
-            if(source is GH_Agent)
+            if (source is GH_Node)
             {
-                Value = new LinkMesh((Node)((GH_Agent)source).Value);
+                Value = new Graph(((GH_Node)source).Value);
                 return true;
             }
             if (source is GH_Plane3D)
             {
-                Value = new LinkMesh(new Node(((GH_Plane3D)source).Value));
+                Value = new Graph(new Node(((GH_Plane3D)source).Value));
                 return true;
             }
             return false;
@@ -213,37 +274,58 @@ namespace SlowRoboticsGH
                 Value = source as IAgent;
                 return true;
             }
-            if (source is Node)
-            {
-                Value = new PlaneAgent((Node)source);
-                return true;
-            }
-            if (source is GH_Node)
-            {
-                Value = new PlaneAgent(((GH_Node)source).Value);
-                return true;
-            }
+           
             if (source is GH_Agent)
             {
                 Value = ((GH_Agent)source).Value;
                 return true;
             }
-            if (source is GH_Plane)
+
+            if (source is IGH_Goo)
             {
-                Value = new PlaneAgent(IO.ToPlane3D(((GH_Plane)source).Value));
+                Value = new AgentT<object>(((IGH_Goo)source).ScriptVariable());
                 return true;
             }
+
+            // Value = new AgentT<object>(source);
+            // return true;
+            return false;
+
+            /*
+            if (source is SlowRobotics.Core.Particle)
+            {
+                Value = new AgentT<Node>((Node)source);
+                return true;
+            }
+
+            if (source is Node)
+            {
+                Value = new AgentT<Node>((Node)source);
+                return true;
+            }
+            if (source is GH_Node)
+            {
+                Value = new AgentT<Node>(((GH_Node)source).Value);
+                return true;
+            }
+
+            if (source is GH_Plane)
+            {
+                Value = new ParticleAgent(new SlowRobotics.Core.Particle(IO.ToPlane3D(((GH_Plane)source).Value)));
+                return true;
+            }
+
             if (source is Plane3D)
             {
-                Value = new PlaneAgent(source as Plane3D);
+                Value = new ParticleAgent(new SlowRobotics.Core.Particle(source as Plane3D));
                 return true;
             }
             if (source is GH_Plane3D)
             {
-                Value = new PlaneAgent(((GH_Plane3D)source).Value);
+                Value = new ParticleAgent(new SlowRobotics.Core.Particle(((GH_Plane3D)source).Value));
                 return true;
-            }
-            return false;
+            }*/
+
         }
 
     }
@@ -253,7 +335,7 @@ namespace SlowRoboticsGH
         public GH_World() { this.Value = null; }
         public GH_World(GH_World goo) { this.Value = goo.Value; }
         public GH_World(IWorld native) { this.Value = native; }
-        public GH_World(float extents) { this.Value = new SimpleWorld(extents); }
+        public GH_World(float extents) { this.Value = new World(extents); }
         
         public override IGH_Goo Duplicate() => new GH_World(this);
         public override bool IsValid => true;

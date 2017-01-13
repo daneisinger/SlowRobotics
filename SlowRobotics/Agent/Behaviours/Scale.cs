@@ -7,7 +7,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class Scale : ScaledAgentBehaviour
+    public class Scale : ScaledBehaviour<Vec3D>
     {
         public List<IScaledBehaviour> behaviours { get; set; }
 
@@ -20,7 +20,7 @@ namespace SlowRobotics.Agent.Behaviours
         /// Default scaling
         /// </summary>
         /// <param name="a"></param>
-        public override void run(IStateAgent a)
+        public override void run(IAgentT<object> a)
         {
             foreach (IScaledBehaviour b in behaviours) b.scale(1);
         }
@@ -37,9 +37,10 @@ namespace SlowRobotics.Agent.Behaviours
                 maxDist = _maxDist;
             }
 
-            public override void run(IStateAgent a)
+            public override void run(IAgentT<object> a)
             {
-                float f = getFactor(a.getPos(), pts);
+                IAgentT<Vec3D> typedAgent = (IAgentT<Vec3D>)a; //cast to generic
+                float f = getFactor(typedAgent.getData(), pts);
                 foreach (IScaledBehaviour b in behaviours)
                 {
                     b.scale(f);
@@ -82,9 +83,10 @@ namespace SlowRobotics.Agent.Behaviours
                 box = _box;
             }
 
-            public override void run(IStateAgent a)
+            public override void run(IAgentT<object> a)
             {
-                float f = getFactor(a.getPos(), box);
+                IAgentT<Vec3D> typedAgent = (IAgentT<Vec3D>)a; //cast to generic
+                float f = getFactor(typedAgent.getData(), box);
                 foreach (IScaledBehaviour b in behaviours)
                 {
                     b.scale(f);

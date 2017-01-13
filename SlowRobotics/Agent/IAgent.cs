@@ -9,9 +9,16 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent
 {
-
+    /// <summary>
+    /// Agent interface - provides collections of neighbouring points and
+    /// queue of behaviours
+    /// </summary>
     public interface IAgent
     {
+        List<Vec3D> neighbours { get; set; }
+        bool hasNeighbours();
+        void addNeighbours(List<Vec3D> neighbours);
+
         PriorityQueue<IBehaviour> behaviours { get; set; }
 
         void step(float damping);
@@ -21,6 +28,15 @@ namespace SlowRobotics.Agent
         void addBehaviour(IBehaviour b);
         void addBehaviours(List<IBehaviour> behaviours);
         void setBehaviours(List<IBehaviour> behaviours);
+        void removeBehaviours();
+    }
 
+    /// <summary>
+    /// Generic extension - provides generic data to behaviours
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public interface IAgentT<out T> : IAgent 
+    {
+        T getData();
     }
 }

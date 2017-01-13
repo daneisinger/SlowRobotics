@@ -7,6 +7,10 @@ using Toxiclibs.core;
 namespace SlowRobotics.Core
 {
 
+    //TODO
+
+    //COMPLETELY DIVORCE NODE FROM ANY TYPE OF GEOMETRY
+
     public class Node : Plane3D, IState
     {
 
@@ -20,10 +24,10 @@ namespace SlowRobotics.Core
         {
             links = new HashSet<Link>();
         }
-
+        
         public Node(Node n) : base(n)
         {
-            links = n.links;
+            links = new HashSet<Link>();
             parent = n.parent;
         }
 

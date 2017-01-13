@@ -1,4 +1,5 @@
 ﻿
+using SlowRobotics.Agent.Types;
 using SlowRobotics.Core;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace SlowRobotics.Agent.Behaviours
     public class Add
     {
 
-        public class StateToWorld : AgentBehaviour, IWorldBehaviour
+        public class StateToWorld : Behaviour<IState>, IWorldBehaviour
         {
             public int frequency { get; set; }
             public IWorld world {get;set;}
@@ -24,27 +25,22 @@ namespace SlowRobotics.Agent.Behaviours
                 c = 0;
             }
 
-            public override void run(IStateAgent a)
+            public override void runOn(IState a)
             {
                     if (c % frequency == 0)
                     {
-                        IState n = a.copyState(); 
-                        world.addStatic(n);
+                        world.addStatic(a); //MIGHT NEED TO COPY STATE
                     }
                     c++;
             }
         }
 
-        
-
-
-        public class BracedLinks : ScaledAgentBehaviour, IWorldBehaviour
+        public class Extend : ScaledBehaviour<Graph>, IWorldBehaviour
         {
             public IWorld world { get; set; }
 
             public Vec3D offset { get; set; }
             public List<IBehaviour> behaviours { get; set; }
-            public LinkMesh parent { get; set; }
 
             public int frequency { get; set; }
             public int ctr;
@@ -53,7 +49,7 @@ namespace SlowRobotics.Agent.Behaviours
             public bool dynamic { get; set; }
             public bool tryToBrace { get; set; }
 
-            public BracedLinks(int _priority, LinkMesh _parent, bool _tryToBrace, int _frequency, Vec3D _offset, float _stiffness, float _braceStiffness, List<IBehaviour> _behaviours, bool _dynamic, IWorld _world) : base(_priority)
+            public Extend(int _priority, bool _tryToBrace, int _frequency, Vec3D _offset, float _stiffness, float _braceStiffness, List<IBehaviour> _behaviours, bool _dynamic, IWorld _world) : base(_priority)
             {
                 world = _world;
                 offset = _offset;
@@ -64,69 +60,35 @@ namespace SlowRobotics.Agent.Behaviours
                 braceStiffness = _braceStiffness;
                 dynamic = _dynamic;
                 tryToBrace = _tryToBrace;
-                parent = _parent;
             }
 
-            public override void run(IGraphAgent a)
+            public override void runOn(Graph l)
             {
+                if (ctr % frequency == 0)
+                {
+                    //duplicate the last node and make links
+                    Node n = new Node(l.parent);
+                    n.addSelf(offset);
 
-                    if (ctr % frequency == 0)
+                    if (dynamic)
                     {
-                        PlaneAgent b = new PlaneAgent(a.getNode());
-                        b.addSelf(offset);
-                        b.parent = a.getNode().parent; //need to rethink parenting
+                        //make agent if dynamic
+                        Particle p = new Particle(n);
 
-                        //shonky bracing - need stiffness control and more explicit search for appropriate nodes
-                        int ctr = parent.getLinks().Count;
+                        l.swapConnections(l.parent, p, tryToBrace, stiffness * scaleFactor, braceStiffness * scaleFactor);
 
-                        if (tryToBrace && ctr > 1)
-                        {
-                            Link last = parent.getLinks()[ctr - 1];
-                            Link secondLast = parent.getLinks()[ctr - 2];
-                            Node shared;
-                            if (LinkMesh.getSharedNode(last, secondLast, out shared))
-                            {
-                                float linkLengths = last.l + secondLast.l;
-                                Link nL = new Link(b, secondLast.tryGetOther(shared), linkLengths);
-                                nL.stiffness = braceStiffness * scaleFactor;
-                                parent.connectTertiary(nL);
-                            }
-                        }
-
-                        parent.connectNodes(a.getNode(), b, stiffness * scaleFactor);
-
-                        if (dynamic)
-                        {
-                            foreach (IBehaviour nb in behaviours) b.addBehaviour(nb);
-                            world.addDynamic(b);//add to world
-                        }
-                        else
-                        {
-                            world.addStatic(b);
-                        }
+                        ParticleAgent a = new ParticleAgent(p);
+                        a.addBehaviours(behaviours);
+                        world.addDynamic(p);
+                        world.addAgent(a);
                     }
-                    ctr++;
-
-            }
-
-            public static void createLink(LinkMesh parent, IWorld world, bool tertiary, PlaneAgent a, PlaneAgent b, float _stiffness, List<IBehaviour> newBehaviours)
-            {
-
-                if (tertiary)
-                {
-                    parent.connectTertiaryNodes(a, b, _stiffness);
-
+                    else
+                    {
+                        l.swapConnections(l.parent, n, tryToBrace, stiffness * scaleFactor, braceStiffness * scaleFactor);
+                        world.addStatic(n);
+                    }
                 }
-                else
-                {
-                    parent.connectNodes(a, b, _stiffness);
-                }
-
-                foreach (IBehaviour nb in newBehaviours)
-                {
-                    b.addBehaviour(nb); //add new behaviours
-                }
-                world.addDynamic(b);//add to world
+                ctr++;
             }
         }
     }

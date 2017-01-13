@@ -206,7 +206,7 @@ namespace SlowRoboticsGH
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddParameter(new LinkMeshParameter(), "Parent LinkMesh", "P", "LinkMesh to parent links to", GH_ParamAccess.item);
+            pManager.AddParameter(new GraphParameter(), "Parent LinkMesh", "P", "LinkMesh to parent links to", GH_ParamAccess.item);
             pManager.AddNumberParameter("Strength", "S", "Cohere Strength", GH_ParamAccess.item);
             pManager.AddNumberParameter("Maximum Distance", "Mx", "Maximum Distance to effect", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
@@ -221,7 +221,7 @@ namespace SlowRoboticsGH
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            LinkMesh parent = null;
+            Graph parent = null;
             double strength = 0.1;
             double maxDist = 10;
             int priority = 5;
@@ -268,7 +268,6 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddParameter(new BehaviourParameter(), "New Behaviours", "B", "Behaviours for duplicated agent", GH_ParamAccess.list);
-            pManager.AddParameter(new LinkMeshParameter(), "Parent LinkMesh", "P", "LinkMesh to parent links to", GH_ParamAccess.item);
             pManager.AddVectorParameter("Offset Vector", "V", "Offset with this vector before duplicating node", GH_ParamAccess.item);
             pManager.AddNumberParameter("Stiffness", "S", "Link Stiffness", GH_ParamAccess.item);
             pManager.AddNumberParameter("Brace Stiffness", "Bs", "Bracing Link Stiffness", GH_ParamAccess.item);
@@ -285,12 +284,11 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public Add.BracedLinks addLink = null;
+        public Add.Extend addLink = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             List<GH_Behaviour> behaviours = new List<GH_Behaviour>();
-            GH_LinkMesh parent = null;
             Vector3d offset = Vector3d.Unset;
             double stiffness = 0.1;
             double braceStiffness = 0.05;
@@ -302,20 +300,18 @@ namespace SlowRoboticsGH
             //Object b = null;
 
             if (!DA.GetDataList(0, behaviours)) { return; }
-            if (!DA.GetData(1, ref parent)) { return; }
-            if (!DA.GetData(2, ref offset)) { return; }
-            if (!DA.GetData(3, ref stiffness)) { return; }
-            if (!DA.GetData(4, ref braceStiffness)) { return; }
-            if (!DA.GetData(5, ref freq)) { return; }
-            if (!DA.GetData(6, ref dynamic)) { return; }
-            if (!DA.GetData(7, ref brace)) { return; }
-            if (!DA.GetData(8, ref priority)) { return; }
-            if (!DA.GetData(9, ref world)) { return; }
+            if (!DA.GetData(1, ref offset)) { return; }
+            if (!DA.GetData(2, ref stiffness)) { return; }
+            if (!DA.GetData(3, ref braceStiffness)) { return; }
+            if (!DA.GetData(4, ref freq)) { return; }
+            if (!DA.GetData(5, ref dynamic)) { return; }
+            if (!DA.GetData(6, ref brace)) { return; }
+            if (!DA.GetData(7, ref priority)) { return; }
+            if (!DA.GetData(8, ref world)) { return; }
 
             if (addLink != null)
             {
                 addLink.behaviours = (behaviours.ConvertAll(b => { return b.Value; }));
-                addLink.parent = parent.Value;
                 addLink.stiffness = (float)stiffness;
                 addLink.braceStiffness = (float)braceStiffness;
                 addLink.offset = IO.ToVec3D(offset);
@@ -327,7 +323,7 @@ namespace SlowRoboticsGH
             }
             else
             {
-                addLink = new Add.BracedLinks(priority, parent.Value, brace, freq, IO.ToVec3D(offset), (float)stiffness, (float) braceStiffness, behaviours.ConvertAll(b => { return b.Value; }),dynamic, world.Value);
+                addLink = new Add.Extend(priority, brace, freq, IO.ToVec3D(offset), (float)stiffness, (float) braceStiffness, behaviours.ConvertAll(b => { return b.Value; }),dynamic, world.Value);
                 
             }
             DA.SetData(0, addLink);

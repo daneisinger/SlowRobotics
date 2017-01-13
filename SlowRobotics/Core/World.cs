@@ -7,7 +7,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Core
 {
-    public class SimpleWorld : IWorld
+    public class World : IWorld
     {
 
         List<IAgent> pop; //things with behaviours to run
@@ -16,7 +16,7 @@ namespace SlowRobotics.Core
         public Plane3DOctree staticTree; //nodes
         float bounds;
 
-        public SimpleWorld(float _bounds)
+        public World(float _bounds)
         {
             pop = new List<IAgent>();
             bounds = _bounds;
@@ -36,7 +36,6 @@ namespace SlowRobotics.Core
         /// <param name="p"></param>
         public void addDynamic(Particle p)
         {
-            if(p is IAgent)pop.Add((IAgent)p);
             dynamicTree.addPoint(p);
         }
         /// <summary>
@@ -45,7 +44,6 @@ namespace SlowRobotics.Core
         /// <param name="p"></param>
         public bool removeDynamic(Particle p)
         {
-            if (p is IAgent) pop.Remove((IAgent)p);
             return dynamicTree.remove(p);
         }
 
@@ -87,14 +85,22 @@ namespace SlowRobotics.Core
         }
         public void addStatic(IState p)
         {
-            if (p is IAgent) pop.Add((IAgent)p); 
             staticTree.addPoint(p.getPos());
         }
 
         public bool removeStatic(IState p)
         {
-            if (p is IAgent) pop.Remove((IAgent)p);
             return staticTree.remove(p.getPos());
+        }
+
+        public void addAgent(IAgent a)
+        {
+            pop.Add(a);
+        }
+
+        public bool removeAgent(IAgent a)
+        {
+            return pop.Remove(a);
         }
 
         public void run()
@@ -123,19 +129,36 @@ namespace SlowRobotics.Core
             //rebuild octrees
             List<IAgent> remove = new List<IAgent>();
             dynamicTree = new Plane3DOctree(new Vec3D(-bounds, -bounds, -bounds), bounds * 2);
+
+
+
+
+
+            //TODO - fix this up to be more generic and handle things that arent only particles
+            //e.g. IAgentT interface probably needs a few more methods 
+
+
+
             foreach (IAgent a in pop)
             {
-                if (a is Particle)
+                IAgentT<object> defaultAgent = (IAgentT<object>)a;
+                
+                if (defaultAgent != null)
                 {
-                    Particle p = (Particle)a;
-                    if (p.getInertia() != 0)
+                    Particle p = defaultAgent.getData() as Particle;
                     {
-                        dynamicTree.addPoint(p);
-                    }
-                    else
-                    {
-                        staticTree.addPoint(p);
-                        remove.Add(a);
+                        if (p != null)
+                        {
+                            if (p.getInertia() != 0)
+                            {
+                                dynamicTree.addPoint(p);
+                            }
+                            else
+                            {
+                                staticTree.addPoint(p);
+                                remove.Add(a);
+                            }
+                        }
                     }
                 }
             }

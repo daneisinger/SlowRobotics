@@ -46,21 +46,21 @@ namespace SlowRoboticsGH
         }
     }
 
-    public class LinkMeshParameter : GH_PersistentParam<GH_LinkMesh>
+    public class GraphParameter : GH_PersistentParam<GH_Graph>
     {
-        public LinkMeshParameter() : base("LinkMesh", "LinkMesh", "This is a LinkMesh", "SlowRobotics", "Parameters") { }
+        public GraphParameter() : base("Graph", "Graph", "This is a Graph", "SlowRobotics", "Parameters") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
         public override System.Guid ComponentGuid => new Guid("{de92ea40-4472-4351-a1ec-eb948d096d8e}");
 
-        protected override GH_GetterResult Prompt_Singular(ref GH_LinkMesh value)
+        protected override GH_GetterResult Prompt_Singular(ref GH_Graph value)
         {
-            value = new GH_LinkMesh();
+            value = new GH_Graph();
             return GH_GetterResult.success;
         }
-        protected override GH_GetterResult Prompt_Plural(ref List<GH_LinkMesh> values)
+        protected override GH_GetterResult Prompt_Plural(ref List<GH_Graph> values)
         {
-            values = new List<GH_LinkMesh>();
+            values = new List<GH_Graph>();
             return GH_GetterResult.success;
         }
     }
@@ -105,6 +105,28 @@ namespace SlowRoboticsGH
         protected override GH_GetterResult Prompt_Plural(ref List<GH_Plane3D> values)
         {
             values = new List<GH_Plane3D>();
+            return GH_GetterResult.success;
+        }
+    }
+
+    public class ParticleParameter : GH_PersistentParam<GH_Particle>
+    {
+        public ParticleParameter() : base("Particle", "Particle", "This is a Particle", "SlowRobotics", "Parameters") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        public override System.Guid ComponentGuid => new Guid("{742c9e9f-e8a6-4fd8-a89f-ae3b590d0d4a}");
+
+        protected override GH_GetterResult Prompt_Singular(ref GH_Particle value)
+        {
+
+            value = new GH_Particle();
+            return GH_GetterResult.success;
+
+        }
+
+        protected override GH_GetterResult Prompt_Plural(ref List<GH_Particle> values)
+        {
+            values = new List<GH_Particle>();
             return GH_GetterResult.success;
         }
     }

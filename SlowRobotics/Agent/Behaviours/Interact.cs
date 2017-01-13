@@ -4,10 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class Interact : AgentBehaviour
+    public class Interact : Behaviour
     {
         private PriorityQueue<IBehaviour> behaviours;
 
@@ -17,14 +18,19 @@ namespace SlowRobotics.Agent.Behaviours
             foreach (IBehaviour b in _interactionBehaviours) behaviours.Enqueue(b);
         }
 
-        public override void run(IGraphAgent a)
+        public override void interact(IAgentT<object> a, object b)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void run(IAgentT<object> a)
         {
 
             if (a.hasNeighbours())
             {
                 // Testing step - loop through all neighbours
                 // used for closest point search etc.
-                foreach (IAgent p in a.neighbours)
+                foreach (Vec3D p in a.neighbours)
                 {
                     //TODO - neighbour search doesnt return IAgent
                     foreach (IBehaviour b in behaviours.getData()) b.interact(a, p);

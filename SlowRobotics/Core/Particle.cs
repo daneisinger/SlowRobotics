@@ -6,7 +6,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Core
 {
-    public class Particle : Node
+    public class Particle : Node, IParticle
     {
         protected Vec3D accel = new Vec3D();
         protected Vec3D vel = new Vec3D();
@@ -16,7 +16,7 @@ namespace SlowRobotics.Core
         private float inertia = 1;
         public bool f { get; set; } = false; //TODO sort out better locking system
 
-        public Particle(float _x, float _y, float _z) : base(_x, _y, _z) { }
+        public Particle(float _x, float _y, float _z) : this(new Vec3D(_x, _y, _z)) { }
         public Particle(Vec3D _o) : base(_o) { }
         public Particle(Node _n) : base(_n) { }
 
@@ -40,7 +40,7 @@ namespace SlowRobotics.Core
             }
         }
 
-        public override void step(float damping)
+        public void step(float damping)
         {
             update(damping);
         }

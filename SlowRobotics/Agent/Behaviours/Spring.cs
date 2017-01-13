@@ -7,7 +7,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class Spring : ScaledAgentBehaviour
+    public class Spring : ScaledBehaviour<Graph>
     {
         public float damping { get; set; }
         public bool verlet { get; set; }
@@ -18,9 +18,8 @@ namespace SlowRobotics.Agent.Behaviours
             verlet = _verlet;
         }
 
-        public override void run(IStateAgent a)
+        public override void runOn(Graph a_lm)
         {
-            LinkMesh a_lm = a as LinkMesh;
             if(a_lm != null) { 
                 List<Link> springs = a_lm.getLinks();
                 springs.AddRange(a_lm.getTertiaryLinks());

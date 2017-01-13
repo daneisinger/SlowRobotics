@@ -40,7 +40,7 @@ namespace SlowRobotics.Rhino.Visualisation
                 {
 
                     List<Node> used = new List<Node>() { start };
-                    Graph.marchNodes(start, ref used);
+                    GraphTools.GraphUtils.marchNodes(start, ref used);
                     nodes.Add(new GH_ObjectWrapper(used.ConvertAll(x => NodeToPlane(x))));
                 }
             }

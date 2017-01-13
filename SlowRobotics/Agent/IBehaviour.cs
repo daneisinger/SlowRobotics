@@ -7,27 +7,40 @@ using System.Text;
 
 namespace SlowRobotics.Agent
 {
+    /// <summary>
+    /// Behaviour interface - handles queue inertion and run methods for base object data
+    /// </summary>
     public interface IBehaviour : IComparable<IBehaviour>
     {
+        int priority { get; set; }
+        void run(IAgentT<object> a);
+        void interact(IAgentT<object> a, object b);
+    }
 
-        /// <summary>
-        /// Method to update agent
-        /// </summary>
-        /// <param name="a"></param>
-        void run(IAgent a);
+    /// <summary>
+    /// Generic behaviour interface - provides methods for running on specific object type
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public interface IBehaviourT<in T> : IBehaviour where T : class
+    {
+        void runOn(T a);
+        void interactWith(T a, object b);
+    }
 
-        /// <summary>
-        /// Method to interact with other agents
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="p"></param>
-        void interact(IAgent a, IAgent b);
+    /// <summary>
+    /// Scaled behaviour interface - provides methods for scaling behaviour parameters
+    /// </summary>
+    public interface IScaledBehaviour : IBehaviour
+    {
+        float scaleFactor { get; set; }
+        void scale(float factor);
+    }
 
-        /// <summary>
-        /// Return priority of this behaviour
-        /// </summary>
-        /// <returns></returns>
-        int getPriority();
-
+    /// <summary>
+    /// World behaviour interface - provides access to world object
+    /// </summary>
+    public interface IWorldBehaviour : IBehaviour
+    {
+        IWorld world { get; set; }
     }
 }

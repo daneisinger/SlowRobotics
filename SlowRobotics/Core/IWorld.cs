@@ -20,6 +20,9 @@ namespace SlowRobotics.Core
         bool removeDynamic(Particle p);
         bool removeStatic(IState p);
 
+        void addAgent(IAgent a);
+        bool removeAgent(IAgent a);
+
         void run();
         void run(float damping);
 

@@ -10,7 +10,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public abstract class Align : ScaledAgentBehaviour
+    public abstract class Align : ScaledBehaviour<Particle>
     {
         public float strength { get; set; }
         public float maxDist { get; set; }
@@ -30,11 +30,10 @@ namespace SlowRobotics.Agent.Behaviours
 
             public Planes(int _priority, float _maxDist, float _strength) : base(_priority, _strength, _maxDist) { }
 
-            public override void interact(IParticleAgent a, IAgent b)
+            public override void interactWith(Particle a_p, object b)
             {
                 Plane3D b_p = b as Plane3D;
                 if (b_p != null) {
-                    Particle a_p = a.getParticle();
                     Vec3D ab = b_p.sub(a_p);
                     float d = ab.magnitude();
                     if (d > minDist && d < maxDist)
@@ -103,9 +102,8 @@ namespace SlowRobotics.Agent.Behaviours
                 field = _field;
             }
 
-            public override void run(IParticleAgent a)
+            public override void runOn(Particle a_p)
             {
-                Particle a_p = a.getParticle();
                 FieldData d = field.evaluate(a_p);
                 if (d.hasPlaneData()) interpolateToVector(a_p, getAxis(d.planeData), strength * scaleFactor);
                 if (d.hasVectorData()) interpolateToVector(a_p, d.vectorData, strength * scaleFactor);
@@ -133,9 +131,8 @@ namespace SlowRobotics.Agent.Behaviours
 
             public AxisToLinks(int _priority, float _strength, int _axis) : base(_priority, _strength, _axis) { }
 
-            public override void run(IParticleAgent a)
+            public override void runOn(Particle a_p)
             {
-                Particle a_p = a.getParticle();
                 foreach (Link l in a_p.getLinks())
                     {
                         interpolateToVector(a_p, l.getDir(), strength * scaleFactor);
@@ -148,9 +145,8 @@ namespace SlowRobotics.Agent.Behaviours
 
             public AxisToVelocity(int _priority, float _strength, int _axis) : base(_priority, _strength, _axis) { }
 
-            public override void run(IParticleAgent a)
+            public override void runOn(Particle a_p)
             {
-                Particle a_p = a.getParticle();
                 interpolateToVector(a_p, a_p.getVel(), strength * scaleFactor);
             }
         }
@@ -167,12 +163,11 @@ namespace SlowRobotics.Agent.Behaviours
                 useParent = _useParent;
             }
 
-            public override void interact(IParticleAgent a, IAgent b)
+            public override void interactWith(Particle a_n, object b)
             {
                 Node b_n = b as Node;
                 if (b_n != null)
                 {
-                    Particle a_n = a.getParticle();
                     if (useParent || b_n.parent != a_n.parent)
                     {
                         foreach (Link l in b_n.parent.getLinks())
@@ -212,20 +207,18 @@ namespace SlowRobotics.Agent.Behaviours
                 scaleFactor = 1;
             }
 
-            public override void interact(IParticleAgent a, IAgent b)
+            public override void interactWith(Particle a_v, object b)
             {
                 Vec3D b_v = b as Vec3D;
                 if (b_v != null)
                 {
-                    Particle a_v = a.getParticle();
                     float d = b_v.distanceTo(a_v);
                     if (d > 0 && !closestPts.ContainsKey(d)) closestPts.Add(d, b_v);
                 }
             }
 
-            public override void run(IParticleAgent a)
+            public override void runOn(Particle a_p)
             {
-                Particle a_p = a.getParticle();
                 if (closestPts.Count >= 3)
                 {
                     Triangle3D tri = new Triangle3D((Vec3D)closestPts.GetValueList()[0], (Vec3D)closestPts.GetValueList()[1], (Vec3D)closestPts.GetValueList()[2]);
@@ -247,9 +240,12 @@ namespace SlowRobotics.Agent.Behaviours
                 reset();
             }
 
-            public override void run(IGraphAgent a)
+            public override void runOn(Particle a)
             {
-                Node a_p = a.getNode();
+                //TODO need an interface that holds neighbours
+
+                /*
+                Node a_p = (Node)a;
                 if (a.neighbours.Count >= 3)
                 {
                     Vec3D centroid = new Vec3D();
@@ -260,6 +256,7 @@ namespace SlowRobotics.Agent.Behaviours
                     interpolateToVector(a_p, n, strength * scaleFactor);
                 }
                 reset();
+                */
             }
         }
     }

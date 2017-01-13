@@ -3,6 +3,7 @@ using Rhino.Geometry;
 using Rhino.Geometry.Collections;
 using SlowRobotics.Agent;
 using SlowRobotics.Agent.Behaviours;
+using SlowRobotics.Agent.Types;
 using SlowRobotics.Core;
 using System;
 using System.Collections.Generic;
@@ -14,15 +15,16 @@ namespace SlowRobotics.Rhino.IO
 {
     public static class IO
     {
-        public static List<PlaneAgent> ConvertCurveToLinkMesh(Curve c, int res, float stiffness, out LinkMesh lm)
+        public static List<ParticleAgent> ConvertCurveToLinkMesh(Curve c, int res, float stiffness, out Graph lm)
         {
             Plane startPlane;
             c.FrameAt(0, out startPlane);
-            PlaneAgent a = new PlaneAgent(ToPlane3D(startPlane));
-            lm = new LinkMesh(a);
-            a.parent = lm;
+            Core.Particle p1 = new Core.Particle(ToPlane3D(startPlane));
+            ParticleAgent a = new ParticleAgent(p1);
+            lm = new Graph(p1);
+            p1.parent = lm.parent;
 
-            List<PlaneAgent> agents = new List<PlaneAgent>();
+            List<ParticleAgent> agents = new List<ParticleAgent>();
             agents.Add(a);
 
             double[] pts = c.DivideByCount(res, true);
@@ -31,46 +33,50 @@ namespace SlowRobotics.Rhino.IO
             {
                 Plane currentPlane;
                 c.FrameAt(pts[i], out currentPlane);
-                PlaneAgent b = new PlaneAgent(ToPlane3D(currentPlane));
-                b.parent = lm;
+                Core.Particle p2 = new Core.Particle(ToPlane3D(currentPlane));
+                ParticleAgent b = new ParticleAgent(p2);
+                p2.parent = lm.parent;
 
                 agents.Add(b);
-                lm.connectNodes(a, b, stiffness);
+                lm.connectNodes(a.getData(), b.getData(), stiffness);
                 a = b;
             }
 
             return agents;
         }
 
-        public static List<IAgent> ConvertMeshToLinkMesh(Mesh m, float stiffness, out LinkMesh lm)
+        public static List<IAgent> ConvertMeshToLinkMesh(Mesh m, float stiffness, out Graph lm)
         {
-            List<PlaneAgent> agents = new List<PlaneAgent>();
-            PlaneAgent a = new PlaneAgent(new Plane3D(ToVec3D(m.TopologyVertices[0])));
-            lm = new LinkMesh(a);
-            a.parent = lm;
+            List<ParticleAgent> agents = new List<ParticleAgent>();
+            Core.Particle p1 = new Core.Particle(new Plane3D(ToVec3D(m.TopologyVertices[0])));
+            ParticleAgent a = new ParticleAgent(p1);
+            lm = new Graph(p1);
+            p1.parent = lm.parent;
             agents.Add(a);
 
             for (int i = 1; i < m.TopologyVertices.Count; i++)
             {
                 Point3f p = m.TopologyVertices[i];
-                PlaneAgent aa = new PlaneAgent(new Plane3D(ToVec3D(p)));
-                aa.parent = lm;
+                Core.Particle p2 = new Core.Particle(new Plane3D(ToVec3D(p)));
+                ParticleAgent aa = new ParticleAgent(p2);
+                p2.parent = lm.parent;
                 agents.Add(aa);
             }
 
             for (int i = 0; i < m.TopologyEdges.Count; i++)
             {
                 IndexPair p = m.TopologyEdges.GetTopologyVertices(i);
-                lm.connectNodes(agents[p.I], agents[p.J], stiffness);
+                lm.connectNodes(agents[p.I].getData(), agents[p.J].getData(), stiffness);
             }
 
             return agents.Select(x=>(IAgent)x).ToList();
 
         }
 
-        public static PlaneAgent ToPlaneAgent(Plane p)
+        public static ParticleAgent ToPlaneAgent(Plane p)
         {
-            return new PlaneAgent(ToPlane3D(p));
+            Core.Particle p1 = new Core.Particle(ToPlane3D(p));
+            return new ParticleAgent(p1);
         }
 
         public static Plane3D ToPlane3D(Plane p)

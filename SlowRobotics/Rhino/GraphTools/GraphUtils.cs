@@ -8,7 +8,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Rhino.GraphTools
 {
-    public class Graph
+    public static class GraphUtils
     {
 
         public static List<Line> getConnectionsAsLines(Node n)

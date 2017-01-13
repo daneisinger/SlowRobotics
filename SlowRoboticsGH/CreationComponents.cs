@@ -15,9 +15,11 @@ using SlowRobotics.Field;
 using SlowRobotics.Field.Elements;
 using System.Linq;
 using Toxiclibs.core;
+using SlowRobotics.Agent.Types;
 
 namespace SlowRoboticsGH
 {
+    /*
     public class CreateAgentsFromPlanesComponent : GH_Component
     {
         public CreateAgentsFromPlanesComponent() : base("Agents From Planes", "CreateAgents", "Create Agents from a collection of planes", "SlowRobotics", "Agent") { }
@@ -46,7 +48,8 @@ namespace SlowRoboticsGH
                 agents = new List<IAgent>();
                 foreach (Plane3D p in planes.ConvertAll(x => { return IO.ToPlane3D(x); }))
                 {
-                    IAgent a = new PlaneAgent(p);
+                    SlowRobotics.Core.Particle p1 = new SlowRobotics.Core.Particle(p);
+                    IAgent a = new ParticleAgent(p1);
                     agents.Add(a);
                 }
 
@@ -54,7 +57,7 @@ namespace SlowRoboticsGH
 
         }
     }
-
+    */
     public class MeshToLinkMeshComponent : GH_Component
     {
         public MeshToLinkMeshComponent() : base("Convert Mesh to LinkMesh", "MeshToLinkMesh", "Converts mesh edges and vertices to links", "SlowRobotics", "Agent") { }
@@ -82,7 +85,7 @@ namespace SlowRoboticsGH
             if (!DA.GetData(0, ref m)) { return; }
             if (!DA.GetData(1, ref stiffness)) { return; }
 
-            LinkMesh lm = new LinkMesh(new Node(new Vec3D()));
+            Graph lm = new Graph(new Node(new Vec3D()));
             GH_ObjectWrapper agents = new GH_ObjectWrapper(IO.ConvertMeshToLinkMesh(m, (float)stiffness, out lm));
 
             DA.SetData(0, agents);
@@ -99,7 +102,7 @@ namespace SlowRoboticsGH
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddParameter(new LinkMeshParameter(), "LinkMesh", "L", "LinkMesh to contain links", GH_ParamAccess.item);
+            pManager.AddParameter(new GraphParameter(), "LinkMesh", "L", "LinkMesh to contain links", GH_ParamAccess.item);
             pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item);
         }
 
@@ -111,12 +114,12 @@ namespace SlowRoboticsGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             double stiffness = 0.1;
-            GH_LinkMesh linkMesh = null;
+            GH_Graph linkMesh = null;
 
             if (!DA.GetData(0, ref linkMesh)) { return; }
             if (!DA.GetData(1, ref stiffness)) { return; }
 
-            LinkMesh lm = linkMesh.Value;
+            Graph lm = linkMesh.Value;
             lm.interconnectTertiaryNodes(lm.getNodes().ToList(), (float)stiffness);
 
             DA.SetData(0, new GH_ObjectWrapper(lm));
@@ -132,7 +135,7 @@ namespace SlowRoboticsGH
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddParameter(new LinkMeshParameter(), "LinkMesh", "L", "LinkMesh to contain links", GH_ParamAccess.item);
+            pManager.AddParameter(new GraphParameter(), "LinkMesh", "L", "LinkMesh to contain links", GH_ParamAccess.item);
             pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item);
             pManager.AddNumberParameter("Minimum Distance", "Mn", "Minimum connection distance", GH_ParamAccess.item);
             pManager.AddNumberParameter("Maximum Distance", "Mx", "Maximum connection distance", GH_ParamAccess.item);
@@ -146,7 +149,7 @@ namespace SlowRoboticsGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             double stiffness = 0.1;
-            GH_LinkMesh linkMesh = null;
+            GH_Graph linkMesh = null;
             double minD = 0;
             double maxD = 10;
 
@@ -154,7 +157,7 @@ namespace SlowRoboticsGH
             if (!DA.GetData(1, ref stiffness)) { return; }
             if (!DA.GetData(2, ref minD)) { return; }
             if (!DA.GetData(3, ref maxD)) { return; }
-            LinkMesh lm = linkMesh.Value;
+            Graph lm = linkMesh.Value;
             lm.connectByProximity(lm.getNodes().ToList(), (float)minD, (float)maxD,(float)stiffness);
 
             DA.SetData(0, new GH_ObjectWrapper(lm));
@@ -170,7 +173,7 @@ namespace SlowRoboticsGH
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddParameter(new LinkMeshParameter(), "LinkMesh", "L", "LinkMesh to contain links", GH_ParamAccess.item);
+            pManager.AddParameter(new GraphParameter(), "LinkMesh", "L", "LinkMesh to contain links", GH_ParamAccess.item);
             pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item);
         }
 
@@ -182,12 +185,12 @@ namespace SlowRoboticsGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             double stiffness = 0.1;
-            GH_LinkMesh linkMesh = null;
+            GH_Graph linkMesh = null;
 
             if (!DA.GetData(0, ref linkMesh)) { return; }
             if (!DA.GetData(1, ref stiffness)) { return; }
 
-            LinkMesh lm = linkMesh.Value;
+            Graph lm = linkMesh.Value;
             lm.braceNthLinks(lm.getLinks(), (float)stiffness);
 
             DA.SetData(0, new GH_ObjectWrapper(lm));
@@ -214,7 +217,7 @@ namespace SlowRoboticsGH
         }
 
         public List<IAgent> agents = new List<IAgent>();
-        public LinkMesh linkMesh = null;
+        public Graph linkMesh = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -233,18 +236,20 @@ namespace SlowRoboticsGH
                 //first agent
                 Plane currentPlane;
                 curve.FrameAt(0, out currentPlane);
-                PlaneAgent a = new PlaneAgent(IO.ToPlane3D(currentPlane));
+                SlowRobotics.Core.Particle p1 = new SlowRobotics.Core.Particle(IO.ToPlane3D(currentPlane));
+                ParticleAgent a = new ParticleAgent(p1);
                 agents.Add(a);
 
-                linkMesh = new LinkMesh(a);
+                linkMesh = new Graph(p1);
                 //all other agents
                 double[] pts = curve.DivideByCount(res, true);
 
                 for (int i = 1; i < pts.Length; i++)
                 {
                     curve.FrameAt(pts[i], out currentPlane);
-                    PlaneAgent b = new PlaneAgent(IO.ToPlane3D(currentPlane));
-                    linkMesh.connectNodes(a, b, (float)stiffness);
+                SlowRobotics.Core.Particle p2 = new SlowRobotics.Core.Particle(IO.ToPlane3D(currentPlane));
+                ParticleAgent b = new ParticleAgent(p2);
+                    linkMesh.connectNodes(a.getData(), b.getData(), (float)stiffness);
                     agents.Add(b);
                     a = b;
                 }
@@ -645,7 +650,7 @@ namespace SlowRoboticsGH
             pManager.AddGenericParameter("LinkMesh", "L", "LinkMesh", GH_ParamAccess.item);
         }
 
-        public LinkMesh linkMesh = null;
+        public Graph linkMesh = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -655,17 +660,17 @@ namespace SlowRoboticsGH
 
             if (node.Value is IAgent)
             {
-                linkMesh = new LinkMesh((Node)node.Value);
+                linkMesh = new Graph((Node)node.Value);
             }
 
             else if (node.Value is Node)
             {
-                linkMesh = new LinkMesh((Node)node.Value);
+                linkMesh = new Graph((Node)node.Value);
             }
 
             else if (node.Value is Plane3D)
             {
-                linkMesh = new LinkMesh(new Node((Plane3D)node.Value));
+                linkMesh = new Graph(new Node((Plane3D)node.Value));
 
             } 
 
@@ -697,7 +702,7 @@ namespace SlowRoboticsGH
 
             if (!DA.GetData(0, ref extents)) { return; }
 
-            DA.SetData(0, new GH_World(new SimpleWorld((float)extents)));
+            DA.SetData(0, new GH_World(new World((float)extents)));
         }
     }
 }

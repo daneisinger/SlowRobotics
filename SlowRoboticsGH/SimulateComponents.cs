@@ -83,63 +83,68 @@ namespace SlowRoboticsGH
 
             if (add)
             {
-
-                //TODO - redo all of this casting stuff seems over the top
-
                 foreach (GH_ObjectWrapper wrapper in wrapperList)
                 {
-                    if (wrapper.Value is List<IAgent>)
+
+                    if (wrapper.Value is IAgent)
                     {
-                        List<IAgent> agents = (List<IAgent>)wrapper.Value;
-                        foreach (IAgent a in agents)
-                        {
-                            addAgent((Node)a, world.Value, dynamic);
-                        }
+                        addAgent((IAgent)wrapper.Value, world.Value, dynamic);
                     }
-                    else if (wrapper.Value is IAgent)
-                    {
-                        addAgent((Node)wrapper.Value, world.Value, dynamic);
+                    else if (wrapper.Value is List<IAgent>) {
+
+                        List<IAgent> agents = wrapper.Value as List<IAgent>;
+                        foreach (IAgent a in agents) addAgent(a, world.Value, dynamic);
                     }
+
                     else if (wrapper.Value is List<GH_Agent>)
                     {
                         List<GH_Agent> agents = (List<GH_Agent>)wrapper.Value;
-                        foreach (GH_Agent a in agents)
-                        {
-                            addAgent((Node)a.Value, world.Value, dynamic);
-                        }
+                        foreach (GH_Agent a in agents) addAgent(a.Value, world.Value, dynamic);
                     }
                     else if (wrapper.Value is GH_Agent)
                     {
-                        IAgent a = ((GH_Agent)wrapper.Value).Value;
-                        addAgent((Node)a, world.Value, dynamic);
+                        GH_Agent a = (GH_Agent)wrapper.Value;
+                        addAgent(a.Value, world.Value, dynamic);
                     }
-                    else if (wrapper.Value is Node)
-                    {
-                        addAgent((Node)wrapper.Value, world.Value, false);
-                    }
-                    else if (wrapper.Value is LinkMesh)
-                    {
-                        addAgent((LinkMesh)wrapper.Value, world.Value, false);
-                    }
-                    else if (wrapper.Value is GH_LinkMesh)
-                    {
-                        addAgent(((GH_LinkMesh)wrapper.Value).Value, world.Value, false);
-                    }
+
                 }
             }
 
             DA.SetData(0, world);
         }
 
-        public void addAgent(Node a, IWorld world, bool dynamic) {
-            if (dynamic && a is SlowRobotics.Core.Particle)
+        public void addAgent(IAgent a, IWorld world, bool dynamic)
+        {
+            IAgentT<object> defaultAgent = (IAgentT<object>)a;
+
+            if (defaultAgent != null)
             {
-                world.addDynamic((SlowRobotics.Core.Particle)a);
+                
+                //TODO this all needs to be handled by the IAgentT interface - 
+                //or this simply needs to be a direct test for IAgentT<Node> and IAgentT<Particle>
+                //could possibly be handled by the world (addDynamicAgent(IAgentT<Particle> a)) etc
+
+                SlowRobotics.Core.Particle p = (SlowRobotics.Core.Particle)defaultAgent.getData();
+                if (p!=null && dynamic) world.addDynamic(p);
+                Node n = (Node)defaultAgent.getData();
+                if(n!=null && !dynamic)world.addStatic(n);
+
+            }
+
+            world.addAgent(a);
+
+        }
+
+        public void addNode(Node a, IWorld world, bool dynamic) {
+            SlowRobotics.Core.Particle p = a as SlowRobotics.Core.Particle;
+
+            if (dynamic && a!=null)
+            {
+                world.addDynamic(p);
             }
             else
             {
-                //default to static
-                world.addStatic((Node)a);
+                world.addStatic(a);
             }
         }
     }
@@ -256,18 +261,22 @@ namespace SlowRoboticsGH
 
         public void testPt(IAgent agent, List<Point3d> pts)
         {
-            if (agent.GetType().IsAssignableFrom(typeof(IStateAgent)))
+            IAgentT<Vec3D> typedAgent = (IAgentT<Vec3D>)agent;
+            if (typedAgent != null)
             {
-                IStateAgent a_s = (IStateAgent)agent;
                 foreach (Point3d p in pts)
                 {
-                    if (a_s.getPos().distanceTo(new Vec3D((float)p.X, (float)p.Y, (float)p.Z)) < 1)
+                    if (typedAgent.getData().distanceTo(new Vec3D((float)p.X, (float)p.Y, (float)p.Z)) < 1)
                     {
-                        agent.setBehaviours(new List<IBehaviour>());
+                        agent.removeBehaviours();
                         if (agent is SlowRobotics.Core.Particle) ((SlowRobotics.Core.Particle)agent).f = true;
                         return;
                     }
                 }
+            }
+            else
+            {
+                throw new TypeAccessException("Incorrect agent type, try implementing IAgentT<Vec3D>");
             }
         }
     }
@@ -315,7 +324,7 @@ namespace SlowRoboticsGH
                 List<GH_Agent> agents = (List<GH_Agent>)wrapper.Value;
                 foreach (GH_Agent a in agents)
                 {
-                    ((GH_Agent)a).Value.setBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
+                    a.Value.setBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
                 }
             }
             else if (wrapper.Value is GH_Agent)
@@ -323,18 +332,6 @@ namespace SlowRoboticsGH
                 ((GH_Agent)wrapper.Value).Value.setBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
             }
 
-            else if (wrapper.Value is List<GH_LinkMesh>)
-            {
-                List<GH_LinkMesh> agents = (List<GH_LinkMesh>)wrapper.Value;
-                foreach (GH_LinkMesh a in agents)
-                {
-                    ((GH_LinkMesh)a).Value.setBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
-                }
-            }
-            else if (wrapper.Value is GH_LinkMesh)
-            {
-                ((GH_LinkMesh)wrapper.Value).Value.setBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
-            }
             DA.SetData(0, wrapper.Value);
         }
     }
@@ -382,7 +379,7 @@ namespace SlowRoboticsGH
                 List<GH_Agent> agents = (List<GH_Agent>)wrapper.Value;
                 foreach (GH_Agent a in agents)
                 {
-                    ((GH_Agent)a).Value.addBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
+                    a.Value.addBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
                 }
             }
             else if (wrapper.Value is GH_Agent)
@@ -390,18 +387,7 @@ namespace SlowRoboticsGH
                 ((GH_Agent)wrapper.Value).Value.setBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
             }
 
-            else if (wrapper.Value is List<GH_LinkMesh>)
-            {
-                List<GH_LinkMesh> agents = (List<GH_LinkMesh>)wrapper.Value;
-                foreach (GH_LinkMesh a in agents)
-                {
-                    ((GH_LinkMesh)a).Value.addBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
-                }
-            }
-            else if (wrapper.Value is GH_LinkMesh)
-            {
-                ((GH_LinkMesh)wrapper.Value).Value.addBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
-            }
+           
             DA.SetData(0, wrapper.Value);
         }
     }

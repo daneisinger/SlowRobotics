@@ -9,7 +9,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class Move : ScaledAgentBehaviour
+    public class Move : ScaledBehaviour<Particle>
     {
         
         public float strength { get; set; }
@@ -43,10 +43,9 @@ namespace SlowRobotics.Agent.Behaviours
                 axis = _axis;
             }
 
-            public override void run(IParticleAgent a)
+            public override void runOn(Particle p)
             {
-                Particle a_p = a.getParticle();
-                if (scaleFactor > 0) a_p.addForce(getAxis(a_p).scale(strength * scaleFactor));
+                if (scaleFactor > 0) p.addForce(getAxis(p).scale(strength * scaleFactor));
             }
 
             public Vec3D getAxis(Plane3D a)
@@ -74,11 +73,10 @@ namespace SlowRobotics.Agent.Behaviours
                 field = _field;
             }
 
-            public override void run(IParticleAgent a)
+            public override void runOn(Particle p)
             {
-                Particle a_p = a.getParticle();
-                FieldData d = field.evaluate(a_p);
-                if (d.hasVectorData()) a_p.addForce(d.vectorData.scale(strength * scaleFactor));
+                FieldData d = field.evaluate(p);
+                if (d.hasVectorData()) p.addForce(d.vectorData.scale(strength * scaleFactor));
             }
         }
 
@@ -100,33 +98,31 @@ namespace SlowRobotics.Agent.Behaviours
                 scaleFactor = 1;
             }
 
-            public override void interact(IParticleAgent a, IAgent b)
+            public override void interactWith(Particle p, object b)
             {
                 Vec3D b_v = b as Vec3D;
                 if(b_v!= null) { 
-                Particle a_p = a.getParticle();
                     
                     if (!inXY)
                     {
-                        force.addSelf(calcForce(a_p, a_p.sub(b_v), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
+                        force.addSelf(calcForce(p, p.sub(b_v), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
                     }
                     else
                     {
-                        ToxiPlane tp = new ToxiPlane(a_p, a_p.zz);
+                        ToxiPlane tp = new ToxiPlane(p, p.zz);
                         Vec3D op = tp.getProjectedPoint(b_v);
-                        float d = a_p.distanceTo(b_v);
+                        float d = p.distanceTo(b_v);
                         float f = SR_Math.map(d, minDist, maxDist, 1, 0);
                         float sf = ExponentialInterpolation.Squared.interpolate(0, strength, f);
-                        if (d > minDist && d < maxDist) force.addSelf(a_p.sub(op).normalizeTo(sf));
+                        if (d > minDist && d < maxDist) force.addSelf(p.sub(op).normalizeTo(sf));
                     }
                 }
 
             }
 
-            public override void run(IParticleAgent a)
+            public override void runOn(Particle p)
             {
-                Particle a_p = a.getParticle();
-                a_p.addForce(force);
+                p.addForce(force);
                 reset();
             }
         }
@@ -136,24 +132,23 @@ namespace SlowRobotics.Agent.Behaviours
 
             public Together(int _priority, float _strength, float _minDist, float _maxDist, bool _inXY) : base(_priority, _strength, _minDist, _maxDist, _inXY){ }
 
-            public override void interact(IParticleAgent a, IAgent b)
+            public override void interactWith(Particle p, object b)
             {
                 Vec3D b_v = b as Vec3D;
                 if (b_v != null)
                 {
-                    Particle a_p = a.getParticle();
                     if (!inXY)
                     {
-                        force.addSelf(calcForce(a_p, b_v.sub(a_p), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
+                        force.addSelf(calcForce(p, b_v.sub(p), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
                     }
                     else
                     {
-                        ToxiPlane tp = new ToxiPlane(a_p, a_p.zz);
+                        ToxiPlane tp = new ToxiPlane(p, p.zz);
                         Vec3D op = tp.getProjectedPoint(b_v);
-                        float d = a_p.distanceTo(b_v);
+                        float d = p.distanceTo(b_v);
                         float f = SR_Math.map(d, minDist, maxDist, 1, 0);
                         float sf = ExponentialInterpolation.Squared.interpolate(0, strength, f);
-                        if (d > minDist && d < maxDist) force.addSelf(op.sub(a_p).normalizeTo(sf));
+                        if (d > minDist && d < maxDist) force.addSelf(op.sub(p).normalizeTo(sf));
                     }
                 }
             }
@@ -164,22 +159,21 @@ namespace SlowRobotics.Agent.Behaviours
 
             public TogetherInZ(int _priority, float _strength, float _maxDist) : base(_priority,_strength, _maxDist) {}
 
-            public override void interact(IParticleAgent a, IAgent b)
+            public override void interactWith(Particle p, object b)
             {
                 Vec3D b_v = b as Vec3D;
                 if (b_v != null)
                 {
-                    Particle a_p = a.getParticle();
-                    Vec3D ab = b_v.sub(a_p);
+                    Vec3D ab = b_v.sub(p);
                     float d = ab.magnitude();
                     if (d > minDist && d < maxDist)
                     {
                         float f = SR_Math.map(d, 0, maxDist, 1, 0);
                         float sf = ExponentialInterpolation.Squared.interpolate(0, strength, f);
-                        Vec3D zt = a_p.zz.scale(sf * scaleFactor);
-                        float angle = ab.angleBetween(a_p.zz, true);
+                        Vec3D zt = p.zz.scale(sf * scaleFactor);
+                        float angle = ab.angleBetween(p.zz, true);
                         if (angle > (float)Math.PI / 2) zt.invert();
-                        a_p.addForce(zt);
+                        p.addForce(zt);
                     }
                 }
             }
@@ -188,9 +182,9 @@ namespace SlowRobotics.Agent.Behaviours
         public class ToNearestLink : Move
         {
 
-            public LinkMesh parent { get; set; }
+            public Graph parent { get; set; }
 
-            public ToNearestLink(int _priority, LinkMesh _parent, float _strength, float _maxDist) : base(_priority, _strength, _maxDist)
+            public ToNearestLink(int _priority, Graph _parent, float _strength, float _maxDist) : base(_priority, _strength, _maxDist)
             {
                 parent = _parent;
                 reset();
@@ -203,7 +197,7 @@ namespace SlowRobotics.Agent.Behaviours
             Link closestO;
             Vec3D targetA;
             Vec3D targetB;
-            List<LinkMesh> used;
+            List<Graph> used;
 
             public override void reset()
             {
@@ -214,12 +208,16 @@ namespace SlowRobotics.Agent.Behaviours
                 a_l = new Vec3D();
                 b_l = new Vec3D();
                 minD = 1000;
-                used = new List<LinkMesh>();
+                used = new List<Graph>();
                 scaleFactor = 1;
             }
 
-            public override void interact(IAgent a, IAgent b)
+            public override void interactWith(Particle a, object b)
             {
+
+                //TODO fix up this crappy code
+
+                /*
                 Node b_n = b as Node;
                 if (b_n != null)
                 {
@@ -230,11 +228,13 @@ namespace SlowRobotics.Agent.Behaviours
                     if (a_p != null) interact(a_p, b_n);
                     
                 }
+                */
 
             }
-
+            /*
             public void interact(LinkMesh lm, Node p)
             {
+                
                 if (!used.Contains(p.parent))
                 {
                     foreach (Link l in lm.getLinks())
@@ -277,13 +277,13 @@ namespace SlowRobotics.Agent.Behaviours
                     }
                 }
             }
+*/
 
-            public override void run(IParticleAgent a)
+            public override void runOn(Particle p)
             {
                 if (targetA != null && minD > 0.2)
                 {
-                    Particle a_p = a.getParticle();
-                    a.addForce(calcForce(a_p, targetB.sub(a_p), 0.25f, maxDist, strength, ExponentialInterpolation.Squared));
+                    p.addForce(calcForce(p, targetB.sub(p), 0.25f, maxDist, strength, ExponentialInterpolation.Squared));
                 }
 
                 reset();

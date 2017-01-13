@@ -10,7 +10,7 @@ namespace SlowRobotics.Agent.Behaviours
 {
     public class Arrest
     {
-        public class Friction : ScaledAgentBehaviour
+        public class Friction : ScaledBehaviour<Particle>
         {
             public float frictionCof { get; set; }
             public float inertiaMod { get; set; }
@@ -23,12 +23,12 @@ namespace SlowRobotics.Agent.Behaviours
                 inertiaMod = 0;
             }
 
-            public override void interact(IParticleAgent a, IAgent b)
+            public override void interactWith(Particle a, object b)
             {
                 Vec3D b_v = b as Vec3D;
                 if (b_v != null)
                 {
-                    Vec3D ab = b_v.sub(a.getParticle());
+                    Vec3D ab = b_v.sub(a);
                     float d = ab.magnitude();
                     if (d > 0 && d < maxDist)
                     {
@@ -40,15 +40,15 @@ namespace SlowRobotics.Agent.Behaviours
 
             }
 
-            public override void run(IParticleAgent a)
+            public override void runOn(Particle a)
             {
 
-                    a.getParticle().addInertia(inertiaMod);
+                    a.addInertia(inertiaMod);
                     inertiaMod = 0;
             }
         }
 
-        public class Freeze : ScaledAgentBehaviour
+        public class Freeze : ScaledBehaviour<Particle>
         {
 
             public float minInertia { get; set; }
@@ -62,9 +62,8 @@ namespace SlowRobotics.Agent.Behaviours
                 minAge = _minAge;
             }
 
-            public override void run(IParticleAgent a)
+            public override void runOn(Particle p)
             {
-                Particle p = a.getParticle();
                     if (p.getInertia() + (p.getSpeed() * speedFactor * scaleFactor) < minInertia && p.age > minAge)
                     {
                         p.setInertia(0);
@@ -72,7 +71,7 @@ namespace SlowRobotics.Agent.Behaviours
             }
         }
 
-        public class Z : AgentBehaviour
+        public class Z : Behaviour<Particle>
         {
             public float minZ
             {
@@ -84,10 +83,9 @@ namespace SlowRobotics.Agent.Behaviours
                 minZ = _minZ;
             }
 
-            public override void run(IParticleAgent a)
+            public override void runOn(Particle a)
             {
-                Particle a_p = a.getParticle();
-                if (a_p.z < minZ) a_p.setInertia(0);
+                if (a.z < minZ) a.setInertia(0);
             }
         }
 

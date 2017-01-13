@@ -1,23 +1,49 @@
-﻿using SlowRobotics.Core;
-using SlowRobotics.Utils;
+﻿using SlowRobotics.Agent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Toxiclibs.core;
 
-namespace SlowRobotics.Agent
+namespace SlowRobotics.Core
 {
-    public class LinkMesh : Node, IStateAgent
+    public class Graph : INode
     {
-        public PriorityQueue<IBehaviour> behaviours { get; set; }
-
         HashSet<Link> tertiaryLinks;
+        HashSet<Link> links;
+        HashSet<Node> nodes;
 
-        public LinkMesh(Node n) : base(n)
+        public Node parent { get; set; }
+
+        public Graph(Node n) :this()
         {
-            behaviours = new PriorityQueue<IBehaviour>();
+            parent = n;
+            nodes.Add(n);
+        }
+
+        private Graph()
+        {
+            links = new HashSet<Link>();
             tertiaryLinks = new HashSet<Link>();
+            nodes = new HashSet<Node>();
+        }
+
+        public void swapConnections(Node oldNode, Node newNode, bool tryToBrace, float linkStiffness, float braceStiffness)
+        {
+
+            //Get node connected to parent
+            if (oldNode.hasLinks())
+            {
+                Link l = oldNode.getLinks()[0]; //only works if agent has just a single link
+                Node other = l.tryGetOther(oldNode);
+
+                connectNodes(newNode, other, linkStiffness);
+                disconnect(l);
+            }
+
+            connectNodes(oldNode, newNode, linkStiffness);
+
+
         }
 
         public void connectTertiary(Link l)
@@ -38,7 +64,7 @@ namespace SlowRobotics.Agent
         public void braceLinks(Link a, Link b, float stiffness)
         {
             Node shared;
-            if(getSharedNode(a,b, out shared))
+            if (getSharedNode(a, b, out shared))
             {
                 Link brace = new Link(a.tryGetOther(shared), b.tryGetOther(shared));
                 brace.stiffness = stiffness;
@@ -48,7 +74,7 @@ namespace SlowRobotics.Agent
 
         public void braceNthLinks(List<Link> toBrace, float stiffness)
         {
-            for (int i = 0; i < toBrace.Count-1; i += 2)
+            for (int i = 0; i < toBrace.Count - 1; i += 2)
             {
                 braceLinks(toBrace[i], toBrace[i + 1], stiffness);
             }
@@ -70,30 +96,30 @@ namespace SlowRobotics.Agent
 
         public void interconnectTertiaryNodes(List<Node> toConnect, float stiffness)
         {
-            foreach(Node a in toConnect)
+            foreach (Node a in toConnect)
             {
-                foreach(Node b in toConnect)
+                foreach (Node b in toConnect)
                 {
                     if (a != b) connectTertiaryNodes(a, b, stiffness);
                 }
             }
         }
 
-        public void connectByProximity(List<Node> toConnect,float minDist, float maxDist,float stiffness)
+        public void connectByProximity(List<Node> toConnect, float minDist, float maxDist, float stiffness)
         {
             Plane3DOctree dynamicTree = new Plane3DOctree(new Vec3D(-200, -200, -200), 200 * 2);
-            foreach(Node n in toConnect) dynamicTree.addPoint(n);
+            foreach (Node n in toConnect) dynamicTree.addPoint(n);
 
             foreach (Node n in toConnect)
             {
                 List<Vec3D> inProx = dynamicTree.getPointsWithinSphere(n, maxDist);
                 foreach (Vec3D v in inProx)
                 {
-                    if(v.distanceTo(n)> minDist)
+                    if (v.distanceTo(n) > minDist)
                     {
-                        if(v is Node)
+                        if (v is Node)
                         {
-                            if(n != (Node)v) connectTertiaryNodes(n, (Node)v, stiffness);
+                            if (n != (Node)v) connectTertiaryNodes(n, (Node)v, stiffness);
                         }
                     }
                 }
@@ -135,48 +161,58 @@ namespace SlowRobotics.Agent
 
         public float getDeltaForStep()
         {
-            return 0;
+            return 1;
             /*
             return getNodes().Sum(x => {
                 return (x is Particle) ? ((Particle)x).getDelta() : 0;
             });*/
         }
 
-        public HashSet<Node> getNodes()
+        public List<Node> getNodes()
         {
-            HashSet<Node> nodes = new HashSet<Node>();
-            getLinks().ForEach(l =>
-            {
-                nodes.Add(l.a);
-                nodes.Add(l.b);
-            });
-            return nodes;
+            return nodes.ToList();
         }
 
-        public void addBehaviour(IBehaviour b)
+        public Node getLastNode()
         {
-            behaviours.Enqueue(b);
-        }
-        public void addBehaviours(List<IBehaviour> newBehaviours)
-        {
-            foreach (IBehaviour b in newBehaviours) behaviours.Enqueue(b);
-        }
-        public List<IBehaviour> getBehaviours()
-        {
-            return behaviours.getData();
+            List<Node> nodes = getNodes();
+            return nodes[nodes.Count - 1];
         }
 
-        public void setBehaviours(List<IBehaviour> newBehaviours)
+        public Link getLastLink()
         {
-            behaviours = new PriorityQueue<IBehaviour>();
-            foreach (IBehaviour b in newBehaviours) behaviours.Enqueue(b);
+            return getLinks()[getLinks().Count - 1];
         }
 
-        public override void step(float damping)
+        public List<Link> getLinks()
         {
-            foreach (IBehaviour b in behaviours.getData()) b.run(this);
+            return links.ToList();
         }
 
-        //TODO implement copying
+        public bool hasLinks()
+        {
+            return links.Count > 0;
+        }
+
+        // This is hugely problematic - creates all sorts of duplication
+
+        public void connect(Link l)
+        {
+            l.a.connect(l);
+            l.b.connect(l);
+            links.Add(l);
+            nodes.Add(l.a);
+            nodes.Add(l.b);
+        }
+
+        public bool disconnect(Link l)
+        {
+            l.a.disconnect(l);
+            l.b.disconnect(l);
+            nodes.Remove(l.a);
+            nodes.Remove(l.b);
+            return links.Remove(l);
+
+        }
     }
 }
