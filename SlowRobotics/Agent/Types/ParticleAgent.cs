@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Types
 {
@@ -27,6 +28,11 @@ namespace SlowRobotics.Agent.Types
         public override float getDeltaForStep()
         {
             return getData().getDeltaForStep();
+        }
+
+        public override Vec3D getPos()
+        {
+            return getData();
         }
     }
 }

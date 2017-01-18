@@ -10,8 +10,8 @@ namespace SlowRobotics.Rhino.GraphTools
 {
     public static class GraphUtils
     {
-
-        public static List<Line> getConnectionsAsLines(Node n)
+        /*
+        public static List<Line> getConnectionsAsLines(LegacyNode n)
         {
             List<Line> output = new List<Line>();
             n.getLinks().ForEach(
@@ -20,44 +20,44 @@ namespace SlowRobotics.Rhino.GraphTools
             return output;
         }
 
-        public static List<Node> mergeDuplicatesByCoordinates(List<Point3d> pts, float distToMergeDuplicates)
+        public static List<LegacyNode> mergeDuplicatesByCoordinates(List<Point3d> pts, float distToMergeDuplicates)
         {
-            List<Node> unique = new List<Node>();
+            List<LegacyNode> unique = new List<LegacyNode>();
 
             foreach(Point3d p in Point3d.SortAndCullPointList(pts, distToMergeDuplicates))
             {
-                unique.Add(new Node((float)p.X, (float)p.Y, (float)p.Z));
+                unique.Add(new LegacyNode((float)p.X, (float)p.Y, (float)p.Z));
             }
             return unique;
         }
 
-        public static List<Node> mergeDuplicates (List<Point3d> pts, float distToMergeDuplicates)
+        public static List<LegacyNode> mergeDuplicates (List<Point3d> pts, float distToMergeDuplicates)
         {
-            Dictionary<string, Node> bins = new Dictionary<string, Node>(); //bins to keep track of duplicates within a threshold
+            Dictionary<string, LegacyNode> bins = new Dictionary<string, LegacyNode>(); //bins to keep track of duplicates within a threshold
 
             foreach (Point3d p in pts)
             {
                 string key = makeSpatialKey(p, distToMergeDuplicates);
-                Node a;
+                LegacyNode a;
                 //set a and b to nodes that already exist if possible
                 if (!bins.TryGetValue(key, out a))
                 {
-                    a = new Node((float)p.X, (float)p.Y, (float)p.Z);
+                    a = new LegacyNode((float)p.X, (float)p.Y, (float)p.Z);
                     bins.Add(key, a);
                 }
             }
 
-            return bins.Values.ToList<Node>();
+            return bins.Values.ToList<LegacyNode>();
         }
 
         public static void LinkByProximity(IWorld world, int maxConnections, float minDist, float maxDist)
         {
-            List<Node> graph = new List<Node>();
-            foreach(Node n in world.getPop())
+            List<LegacyNode> graph = new List<LegacyNode>();
+            foreach(LegacyNode n in world.getAgents())
             {
 
-                List<Vec3D> neighbours = world.searchDynamic(n, maxDist);
-                neighbours.AddRange(world.searchStatic(n, maxDist));
+                List<Vec3D> neighbours = world.search(n, maxDist,0);
+                neighbours.AddRange(world.search(n, maxDist,1));
                 foreach (Vec3D v in neighbours){
                     if(v.distanceTo(n)> minDist)
                     {
@@ -66,61 +66,63 @@ namespace SlowRobotics.Rhino.GraphTools
                 }
             }
         }
-        public static List<Node> buildFromLines(List<Line> lines, float distToMergeDuplicates)
+        
+
+        public static List<LegacyNode> buildFromLines(List<Line> lines, float distToMergeDuplicates)
         {
-            Dictionary<string, Node> bins = new Dictionary<string, Node>(); //bins to keep track of duplicates within a threshold
+            Dictionary<string, LegacyNode> bins = new Dictionary<string, LegacyNode>(); //bins to keep track of duplicates within a threshold
 
             foreach(Line l in lines)
             {
                 string startKey = makeSpatialKey(l.From, distToMergeDuplicates);
                 string endKey = makeSpatialKey(l.To, distToMergeDuplicates);
-                Node a, b;
+                LegacyNode a, b;
 
                 //set a and b to nodes that already exist if possible
                 if (!bins.TryGetValue(startKey, out a))
                 {
-                    a = new Node((float)l.FromX, (float)l.FromY, (float)l.FromZ);
+                    a = new LegacyNode((float)l.FromX, (float)l.FromY, (float)l.FromZ);
                     bins.Add(startKey, a);
                 }
                 if (!bins.TryGetValue(endKey, out b))
                 {
-                    b = new Node((float)l.ToX, (float)l.ToY, (float)l.ToZ);
+                    b = new LegacyNode((float)l.ToX, (float)l.ToY, (float)l.ToZ);
                     bins.Add(endKey, b);
                 }
 
                 //add link to a and b
-                Link connection = new Link(a, b);
+                LegacyLink connection = new LegacyLink(a, b);
                 a.connect(connection);
                 b.connect(connection);
             }
 
-            return bins.Values.ToList<Node>();
+            return bins.Values.ToList<LegacyNode>();
         }
 
 
-        public static void marchNodes(Node current, ref List<Node> used)
+        public static void marchNodes(LegacyNode current, ref List<LegacyNode> used)
         {
 
-            List<Node> childNodes = current.getConnectedNodes().Except(used).ToList();
+            List<LegacyNode> childNodes = current.getConnectedNodes().Except(used).ToList();
             used.AddRange(childNodes);
 
-            foreach (Node n in childNodes)
+            foreach (LegacyNode n in childNodes)
             {
                 marchNodes(n, ref used);
             }
 
         }
 
-        public static void parentUnique(List<Node> nodes)
+        public static void parentUnique(List<LegacyNode> nodes)
         {
-            List<Node> remaining = new List<Node>(nodes);
-            List<Node> used = new List<Node>();
+            List<LegacyNode> remaining = new List<LegacyNode>(nodes);
+            List<LegacyNode> used = new List<LegacyNode>();
 
-            Node current = remaining[0];
+            LegacyNode current = remaining[0];
             used.Add(current);
             marchNodes(current, ref used);
             
-            foreach (Node n in used)
+            foreach (LegacyNode n in used)
                 {
                      n.parent = current;
                      remaining.Remove(n);
@@ -138,5 +140,6 @@ namespace SlowRobotics.Rhino.GraphTools
                 (Math.Round(pt.Y / binSize) * binSize)+"," +
                 (Math.Round(pt.Z / binSize) * binSize));
         }
+        */
     }
 }

@@ -10,7 +10,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public abstract class Align : ScaledBehaviour<Particle>
+    public abstract class Align : ScaledBehaviour<Plane3D>
     {
         public float strength { get; set; }
         public float maxDist { get; set; }
@@ -30,7 +30,7 @@ namespace SlowRobotics.Agent.Behaviours
 
             public Planes(int _priority, float _maxDist, float _strength) : base(_priority, _strength, _maxDist) { }
 
-            public override void interactWith(Particle a_p, object b)
+            public override void interactWith(Plane3D a_p, object b)
             {
                 Plane3D b_p = b as Plane3D;
                 if (b_p != null) {
@@ -102,7 +102,7 @@ namespace SlowRobotics.Agent.Behaviours
                 field = _field;
             }
 
-            public override void runOn(Particle a_p)
+            public override void runOn(Plane3D a_p)
             {
                 FieldData d = field.evaluate(a_p);
                 if (d.hasPlaneData()) interpolateToVector(a_p, getAxis(d.planeData), strength * scaleFactor);
@@ -126,6 +126,10 @@ namespace SlowRobotics.Agent.Behaviours
             }
         }
 
+       /*
+
+        //TODO - implement using graph
+
         public class AxisToLinks : Axis
         {
 
@@ -133,24 +137,28 @@ namespace SlowRobotics.Agent.Behaviours
 
             public override void runOn(Particle a_p)
             {
-                foreach (Link l in a_p.getLinks())
+                foreach (LegacyLink l in a_p.getLinks())
                     {
                         interpolateToVector(a_p, l.getDir(), strength * scaleFactor);
                     }
             }
-        }
-
+        }*/
+        
         public class AxisToVelocity : Axis
         {
 
             public AxisToVelocity(int _priority, float _strength, int _axis) : base(_priority, _strength, _axis) { }
 
-            public override void runOn(Particle a_p)
+            public override void runOn(Plane3D a_p)
             {
-                interpolateToVector(a_p, a_p.getVel(), strength * scaleFactor);
+                Particle p = (Particle)a_p; //TODO - WITHOUT CASTS
+                if(p!=null) interpolateToVector(a_p, p.getVel(), strength * scaleFactor);
             }
         }
 
+       /*
+
+            //TODO - USE GRAPH
 
         public class AxisToNearLinks : Axis
         {
@@ -165,12 +173,12 @@ namespace SlowRobotics.Agent.Behaviours
 
             public override void interactWith(Particle a_n, object b)
             {
-                Node b_n = b as Node;
+                LegacyNode b_n = b as LegacyNode;
                 if (b_n != null)
                 {
                     if (useParent || b_n.parent != a_n.parent)
                     {
-                        foreach (Link l in b_n.parent.getLinks())
+                        foreach (LegacyLink l in b_n.parent.getLinks())
                         {
                             Vec3D ab = l.closestPt(a_n).sub(a_n);
                             float d = ab.magnitude();
@@ -186,6 +194,7 @@ namespace SlowRobotics.Agent.Behaviours
                 }
             }
         }
+      */
 
         public class AxisTo3PtTri : Axis
         {
@@ -207,7 +216,7 @@ namespace SlowRobotics.Agent.Behaviours
                 scaleFactor = 1;
             }
 
-            public override void interactWith(Particle a_v, object b)
+            public override void interactWith(Plane3D a_v, object b)
             {
                 Vec3D b_v = b as Vec3D;
                 if (b_v != null)
@@ -217,7 +226,7 @@ namespace SlowRobotics.Agent.Behaviours
                 }
             }
 
-            public override void runOn(Particle a_p)
+            public override void runOn(Plane3D a_p)
             {
                 if (closestPts.Count >= 3)
                 {
@@ -240,7 +249,7 @@ namespace SlowRobotics.Agent.Behaviours
                 reset();
             }
 
-            public override void runOn(Particle a)
+            public override void runOn(Plane3D a)
             {
                 //TODO need an interface that holds neighbours
 

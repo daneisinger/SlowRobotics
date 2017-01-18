@@ -1,95 +1,163 @@
-﻿using System;
+﻿using SlowRobotics.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Toxiclibs.core;
 
 namespace SlowRobotics.SRGraph
 {
-
-    //Based on David Reeves SlurGraph
-    //https://github.com/daveReeves/SpatialSlur/blob/master/SpatialSlur/SlurGraph
-
-    public class Edge : GraphElement
+    public class Edge<T> : IEdge<T>
     {
-
-        private Node _start;
-        private Node _end;
-        //private E _data;
+        public INode<T> a { get; set; }
+        public INode<T> b { get; set; }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        internal Edge()
+        public Edge(INode<T> _start, INode<T> _end)
         {
+            a = _start;
+            b = _end;
         }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        internal Edge(Node start, Node end)
+        public void cleanup()
         {
-            _start = start;
-            _end = end;
+            a.remove(this);
+            b.remove(this);
+        }
+    }
+
+    public class Spring : Edge<Particle>
+    {
+        public float l { get; set; }
+        public float s { get; set; }
+
+        public Spring(Particle _start, Particle _end) : this(new Node<Particle>(_start), new Node<Particle>(_end)) { }
+
+        public Spring(INode<Particle> _start, INode<Particle> _end) : base(_start, _end)
+        {
+            updateLength();
+            s = 0.08f;
         }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public Node Start
+        public void updateLength()
         {
-            get { return _start; }
-            internal set { _start = value; }
+            l = a.Geometry.distanceTo(b.Geometry);
         }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public Node End
+        public Vec3D getDir()
         {
-            get { return _end; }
-            internal set { _end = value; }
+            return b.Geometry.sub(a.Geometry).normalize();
         }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="node"></param>
-        /// <returns></returns>
-        public Node Other(Node node)
+        public float getLength()
         {
-            if (node == _start)
-                return _end;
-            else if (node == _end)
-                return _start;
+            return a.Geometry.distanceTo(b.Geometry);
+        }
 
+        /*
+
+    //From old link class
+
+    public LegacyLink replaceNode(LegacyNode oldN, LegacyNode newN)
+        {
+            if(oldN== a)
+            {
+                return new LegacyLink(newN, b);
+            }else if(oldN== b)
+            {
+                return new LegacyLink(a, newN);
+            }
             return null;
         }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public override bool IsUnused
+        public bool getNaked(out LegacyNode n)
         {
-            get { return _start == null; }
+            if (a.links.Count <= 1)
+            {
+                n = a;
+                return true;
+            }
+            if (b.links.Count <= 1)
+            {
+                n = b;
+                return true;
+            }
+            n = null;
+            return false;
         }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        internal void OnRemove()
+        public void split(LegacyNode splitPt)
         {
-            _start.Degree--;
-            _end.Degree--;
-            _start = null; // flag as unused
+            LegacyLink a_s = new LegacyLink(splitPt, a);
+            LegacyLink b_s = new LegacyLink(splitPt, b);
+
+            splitPt.connect(a_s);
+            splitPt.connect(b_s);
+
+            a.replaceLink(this, a_s);
+            b.replaceLink(this, b_s);
+
+            
         }
+
+        public float angleBetween(LegacyLink other, bool flip)
+        {
+
+            Vec3D ab = a.sub(b);
+            Vec3D abo = other.a.sub(other.b);
+            if (flip) abo.invert();
+            return ab.angleBetween(abo, true);
+        }
+
+        public Vec3D closestPt(Vec3D p)
+        {
+            Vec3D dir = b.sub(a);
+            float t = p.sub(a).dot(dir) / dir.magSquared();
+            if (t > 1) t = 1;
+            if (t < 0) t = 0;
+            return a.add(dir.scaleSelf(t));
+        }
+
+        public Vec3D pointAt(float param)
+        {
+            Vec3D ab = b.sub(a);
+            ab.scaleSelf(param);
+            return a.add(ab);
+        }
+
+        public static void closestPtBetweenLinks(LegacyLink l1, LegacyLink l2, ref Vec3D a, ref Vec3D b)
+        {
+
+            //TODO - sort out this mess
+            b = closestOnB(l1, l2);
+            a = closestOnB(l2, l1);
+        }
+
+        private static Vec3D closestOnB(LegacyLink l1, LegacyLink l2)
+        {
+            // Algorithm is ported from the C algorithm of Paul Bourke
+            Vec3D p1 = l1.a;
+            Vec3D p2 = l1.b;
+            Vec3D p3 = l2.a;
+            Vec3D p4 = l2.b;
+            Vec3D p21 = p2.sub(p1);
+            Vec3D p13 = p1.sub(p3);
+            Vec3D p43 = p4.sub(p3);
+            double d1343 = p13.x * (double)p43.x + (double)p13.y * p43.y + (double)p13.z * p43.z;
+            double d4321 = p43.x * (double)p21.x + (double)p43.y * p21.y + (double)p43.z * p21.z;
+            double d1321 = p13.x * (double)p21.x + (double)p13.y * p21.y + (double)p13.z * p21.z;
+            double d4343 = p43.x * (double)p43.x + (double)p43.y * p43.y + (double)p43.z * p43.z;
+            double d2121 = p21.x * (double)p21.x + (double)p21.y * p21.y + (double)p21.z * p21.z;
+
+            double denom = d2121 * d4343 - d4321 * d4321;
+            double numer = d1343 * d4321 - d1321 * d4343;
+
+            float mua = Math.Max(Math.Min((float)(numer / denom),1),0);
+            float mub = Math.Max(Math.Min((float)((d1343 + d4321 * (mua)) / d4343), 1),0);
+            return l2.pointAt(mub);
+
+        }
+
+    */
     }
 }

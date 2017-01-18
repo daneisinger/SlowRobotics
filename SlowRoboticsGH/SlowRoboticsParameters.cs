@@ -65,6 +65,7 @@ namespace SlowRoboticsGH
         }
     }
 
+    /*
     public class NodeParameter : GH_PersistentParam<GH_Node>
     {
         public NodeParameter() : base("Node", "Node", "This is a Node", "SlowRobotics", "Parameters") { }
@@ -86,7 +87,7 @@ namespace SlowRoboticsGH
             return GH_GetterResult.success;
         }
     }
-
+    */
     public class Plane3DParameter : GH_PersistentParam<GH_Plane3D>
     {
         public Plane3DParameter() : base("Plane3D", "Plane3D", "This is a Plane3D", "SlowRobotics", "Parameters") { }

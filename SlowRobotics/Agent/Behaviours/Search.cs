@@ -62,21 +62,21 @@ namespace SlowRobotics.Agent.Behaviours
 
         public List<Vec3D> searchDynamic(Vec3D a, float radius)
         {
-            List<Vec3D> n = world.searchDynamic(a, radius * scaleFactor);
+            List<Vec3D> n = world.search(a, radius * scaleFactor,0);
             n.Remove(a);
             return n;
         }
 
         public List<Vec3D> searchStatic(Vec3D a, float radius)
         {
-            List<Vec3D> n = world.searchStatic(a, radius * scaleFactor);
+            List<Vec3D> n = world.search(a, radius * scaleFactor,1);
             n.Remove(a);
             return n;
         }
 
         public List<Vec3D> searchAll(Vec3D a, float dynamicRadius, float staticRadius)
         {
-            List<Vec3D> n = world.searchDynamic(a, dynamicRadius * scaleFactor);
+            List<Vec3D> n = world.search(a, dynamicRadius * scaleFactor,2);
             n.AddRange(searchStatic(a, staticRadius * scaleFactor));
             n.Remove(a);
             return n;

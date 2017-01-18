@@ -5,6 +5,7 @@ using SlowRobotics.Agent;
 using SlowRobotics.Agent.Behaviours;
 using SlowRobotics.Agent.Types;
 using SlowRobotics.Core;
+using SlowRobotics.SRGraph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,14 +16,17 @@ namespace SlowRobotics.Rhino.IO
 {
     public static class IO
     {
-        public static List<ParticleAgent> ConvertCurveToLinkMesh(Curve c, int res, float stiffness, out Graph lm)
+      
+        public static List<ParticleAgent> ConvertCurveToGraph(Curve c, int res, float stiffness, out Graph<SlowRobotics.Core.Particle,Spring> lm)
         {
             Plane startPlane;
             c.FrameAt(0, out startPlane);
             Core.Particle p1 = new Core.Particle(ToPlane3D(startPlane));
             ParticleAgent a = new ParticleAgent(p1);
-            lm = new Graph(p1);
-            p1.parent = lm.parent;
+            lm = new Graph<SlowRobotics.Core.Particle, Spring>();
+            lm.parent = p1;
+
+           // p1.parent = lm.parent;
 
             List<ParticleAgent> agents = new List<ParticleAgent>();
             agents.Add(a);
@@ -35,23 +39,27 @@ namespace SlowRobotics.Rhino.IO
                 c.FrameAt(pts[i], out currentPlane);
                 Core.Particle p2 = new Core.Particle(ToPlane3D(currentPlane));
                 ParticleAgent b = new ParticleAgent(p2);
-                p2.parent = lm.parent;
+                //p2.parent = lm.parent;
 
                 agents.Add(b);
-                lm.connectNodes(a.getData(), b.getData(), stiffness);
+                Spring s = new Spring(a.getData(), b.getData());
+                s.s = stiffness;
+                lm.insert(s);
                 a = b;
             }
 
             return agents;
         }
 
-        public static List<IAgent> ConvertMeshToLinkMesh(Mesh m, float stiffness, out Graph lm)
+       
+        public static List<IAgent> ConvertMeshToGraph(Mesh m, float stiffness, out Graph<SlowRobotics.Core.Particle,Spring> lm)
         {
             List<ParticleAgent> agents = new List<ParticleAgent>();
             Core.Particle p1 = new Core.Particle(new Plane3D(ToVec3D(m.TopologyVertices[0])));
             ParticleAgent a = new ParticleAgent(p1);
-            lm = new Graph(p1);
-            p1.parent = lm.parent;
+            lm = new Graph<SlowRobotics.Core.Particle,Spring>();
+            lm.parent = p1;
+            //not sure if I need particles parented
             agents.Add(a);
 
             for (int i = 1; i < m.TopologyVertices.Count; i++)
@@ -59,19 +67,21 @@ namespace SlowRobotics.Rhino.IO
                 Point3f p = m.TopologyVertices[i];
                 Core.Particle p2 = new Core.Particle(new Plane3D(ToVec3D(p)));
                 ParticleAgent aa = new ParticleAgent(p2);
-                p2.parent = lm.parent;
                 agents.Add(aa);
             }
 
             for (int i = 0; i < m.TopologyEdges.Count; i++)
             {
                 IndexPair p = m.TopologyEdges.GetTopologyVertices(i);
-                lm.connectNodes(agents[p.I].getData(), agents[p.J].getData(), stiffness);
+                Spring s = new Spring(agents[p.I].getData(), agents[p.J].getData());
+                s.s = stiffness;
+                lm.insert(s);
             }
 
             return agents.Select(x=>(IAgent)x).ToList();
 
         }
+
 
         public static ParticleAgent ToPlaneAgent(Plane p)
         {

@@ -1,6 +1,7 @@
 ﻿
 using SlowRobotics.Agent.Types;
 using SlowRobotics.Core;
+using SlowRobotics.SRGraph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,30 +13,26 @@ namespace SlowRobotics.Agent.Behaviours
     public class Add
     {
 
-        public class StateToWorld : Behaviour<IState>, IWorldBehaviour
+        public class PointToWorld : Behaviour<Vec3D>, IWorldBehaviour
         {
             public int frequency { get; set; }
             public IWorld world {get;set;}
             int c;
 
-            public StateToWorld(int _priority, IWorld _world, int _frequency) :base(_priority)
+            public PointToWorld(int _priority, IWorld _world, int _frequency) :base(_priority)
             {
                 world = _world;
                 frequency = _frequency;
                 c = 0;
             }
 
-            public override void runOn(IState a)
+            public override void runOn(Vec3D a)
             {
-                    if (c % frequency == 0)
-                    {
-                        world.addStatic(a); //MIGHT NEED TO COPY STATE
-                    }
-                    c++;
+                if (c++ % frequency == 0)world.addPoint(a,false); 
             }
         }
 
-        public class Extend : ScaledBehaviour<Graph>, IWorldBehaviour
+        public class Extend : ScaledBehaviour<Graph<Particle,Spring>>, IWorldBehaviour
         {
             public IWorld world { get; set; }
 
@@ -45,11 +42,8 @@ namespace SlowRobotics.Agent.Behaviours
             public int frequency { get; set; }
             public int ctr;
             public float stiffness { get; set; }
-            public float braceStiffness { get; set; }
-            public bool dynamic { get; set; }
-            public bool tryToBrace { get; set; }
 
-            public Extend(int _priority, bool _tryToBrace, int _frequency, Vec3D _offset, float _stiffness, float _braceStiffness, List<IBehaviour> _behaviours, bool _dynamic, IWorld _world) : base(_priority)
+            public Extend(int _priority, int _frequency, Vec3D _offset, float _stiffness,List<IBehaviour> _behaviours, IWorld _world) : base(_priority)
             {
                 world = _world;
                 offset = _offset;
@@ -57,38 +51,33 @@ namespace SlowRobotics.Agent.Behaviours
                 ctr = 0;
                 behaviours = _behaviours;
                 stiffness = _stiffness;
-                braceStiffness = _braceStiffness;
-                dynamic = _dynamic;
-                tryToBrace = _tryToBrace;
             }
 
-            public override void runOn(Graph l)
+            public override void runOn(Graph<Particle,Spring> graph)
             {
-                if (ctr % frequency == 0)
+                if (ctr++ % frequency == 0)
                 {
-                    //duplicate the last node and make links
-                    Node n = new Node(l.parent);
-                    n.addSelf(offset);
-
-                    if (dynamic)
+                    //get head particle
+                    Particle p = graph.parent;
+                    Particle clone = new Particle(p.add(offset));
+                    //point nodes to new particle
+                    graph.replaceGeometry(p, clone);
+                    //get the last node
+                    INode<Particle> lastNode;
+                    if(graph.getNodeAt(clone, out lastNode))
                     {
-                        //make agent if dynamic
-                        Particle p = new Particle(n);
-
-                        l.swapConnections(l.parent, p, tryToBrace, stiffness * scaleFactor, braceStiffness * scaleFactor);
-
-                        ParticleAgent a = new ParticleAgent(p);
-                        a.addBehaviours(behaviours);
-                        world.addDynamic(p);
-                        world.addAgent(a);
+                        //make new connection if possible
+                        Spring newConnection = new Spring(lastNode, new Node<Particle>(p));
+                        graph.insert(newConnection);
+                        
                     }
-                    else
-                    {
-                        l.swapConnections(l.parent, n, tryToBrace, stiffness * scaleFactor, braceStiffness * scaleFactor);
-                        world.addStatic(n);
-                    }
+                    //make new agent
+                    ParticleAgent a = new ParticleAgent(clone);
+                    a.addBehaviours(behaviours);
+                    //add to world -------------------------------------------TODO - use graph to store things instead
+                    world.addAgent(a);
+                    world.addPoint(clone, true);
                 }
-                ctr++;
             }
         }
     }

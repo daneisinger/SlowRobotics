@@ -1,4 +1,5 @@
-﻿using SlowRobotics.Utils;
+﻿using SlowRobotics.SRGraph;
+using SlowRobotics.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,27 +14,16 @@ namespace SlowRobotics.Agent
     /// </summary>
     public abstract class Agent : IAgent
     {
-        public List<Vec3D> neighbours { get; set; }
+        
         public PriorityQueue<IBehaviour> behaviours { get; set; }
 
         public Agent()
         {
             behaviours = new PriorityQueue<IBehaviour>();
-            neighbours = new List<Vec3D>();
         }
 
         public abstract void step(float damping);
         public abstract float getDeltaForStep();
-
-        public bool hasNeighbours()
-        {
-            return neighbours.Count > 0;
-        }
-
-        public void addNeighbours(List<Vec3D> n)
-        {
-            neighbours.AddRange(n);
-        }
 
         public void addBehaviour(IBehaviour b)
         {
@@ -60,6 +50,8 @@ namespace SlowRobotics.Agent
         {
             behaviours = new PriorityQueue<IBehaviour>();
         }
+
+        public abstract Vec3D getPos();
     }
 
     /// <summary>
@@ -71,11 +63,13 @@ namespace SlowRobotics.Agent
     public class AgentT<T> : Agent, IAgentT<T> where T : class
     {
 
+        public List<Vec3D> neighbours { get; set; }
         private T data;
 
         public AgentT(T _data)
         {
             data = _data;
+            neighbours = new List<Vec3D>();
         }
 
         public T getData()
@@ -95,5 +89,21 @@ namespace SlowRobotics.Agent
                 b.run(this);
             }
         }
+
+        public bool hasNeighbours()
+        {
+            return neighbours.Count > 0;
+        }
+
+        public void addNeighbours(List<Vec3D> n)
+        {
+            neighbours.AddRange(n);
+        }
+
+        public override Vec3D getPos()
+        {
+            return null;
+        }
+
     }
 }

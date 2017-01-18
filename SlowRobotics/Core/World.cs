@@ -10,97 +10,96 @@ namespace SlowRobotics.Core
     public class World : IWorld
     {
 
-        List<IAgent> pop; //things with behaviours to run
+        private AgentList pop;
 
-        public Plane3DOctree dynamicTree; //particles
-        public Plane3DOctree staticTree; //nodes
-        float bounds;
+        public Plane3DOctree dynamicTree; //this octree is rebuilt every n frames
+        public Plane3DOctree staticTree;  //this octree is not rebuilt
+        public float bounds;
 
         public World(float _bounds)
         {
-            pop = new List<IAgent>();
+
+            pop = new AgentList();
             bounds = _bounds;
             dynamicTree = new Plane3DOctree(new Vec3D(-bounds, -bounds, -bounds), bounds * 2);
             staticTree = new Plane3DOctree(new Vec3D(-bounds, -bounds, -bounds), bounds * 2);
+
         }
 
-        
+        public void addAgent(IAgent a)
+        {
+            pop.add(a);
+        }
+
+        public void removeAgent(IAgent a)
+        {
+            pop.remove(a);
+        }
+
         public List<IAgent> getPop()
         {
-            return pop;
+            return pop.getAgents();
         }
 
         /// <summary>
         /// Add a plane to the octree
         /// </summary>
         /// <param name="p"></param>
-        public void addDynamic(Particle p)
+        public void addPoint(Vec3D p, bool dynamic)
         {
-            dynamicTree.addPoint(p);
+            if (dynamic)
+            {
+                dynamicTree.addPoint(p);
+            }
+            else
+            {
+                staticTree.addPoint(p);
+            }
         }
         /// <summary>
         /// Remove a plane from the octree
         /// </summary>
         /// <param name="p"></param>
-        public bool removeDynamic(Particle p)
+        public bool removePoint(Vec3D p)
         {
-            return dynamicTree.remove(p);
+            return dynamicTree.remove(p) || staticTree.remove(p);
         }
 
         public List<Vec3D> getPoints()
         {
-            List<Vec3D> total = new List<Vec3D>();
             List<Vec3D> pts = dynamicTree.getPoints();
-            List<Vec3D> spts = staticTree.getPoints();
-            if (pts != null) total.AddRange(pts);
-            if (spts != null) total.AddRange(spts);
-            return total;
+            pts.AddRange(staticTree.getPoints());
+            return pts;
 
         }
 
-        public List<Vec3D> searchDynamic(Vec3D pos, float radius)
+        public List<Vec3D> search(Vec3D pos, float radius, int type)
         {
-            List<Vec3D> dynamicPts = dynamicTree.getPointsWithinSphere(pos, radius);
-            if (dynamicPts == null)
+            List<Vec3D> pts = new List<Vec3D>();
+            switch (type)
             {
-                return new List<Vec3D>();
+                case 0:
+                    pts.AddRange(searchDynamic(pos, radius));
+                    break;
+                case 1:
+                    pts.AddRange(searchStatic(pos, radius));
+                    break;
+                default:
+                    pts.AddRange(searchDynamic(pos, radius));
+                    pts.AddRange(searchStatic(pos, radius));
+                    break;
             }
-            else return dynamicPts;
-        }
-        public List<Vec3D> searchStatic(Vec3D pos, float radius)
-        {
-            List<Vec3D> staticPts = staticTree.getPointsWithinSphere(pos, radius);
-            if (staticPts == null)
-            {
-                return new List<Vec3D>();
-            }
-            else return staticPts;
-        }
-        public List<Vec3D> search(Vec3D pos, float radius)
-        {
-            List<Vec3D> dpts = searchDynamic(pos, radius);
-            List<Vec3D> spts = searchStatic(pos, radius);
-            dpts.AddRange(spts);
-            return dpts;
-        }
-        public void addStatic(IState p)
-        {
-            staticTree.addPoint(p.getPos());
+            return pts;
         }
 
-        public bool removeStatic(IState p)
+        private List<Vec3D> searchDynamic(Vec3D pos, float radius)
         {
-            return staticTree.remove(p.getPos());
+            return dynamicTree.getPointsWithinSphere(pos, radius);
         }
 
-        public void addAgent(IAgent a)
+        private List<Vec3D> searchStatic(Vec3D pos, float radius)
         {
-            pop.Add(a);
-        }
-
-        public bool removeAgent(IAgent a)
-        {
-            return pop.Remove(a);
+            return staticTree.getPointsWithinSphere(pos, radius);
         }
 
         public void run()
@@ -110,61 +109,40 @@ namespace SlowRobotics.Core
 
         public void run(float damping)
         {
-            //run behaviours and measure average change in positions
-            float worldDelta = 0;
-            Random r = new Random();
-            int steps = (int) (1 / damping);
-            for (int i=0;i< steps; i++)
+            //add any new agents
+            pop.populate();
+
+            int steps = (int)(1 / damping);
+
+            for (int i = 0; i < steps; i++)
             {
-                foreach (IAgent a in pop.OrderBy(n => r.Next()))
-                {
-                    a.step(damping);
-                   // worldDelta+=a.getDelta();
-                }
+                foreach (IAgent a in pop.getRandomizedAgents()) a.step(damping);
             }
 
-            //can use this if needed
-            worldDelta /= (steps * pop.Count);
+            cleanup();
+            pop.flush();
+        }
 
+        public void cleanup()
+        {
             //rebuild octrees
-            List<IAgent> remove = new List<IAgent>();
             dynamicTree = new Plane3DOctree(new Vec3D(-bounds, -bounds, -bounds), bounds * 2);
 
-
-
-
-
-            //TODO - fix this up to be more generic and handle things that arent only particles
-            //e.g. IAgentT interface probably needs a few more methods 
-
-
-
-            foreach (IAgent a in pop)
+            foreach (IAgent a in pop.getAgents())
             {
-                IAgentT<object> defaultAgent = (IAgentT<object>)a;
-                
-                if (defaultAgent != null)
+                Vec3D p = a.getPos();
+                if (p != null)
                 {
-                    Particle p = defaultAgent.getData() as Particle;
+                    if (a.getDeltaForStep() > 0)
                     {
-                        if (p != null)
-                        {
-                            if (p.getInertia() != 0)
-                            {
-                                dynamicTree.addPoint(p);
-                            }
-                            else
-                            {
-                                staticTree.addPoint(p);
-                                remove.Add(a);
-                            }
-                        }
+                        addPoint(p, true); //add to dynamic octree
+                    }
+                    else {
+                        pop.remove(a);
+                        addPoint(p, false); //add to static octree
                     }
                 }
             }
-
-            //cleanup
-            foreach (IAgent a in remove) pop.Remove(a);
         }
     }
 }

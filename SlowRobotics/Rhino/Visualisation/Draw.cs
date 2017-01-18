@@ -10,36 +10,37 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Rhino.Visualisation
 {
+    /*
     public static class Draw
     {
-
+        
         public static List<GH_ObjectWrapper> LinkedPlanes(IWorld world)
         {
-            Dictionary<Node, List<Node>> map = new Dictionary<Node, List<Node>>();
+            Dictionary<LegacyNode, List<LegacyNode>> map = new Dictionary<LegacyNode, List<LegacyNode>>();
 
             world.getPoints().ForEach(v => {
-                Node node = (Node)v;
+                LegacyNode node = (LegacyNode)v;
                 if (map.ContainsKey(node))
                 {
                     map[node].Add(node);
                 }
                 else {
-                    map.Add(node, new List<Node>() { node });
+                    map.Add(node, new List<LegacyNode>() { node });
                 }
 
             });
             List<GH_ObjectWrapper> nodes = new List<GH_ObjectWrapper>();
-            foreach (Node n in map.Keys)
+            foreach (LegacyNode n in map.Keys)
             {
                 //get an end pt
-                Node start = null;
+                LegacyNode start = null;
 
-                foreach (Node forStart in map[n]) if (forStart.getLinks().Count == 1) start = forStart;
+                foreach (LegacyNode forStart in map[n]) if (forStart.getLinks().Count == 1) start = forStart;
 
                 if (start != null)
                 {
 
-                    List<Node> used = new List<Node>() { start };
+                    List<LegacyNode> used = new List<LegacyNode>() { start };
                     GraphTools.GraphUtils.marchNodes(start, ref used);
                     nodes.Add(new GH_ObjectWrapper(used.ConvertAll(x => NodeToPlane(x))));
                 }
@@ -47,7 +48,7 @@ namespace SlowRobotics.Rhino.Visualisation
             return nodes;
         }
 
-        public static Plane NodeToPlane(Node nn)
+        public static Plane NodeToPlane(LegacyNode nn)
         {
             Point3d pt = new Point3d(nn.x, nn.y, nn.z);
             Vector3d xx = new Vector3d(nn.xx.x, nn.xx.y, nn.xx.z);
@@ -55,7 +56,7 @@ namespace SlowRobotics.Rhino.Visualisation
             return new Plane(pt, xx, yy);
         }
 
-        public static List<Line> Links(Node a)
+        public static List<Line> Links(LegacyNode a)
         {
             List<Line> output = new List<Line>();
             a.getLinks().ForEach(l => {
@@ -64,4 +65,5 @@ namespace SlowRobotics.Rhino.Visualisation
             return output;
         }
     }
+    */
 }

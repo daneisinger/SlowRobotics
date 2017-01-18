@@ -41,7 +41,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public Spring spring = null;
+        public SpringBehaviour spring = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -63,7 +63,7 @@ namespace SlowRoboticsGH
             }
             else
             {
-                spring = new Spring(priority, (float)damping, verlet);
+                spring = new SpringBehaviour(priority, (float)damping, verlet);
                 
             }
             DA.SetData(0,spring);
@@ -71,6 +71,7 @@ namespace SlowRoboticsGH
         }
     }
 
+    /*
     public class AlignAxisToNearLinksComponent : GH_Component
     {
         public AlignAxisToNearLinksComponent() : base("Align to near links", "AlignLinks", "Align the X axis of a plane with the direction of neighbouring links (interaction behaviour)", "SlowRobotics", "Behaviours") { }
@@ -131,7 +132,7 @@ namespace SlowRoboticsGH
 
         }
     }
-
+    */
     public class CohereInZAxisComponent : GH_Component
     {
         public CohereInZAxisComponent() : base("Attract in Z", "AttractZ", "Cohere with neighbours by moving in ZAxis (interaction behaviour)", "SlowRobotics", "Behaviours") { }
@@ -188,7 +189,7 @@ namespace SlowRoboticsGH
             DA.SetData(0, cZAxis);
         }
     }
-
+    /*
     public class CohereToNearestLinkComponent : GH_Component
     {
         public CohereToNearestLinkComponent() : base("Attract to near links", "AttractLinks", "Cohere to nearest point on links (interaction behaviour)", "SlowRobotics", "Behaviours") { }
@@ -221,7 +222,7 @@ namespace SlowRoboticsGH
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            Graph parent = null;
+            LegacyGraph parent = null;
             double strength = 0.1;
             double maxDist = 10;
             int priority = 5;
@@ -249,6 +250,7 @@ namespace SlowRoboticsGH
         }
     }
 
+        */
     //TODO - too much overlap between this and the duplicate behaviour
     public class AddLinkComponent : GH_Component
     {
@@ -270,10 +272,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "New Behaviours", "B", "Behaviours for duplicated agent", GH_ParamAccess.list);
             pManager.AddVectorParameter("Offset Vector", "V", "Offset with this vector before duplicating node", GH_ParamAccess.item);
             pManager.AddNumberParameter("Stiffness", "S", "Link Stiffness", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Brace Stiffness", "Bs", "Bracing Link Stiffness", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Add Frequency", "F", "Add a link every n steps", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Add Dynamic", "D", "Toggle between adding a static or dynamic node", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Brace", "B", "Try to add brace springs for bend resistance", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
             pManager.AddParameter(new WorldParameter(), "World", "W", "World to add new agents to", GH_ParamAccess.item);
 
@@ -291,10 +290,7 @@ namespace SlowRoboticsGH
             List<GH_Behaviour> behaviours = new List<GH_Behaviour>();
             Vector3d offset = Vector3d.Unset;
             double stiffness = 0.1;
-            double braceStiffness = 0.05;
             int freq = 1;
-            bool dynamic = true;
-            bool brace = true;
             int priority = 5;
             GH_World world = null;
             //Object b = null;
@@ -302,28 +298,24 @@ namespace SlowRoboticsGH
             if (!DA.GetDataList(0, behaviours)) { return; }
             if (!DA.GetData(1, ref offset)) { return; }
             if (!DA.GetData(2, ref stiffness)) { return; }
-            if (!DA.GetData(3, ref braceStiffness)) { return; }
-            if (!DA.GetData(4, ref freq)) { return; }
-            if (!DA.GetData(5, ref dynamic)) { return; }
-            if (!DA.GetData(6, ref brace)) { return; }
-            if (!DA.GetData(7, ref priority)) { return; }
-            if (!DA.GetData(8, ref world)) { return; }
+            if (!DA.GetData(3, ref freq)) { return; }
+            if (!DA.GetData(4, ref priority)) { return; }
+            if (!DA.GetData(5, ref world)) { return; }
 
             if (addLink != null)
             {
                 addLink.behaviours = (behaviours.ConvertAll(b => { return b.Value; }));
                 addLink.stiffness = (float)stiffness;
-                addLink.braceStiffness = (float)braceStiffness;
+
                 addLink.offset = IO.ToVec3D(offset);
                 addLink.frequency = freq;
-                addLink.dynamic = dynamic;
-                addLink.tryToBrace = brace;
+
                 addLink.priority = priority;
                 addLink.world = world.Value;
             }
             else
             {
-                addLink = new Add.Extend(priority, brace, freq, IO.ToVec3D(offset), (float)stiffness, (float) braceStiffness, behaviours.ConvertAll(b => { return b.Value; }),dynamic, world.Value);
+                addLink = new Add.Extend(priority, freq, IO.ToVec3D(offset), (float)stiffness,  behaviours.ConvertAll(b => { return b.Value; }), world.Value);
                 
             }
             DA.SetData(0, addLink);
@@ -764,6 +756,8 @@ namespace SlowRoboticsGH
             DA.SetData(0, move);
         }
     }
+
+    /*
     public class AlignAxisToLinksComponent : GH_Component
     {
 
@@ -824,7 +818,7 @@ namespace SlowRoboticsGH
             DA.SetData(0, aAxis);
         }
     }
-
+    */
     public class AlignAxisToVelocityComponent : GH_Component
     {
 
@@ -1304,7 +1298,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public Add.StateToWorld addBehaviour = null;
+        public Add.PointToWorld addBehaviour = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -1324,7 +1318,7 @@ namespace SlowRoboticsGH
             }
             else
             {
-                addBehaviour = new Add.StateToWorld(priority,world.Value,frequency);
+                addBehaviour = new Add.PointToWorld(priority,world.Value,frequency);
             }
             DA.SetData(0, addBehaviour);
         }

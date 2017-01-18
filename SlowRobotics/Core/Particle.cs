@@ -6,7 +6,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Core
 {
-    public class Particle : Node, IParticle
+    public class Particle : Plane3D
     {
         protected Vec3D accel = new Vec3D();
         protected Vec3D vel = new Vec3D();
@@ -18,7 +18,7 @@ namespace SlowRobotics.Core
 
         public Particle(float _x, float _y, float _z) : this(new Vec3D(_x, _y, _z)) { }
         public Particle(Vec3D _o) : base(_o) { }
-        public Particle(Node _n) : base(_n) { }
+        public Particle(Plane3D _p) : base(_p) { }
 
         public bool inBounds(int extents)
         {
@@ -88,8 +88,9 @@ namespace SlowRobotics.Core
 
         public float getDeltaForStep()
         {
-            return vel.magnitude();
+            return (age>0)?vel.magnitude():1;
         }
+
         public void scaleInertia(float factor)
         {
             setInertia(inertia *= factor);

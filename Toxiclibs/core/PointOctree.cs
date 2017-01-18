@@ -373,7 +373,7 @@ namespace Toxiclibs.core
      */
     public List<Vec3D> getPointsWithinSphere(Sphere s)
     {
-        List<Vec3D> results = null;
+        List<Vec3D> results = new List<Vec3D>();
         if (this.intersectsSphere(s))
         {
             if (points != null)

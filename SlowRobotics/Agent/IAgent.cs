@@ -1,5 +1,6 @@
 ﻿using SlowRobotics.Agent.Behaviours;
 using SlowRobotics.Core;
+using SlowRobotics.SRGraph;
 using SlowRobotics.Utils;
 using System;
 using System.Collections.Generic;
@@ -15,15 +16,13 @@ namespace SlowRobotics.Agent
     /// </summary>
     public interface IAgent
     {
-        List<Vec3D> neighbours { get; set; }
-        bool hasNeighbours();
-        void addNeighbours(List<Vec3D> neighbours);
-
         PriorityQueue<IBehaviour> behaviours { get; set; }
 
         void step(float damping);
 
         float getDeltaForStep();
+
+        Vec3D getPos();
 
         void addBehaviour(IBehaviour b);
         void addBehaviours(List<IBehaviour> behaviours);
@@ -37,6 +36,10 @@ namespace SlowRobotics.Agent
     /// <typeparam name="T"></typeparam>
     public interface IAgentT<out T> : IAgent 
     {
+        List<Vec3D> neighbours { get; set; }
+        bool hasNeighbours();
+        void addNeighbours(List<Vec3D> neighbours);
+
         T getData();
     }
 }

@@ -125,90 +125,16 @@ namespace SlowRoboticsGH
                 //could possibly be handled by the world (addDynamicAgent(IAgentT<Particle> a)) etc
 
                 SlowRobotics.Core.Particle p = (SlowRobotics.Core.Particle)defaultAgent.getData();
-                if (p!=null && dynamic) world.addDynamic(p);
-                Node n = (Node)defaultAgent.getData();
-                if(n!=null && !dynamic)world.addStatic(n);
+                if (p!=null && dynamic) world.addPoint(p,true);
+                Plane3D pln = (Plane3D)defaultAgent.getData();
+                if(pln!=null && !dynamic)world.addPoint(pln,false);
 
             }
 
             world.addAgent(a);
 
         }
-
-        public void addNode(Node a, IWorld world, bool dynamic) {
-            SlowRobotics.Core.Particle p = a as SlowRobotics.Core.Particle;
-
-            if (dynamic && a!=null)
-            {
-                world.addDynamic(p);
-            }
-            else
-            {
-                world.addStatic(a);
-            }
-        }
     }
-
-    /*
-
-        TODO = make this retrieve all nodes for a given parent
-
-    public class RetrieveStatesComponent : GH_Component
-    {
-        public RetrieveStatesComponent() : base("Retrieve States", "RetrieveStates", "Get any captured agent states", "SlowRobotics", "Agent") { }
-        public override GH_Exposure Exposure => GH_Exposure.primary;
-        public override Guid ComponentGuid => new Guid("{65722cdd-63e9-4f87-85e4-205b09a56390}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
-
-        protected override void RegisterInputParams(GH_InputParamManager pManager)
-        {
-            pManager.AddGenericParameter("Agents", "A", "Retrieve states from agents", GH_ParamAccess.item);
-        }
-
-        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-        {
-            pManager.AddGenericParameter("States", "S", "States", GH_ParamAccess.list);
-        }
-
-        protected override void SolveInstance(IGH_DataAccess DA)
-        {
-            GH_ObjectWrapper wrapper = null;
-
-            if (!DA.GetData(0, ref wrapper)) { return; }
-
-            List<GH_ObjectWrapper> states = new List<GH_ObjectWrapper>();
-
-            if (wrapper.Value is List<IAgent>)
-            {
-                List<IAgent> agents = (List<IAgent>)wrapper.Value;
-                foreach (IAgent a in agents)
-                {
-                    foreach(IBehaviour cap in a.behaviours.getData())
-                    {
-                        if (cap is ICaptureBehaviour<Plane3D>)
-                        {
-                            List<Plane3D> planes = ((ICaptureBehaviour<Plane3D>)cap).get();
-                            states.Add(new GH_ObjectWrapper(planes));
-                        }
-                    }
-                }
-            }
-            else if (wrapper.Value is IAgent)
-            {
-                foreach (IBehaviour cap in ((IAgent)wrapper.Value).behaviours.getData())
-                {
-                    if(cap is ICaptureBehaviour<Plane3D>)
-                    {
-                        List<Plane3D> planes = ((ICaptureBehaviour < Plane3D > )cap).get();
-                        states.Add(new GH_ObjectWrapper(planes));
-                    }
-                    
-                }
-            }
-
-            DA.SetDataList(0, states);
-        }
-    }*/
 
     public class FixParticlesComponent : GH_Component
     {

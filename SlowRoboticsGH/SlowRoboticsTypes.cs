@@ -6,6 +6,7 @@ using SlowRobotics.Agent.Types;
 using SlowRobotics.Core;
 using SlowRobotics.Field;
 using SlowRobotics.Rhino.IO;
+using SlowRobotics.SRGraph;
 using SlowRobotics.Voxels;
 using System;
 using System.Collections.Generic;
@@ -117,53 +118,6 @@ namespace SlowRoboticsGH
         }
     }
 
-    public class GH_Node : GH_Goo<Node>
-    {
-        public GH_Node() { this.Value = null; }
-        public GH_Node(GH_Node goo) { this.Value = goo.Value; }
-        public GH_Node(Node native) { this.Value = native; }
-
-        public override IGH_Goo Duplicate() => new GH_Node(this);
-        public override bool IsValid => true;
-        public override string TypeName => "Node";
-        public override string TypeDescription => "Node";
-        public override string ToString() => this.Value.ToString();
-        public override object ScriptVariable() => Value;
-
-        public override bool CastFrom(object source)
-        {
-
-            if (source is GH_Plane)
-            {
-                Value = new Node(IO.ToPlane3D(((GH_Plane)source).Value));
-                return true;
-            }
-
-            if (source is Plane3D)
-            {
-                Value = new Node((Plane3D)source);
-                return true;
-            }
-            if (source is GH_Plane3D)
-            {
-                Value = new Node(((GH_Plane3D)source).Value);
-                return true;
-            }
-            if (source is Node)
-            {
-                Value = source as Node;
-                return true;
-            }
-            if (source is GH_Node)
-            {
-                Value = ((GH_Node)source).Value;
-                return true;
-            }
-            return false;
-        }
-
-    }
-
     public class GH_Particle : GH_Goo<SlowRobotics.Core.Particle>
     {
         public GH_Particle() { this.Value = null; }
@@ -179,32 +133,20 @@ namespace SlowRoboticsGH
 
         public override bool CastFrom(object source)
         {
-            if (source is Node)
-            {
-                Value = new SlowRobotics.Core.Particle((Node)source);
-                return true;
-            }
-            if (source is GH_Node)
-            {
-                Value = new SlowRobotics.Core.Particle(((GH_Node)source).Value);
-                return true;
-            }
-
-           
             if (source is Plane3D)
             {
-                Value = new SlowRobotics.Core.Particle(new Node((Plane3D)source));
+                Value = new SlowRobotics.Core.Particle((Plane3D)source);
                 return true;
             }
             if (source is GH_Plane3D)
             {
-                Value = new SlowRobotics.Core.Particle(new Node(((GH_Plane3D)source).Value));
+                Value = new SlowRobotics.Core.Particle(((GH_Plane3D)source).Value);
                 return true;
             }
 
             if (source is GH_Plane)
             {
-                SlowRobotics.Core.Particle p = new SlowRobotics.Core.Particle(new Node(IO.ToPlane3D(((GH_Plane)source).Value)));
+                SlowRobotics.Core.Particle p = new SlowRobotics.Core.Particle(IO.ToPlane3D(((GH_Plane)source).Value));
                 Value = p;
                 return true;
             }
@@ -213,40 +155,29 @@ namespace SlowRoboticsGH
         }
 
     }
-    public class GH_Graph : GH_Goo<Graph>
+    public class GH_Graph : GH_Goo<Graph<SlowRobotics.Core.Particle,Spring>>
     {
         public GH_Graph() { this.Value = null; }
         public GH_Graph(GH_Graph goo) { this.Value = goo.Value; }
-        public GH_Graph(Graph native) { this.Value = native; }
-        public GH_Graph(Node parent) { this.Value = new Graph(parent); }
+        public GH_Graph(Graph<SlowRobotics.Core.Particle, Spring> native) { this.Value = native; }
 
         public override IGH_Goo Duplicate() => new GH_Graph(this);
         public override bool IsValid => true;
-        public override string TypeName => "LinkMesh";
-        public override string TypeDescription => "LinkMesh";
+        public override string TypeName => "Spring Graph";
+        public override string TypeDescription => "Spring Graph";
         public override string ToString() => this.Value.ToString();
         public override object ScriptVariable() => Value;
 
         public override bool CastFrom(object source)
         {
-            if (source is Graph)
+            if (source is Graph<SlowRobotics.Core.Particle, Spring>)
             {
-                Value = source as Graph;
+                Value = source as Graph<SlowRobotics.Core.Particle, Spring>;
                 return true;
             }
             if (source is GH_Graph)
             {
                 Value = ((GH_Graph)source).Value;
-                return true;
-            }
-            if (source is GH_Node)
-            {
-                Value = new Graph(((GH_Node)source).Value);
-                return true;
-            }
-            if (source is GH_Plane3D)
-            {
-                Value = new Graph(new Node(((GH_Plane3D)source).Value));
                 return true;
             }
             return false;
