@@ -10,6 +10,8 @@ namespace SlowRobotics.SRGraph
     {
         List<E> Edges { get; }
         List<INode<T>> Nodes { get; }
+        List<T> Geometry { get; }
+
         IEnumerable<E> getEdgesFor(T geometry);
         bool removeEdge(E edge);
 

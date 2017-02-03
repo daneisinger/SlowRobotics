@@ -147,6 +147,11 @@ namespace SlowRoboticsGH
                 return true;
             }
 
+            if(source is SRParticle)
+            {
+                Value = (SRParticle)source;
+                return true;
+            }
             return false;
         }
 
@@ -223,10 +228,18 @@ namespace SlowRoboticsGH
                 Value = new AgentT<object>(o);
                 return true;
             }
+            
+            if(source is GH_ObjectWrapper)
+            {
+                GH_ObjectWrapper wrapper = (GH_ObjectWrapper)source;
 
-            // Value = new AgentT<object>(source);
-            // return true;
-            return false;
+                Value = new AgentT<object>(wrapper.Value);
+                return true;
+            }
+
+            Value = new AgentT<object>(source);
+            return true;
+           // return false;
 
             /*
             if (source is SlowRobotics.Core.Particle)

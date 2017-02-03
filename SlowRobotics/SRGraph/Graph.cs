@@ -42,6 +42,14 @@ namespace SlowRobotics.SRGraph
             }
         }
 
+        public List<T> Geometry
+        {
+            get
+            {
+                return _nodeMap.Keys.ToList();
+            }
+        }
+
         public bool getNodeAt(T geometry, out INode<T> node)
         {
             return (_nodeMap.TryGetValue(geometry, out node));
