@@ -51,7 +51,7 @@ namespace SlowRoboticsGH
 
     public class AddToWorldComponent : GH_Component
     {
-        public AddToWorldComponent() : base("Add Nodes To World", "AddWorld", "Add wrapped list of nodes to a world", "SlowRobotics", "Agent") { }
+        public AddToWorldComponent() : base("Add Agents To World", "AddWorld", "Add Agents to a world", "SlowRobotics", "Agent") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{25adadd2-b209-4f16-9f3b-75c5e38ec22c}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
@@ -60,7 +60,7 @@ namespace SlowRoboticsGH
         {
             pManager.AddGenericParameter("Agents", "A", "Agents to add", GH_ParamAccess.list);
             pManager.AddParameter(new WorldParameter(), "World", "W", "World to contain agents", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Add Dynamic", "D", "Toggle between adding to dynamic or static trees", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Add Dynamic", "D", "Toggle between adding any particles to dynamic or static trees", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Add Agents", "Add", "Add the agents", GH_ParamAccess.item);
         }
 
@@ -119,18 +119,9 @@ namespace SlowRoboticsGH
 
             if (defaultAgent != null)
             {
-                
-                //TODO this all needs to be handled by the IAgentT interface - 
-                //or this simply needs to be a direct test for IAgentT<Node> and IAgentT<Particle>
-                //could possibly be handled by the world (addDynamicAgent(IAgentT<Particle> a)) etc
-
-                SlowRobotics.Core.Particle p = (SlowRobotics.Core.Particle)defaultAgent.getData();
-                if (p!=null && dynamic) world.addPoint(p,true);
-                Plane3D pln = (Plane3D)defaultAgent.getData();
-                if(pln!=null && !dynamic)world.addPoint(pln,false);
-
+                Vec3D v = defaultAgent.getData() as Vec3D;
+                if(v!= null) world.addPoint(v, dynamic);
             }
-
             world.addAgent(a);
 
         }
@@ -195,7 +186,7 @@ namespace SlowRoboticsGH
                     if (typedAgent.getData().distanceTo(new Vec3D((float)p.X, (float)p.Y, (float)p.Z)) < 1)
                     {
                         agent.removeBehaviours();
-                        if (agent is SlowRobotics.Core.Particle) ((SlowRobotics.Core.Particle)agent).f = true;
+                        if (agent is SlowRobotics.Core.SRParticle) ((SlowRobotics.Core.SRParticle)agent).f = true;
                         return;
                     }
                 }

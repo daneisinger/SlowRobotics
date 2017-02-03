@@ -8,7 +8,8 @@ namespace SlowRobotics.SRGraph
 {
     public interface IGraph<T, E> where E :IEdge<T>
     {
-        List<E> Edges();
+        List<E> Edges { get; }
+        List<INode<T>> Nodes { get; }
         IEnumerable<E> getEdgesFor(T geometry);
         bool removeEdge(E edge);
 

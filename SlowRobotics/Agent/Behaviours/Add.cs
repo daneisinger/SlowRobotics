@@ -1,5 +1,4 @@
 ﻿
-using SlowRobotics.Agent.Types;
 using SlowRobotics.Core;
 using SlowRobotics.SRGraph;
 using System;
@@ -32,7 +31,7 @@ namespace SlowRobotics.Agent.Behaviours
             }
         }
 
-        public class Extend : ScaledBehaviour<Graph<Particle,Spring>>, IWorldBehaviour
+        public class Extend : ScaledBehaviour<Graph<SRParticle,Spring>>, IWorldBehaviour
         {
             public IWorld world { get; set; }
 
@@ -53,26 +52,26 @@ namespace SlowRobotics.Agent.Behaviours
                 stiffness = _stiffness;
             }
 
-            public override void runOn(Graph<Particle,Spring> graph)
+            public override void runOn(Graph<SRParticle,Spring> graph)
             {
                 if (ctr++ % frequency == 0)
                 {
                     //get head particle
-                    Particle p = graph.parent;
-                    Particle clone = new Particle(p.add(offset));
+                    SRParticle p = graph.parent;
+                    SRParticle clone = new SRParticle(p.add(offset));
                     //point nodes to new particle
                     graph.replaceGeometry(p, clone);
                     //get the last node
-                    INode<Particle> lastNode;
+                    INode<SRParticle> lastNode;
                     if(graph.getNodeAt(clone, out lastNode))
                     {
                         //make new connection if possible
-                        Spring newConnection = new Spring(lastNode, new Node<Particle>(p));
+                        Spring newConnection = new Spring(lastNode, new Node<SRParticle>(p));
                         graph.insert(newConnection);
                         
                     }
                     //make new agent
-                    ParticleAgent a = new ParticleAgent(clone);
+                    AgentT<SRParticle> a = new AgentT<SRParticle>(clone);
                     a.addBehaviours(behaviours);
                     //add to world -------------------------------------------TODO - use graph to store things instead
                     world.addAgent(a);

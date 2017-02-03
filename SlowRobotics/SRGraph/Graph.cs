@@ -18,14 +18,44 @@ namespace SlowRobotics.SRGraph
             _nodeMap = new Dictionary<T, INode<T>>();
         }
 
-        public List<E> Edges()
+        public int Count
         {
-            return _edges.ToList();
+            get
+            {
+                return _nodeMap.Count;
+            }
+        }
+
+        public List<INode<T>> Nodes
+        {
+            get
+            {
+                return _nodeMap.Values.ToList();
+            }
+        }
+
+        public List<E> Edges
+        {
+            get
+            {
+                return _edges.ToList();
+            }
         }
 
         public bool getNodeAt(T geometry, out INode<T> node)
         {
             return (_nodeMap.TryGetValue(geometry, out node));
+        }
+
+        public bool getNodeAt(int index, out INode<T> node)
+        {
+            if (index > _nodeMap.ToList().Count)
+            {
+                node = null;
+                return false;
+            }
+            node = _nodeMap.Values.ToList()[index];
+            return true;
         }
 
         public bool removeNodeAt(T geometry)

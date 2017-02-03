@@ -9,7 +9,22 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class Move : ScaledBehaviour<Particle>
+    public class Update : ScaledBehaviour<SRParticle>
+    {
+        public float damping { get; set; }
+
+        public Update(int _priority, float _damping) : base(_priority)
+        {
+            damping = _damping;
+        }
+
+        public override void runOn(SRParticle p)
+        {
+            p.step(damping * scaleFactor);
+        }
+    }
+
+    public class Move : ScaledBehaviour<SRParticle>
     {
         
         public float strength { get; set; }
@@ -43,7 +58,7 @@ namespace SlowRobotics.Agent.Behaviours
                 axis = _axis;
             }
 
-            public override void runOn(Particle p)
+            public override void runOn(SRParticle p)
             {
                 if (scaleFactor > 0) p.addForce(getAxis(p).scale(strength * scaleFactor));
             }
@@ -73,7 +88,7 @@ namespace SlowRobotics.Agent.Behaviours
                 field = _field;
             }
 
-            public override void runOn(Particle p)
+            public override void runOn(SRParticle p)
             {
                 FieldData d = field.evaluate(p);
                 if (d.hasVectorData()) p.addForce(d.vectorData.scale(strength * scaleFactor));
@@ -98,7 +113,7 @@ namespace SlowRobotics.Agent.Behaviours
                 scaleFactor = 1;
             }
 
-            public override void interactWith(Particle p, object b)
+            public override void interactWith(SRParticle p, object b)
             {
                 Vec3D b_v = b as Vec3D;
                 if(b_v!= null) { 
@@ -120,7 +135,7 @@ namespace SlowRobotics.Agent.Behaviours
 
             }
 
-            public override void runOn(Particle p)
+            public override void runOn(SRParticle p)
             {
                 p.addForce(force);
                 reset();
@@ -132,7 +147,7 @@ namespace SlowRobotics.Agent.Behaviours
 
             public Together(int _priority, float _strength, float _minDist, float _maxDist, bool _inXY) : base(_priority, _strength, _minDist, _maxDist, _inXY){ }
 
-            public override void interactWith(Particle p, object b)
+            public override void interactWith(SRParticle p, object b)
             {
                 Vec3D b_v = b as Vec3D;
                 if (b_v != null)
@@ -159,7 +174,7 @@ namespace SlowRobotics.Agent.Behaviours
 
             public TogetherInZ(int _priority, float _strength, float _maxDist) : base(_priority,_strength, _maxDist) {}
 
-            public override void interactWith(Particle p, object b)
+            public override void interactWith(SRParticle p, object b)
             {
                 Vec3D b_v = b as Vec3D;
                 if (b_v != null)

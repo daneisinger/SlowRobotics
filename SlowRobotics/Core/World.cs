@@ -28,7 +28,14 @@ namespace SlowRobotics.Core
 
         public void addAgent(IAgent a)
         {
-            pop.add(a);
+            //try and get some data
+
+            //TODO - fix this up so there is no casting
+
+            IAgentT<object> ao = (IAgentT<object>)a;
+            object data = null;
+            if (ao != null) data = ao.getData();
+            pop.add(a,data);
         }
 
         public void removeAgent(IAgent a)
@@ -128,19 +135,23 @@ namespace SlowRobotics.Core
             //rebuild octrees
             dynamicTree = new Plane3DOctree(new Vec3D(-bounds, -bounds, -bounds), bounds * 2);
 
+            //need a more elegant way of doing this
             foreach (IAgent a in pop.getAgents())
             {
-                Vec3D p = a.getPos();
-                if (p != null)
-                {
-                    if (a.getDeltaForStep() > 0)
-                    {
+                Vec3D p;
+                if(pop.getDataFor(a, out p))
+                { 
+                    //TODO - implement better system for handling dynamic points
+                    //and removing agents
+
+                    //if (a.getDeltaForStep() > 0)
+                  //  {
                         addPoint(p, true); //add to dynamic octree
-                    }
-                    else {
-                        pop.remove(a);
-                        addPoint(p, false); //add to static octree
-                    }
+                   // }
+                   // else {
+                    //    pop.remove(a);
+                     //   addPoint(p, false); //add to static octree
+                   // }
                 }
             }
         }

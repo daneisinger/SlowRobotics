@@ -10,7 +10,7 @@ namespace SlowRobotics.Agent.Behaviours
 {
     public class Arrest
     {
-        public class Friction : ScaledBehaviour<Particle>
+        public class Friction : ScaledBehaviour<SRParticle>
         {
             public float frictionCof { get; set; }
             public float inertiaMod { get; set; }
@@ -23,7 +23,7 @@ namespace SlowRobotics.Agent.Behaviours
                 inertiaMod = 0;
             }
 
-            public override void interactWith(Particle a, object b)
+            public override void interactWith(SRParticle a, object b)
             {
                 Vec3D b_v = b as Vec3D;
                 if (b_v != null)
@@ -40,15 +40,14 @@ namespace SlowRobotics.Agent.Behaviours
 
             }
 
-            public override void runOn(Particle a)
+            public override void runOn(SRParticle a)
             {
-
                     a.addInertia(inertiaMod);
                     inertiaMod = 0;
             }
         }
 
-        public class Freeze : ScaledBehaviour<Particle>
+        public class Freeze : ScaledBehaviour<SRParticle>
         {
 
             public float minInertia { get; set; }
@@ -62,7 +61,7 @@ namespace SlowRobotics.Agent.Behaviours
                 minAge = _minAge;
             }
 
-            public override void runOn(Particle p)
+            public override void runOn(SRParticle p)
             {
                     if (p.getInertia() + (p.getSpeed() * speedFactor * scaleFactor) < minInertia && p.age > minAge)
                     {
@@ -71,7 +70,7 @@ namespace SlowRobotics.Agent.Behaviours
             }
         }
 
-        public class Z : Behaviour<Particle>
+        public class Z : Behaviour<SRParticle>
         {
             public float minZ
             {
@@ -83,7 +82,7 @@ namespace SlowRobotics.Agent.Behaviours
                 minZ = _minZ;
             }
 
-            public override void runOn(Particle a)
+            public override void runOn(SRParticle a)
             {
                 if (a.z < minZ) a.setInertia(0);
             }

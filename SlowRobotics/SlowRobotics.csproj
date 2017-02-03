@@ -90,8 +90,7 @@
     <Compile Include="Agent\Behaviours\Newton.cs" />
     <Compile Include="Agent\Behaviours\Search.cs" />
     <Compile Include="Agent\Behaviours\Spring.cs" />
-    <Compile Include="Agent\Types\ParticleAgent.cs" />
-    <Compile Include="Core\Particle.cs" />
+    <Compile Include="Core\SRParticle.cs" />
     <Compile Include="Core\Plane3D.cs" />
     <Compile Include="Core\Plane3DOctree.cs" />
     <Compile Include="Core\World.cs" />

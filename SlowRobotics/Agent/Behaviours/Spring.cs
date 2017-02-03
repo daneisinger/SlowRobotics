@@ -8,7 +8,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class SpringBehaviour : ScaledBehaviour<Graph<Particle,Spring>>
+    public class SpringBehaviour : ScaledBehaviour<Graph<SRParticle,Spring>>
     {
         public float damping { get; set; }
         public bool verlet { get; set; }
@@ -19,9 +19,9 @@ namespace SlowRobotics.Agent.Behaviours
             verlet = _verlet;
         }
 
-        public override void runOn(Graph<Particle, Spring> graph)
+        public override void runOn(Graph<SRParticle, Spring> graph)
         {
-            foreach (Spring l in graph.Edges())
+            foreach (Spring l in graph.Edges)
             {
                 float d = (l.l - (l.getLength()));
                 Vec3D ab = l.getDir();

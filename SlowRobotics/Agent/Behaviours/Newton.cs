@@ -7,7 +7,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class Newton : ScaledBehaviour<Particle>
+    public class Newton : ScaledBehaviour<SRParticle>
     {
         public Vec3D force { get; set; }
 
@@ -16,7 +16,7 @@ namespace SlowRobotics.Agent.Behaviours
             force = _force;
         }
 
-        public override void runOn(Particle p)
+        public override void runOn(SRParticle p)
         {
             p.addForce(force.scale(scaleFactor));
         }

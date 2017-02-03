@@ -6,7 +6,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Core
 {
-    public class Particle : Plane3D
+    public class SRParticle : Plane3D
     {
         protected Vec3D accel = new Vec3D();
         protected Vec3D vel = new Vec3D();
@@ -14,11 +14,14 @@ namespace SlowRobotics.Core
         float accLimit = 1;
         public int age = 0;
         private float inertia = 1;
+
+        //TODO need mass property
+
         public bool f { get; set; } = false; //TODO sort out better locking system
 
-        public Particle(float _x, float _y, float _z) : this(new Vec3D(_x, _y, _z)) { }
-        public Particle(Vec3D _o) : base(_o) { }
-        public Particle(Plane3D _p) : base(_p) { }
+        public SRParticle(float _x, float _y, float _z) : this(new Vec3D(_x, _y, _z)) { }
+        public SRParticle(Vec3D _o) : base(_o) { }
+        public SRParticle(Plane3D _p) : base(_p) { }
 
         public bool inBounds(int extents)
         {

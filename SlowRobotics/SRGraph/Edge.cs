@@ -24,19 +24,28 @@ namespace SlowRobotics.SRGraph
             a.remove(this);
             b.remove(this);
         }
+
+        public INode<T> Other (INode<T> toThis)
+        {
+            if (a == toThis) return b;
+            if (b == toThis) return a;
+            return null;
+        }
     }
 
-    public class Spring : Edge<Particle>
+    public class Spring : Edge<SRParticle>
     {
         public float l { get; set; }
         public float s { get; set; }
+        public string tag { get; set; }
 
-        public Spring(Particle _start, Particle _end) : this(new Node<Particle>(_start), new Node<Particle>(_end)) { }
+        public Spring(SRParticle _start, SRParticle _end) : this(new Node<SRParticle>(_start), new Node<SRParticle>(_end)) { }
 
-        public Spring(INode<Particle> _start, INode<Particle> _end) : base(_start, _end)
+        public Spring(INode<SRParticle> _start, INode<SRParticle> _end) : base(_start, _end)
         {
             updateLength();
             s = 0.08f;
+            tag = "";
         }
 
         public void updateLength()

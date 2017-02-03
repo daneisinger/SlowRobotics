@@ -23,7 +23,6 @@ namespace SlowRobotics.Agent
         }
 
         public abstract void step(float damping);
-        public abstract float getDeltaForStep();
 
         public void addBehaviour(IBehaviour b)
         {
@@ -51,7 +50,6 @@ namespace SlowRobotics.Agent
             behaviours = new PriorityQueue<IBehaviour>();
         }
 
-        public abstract Vec3D getPos();
     }
 
     /// <summary>
@@ -77,11 +75,6 @@ namespace SlowRobotics.Agent
             return data;
         }
 
-        public override float getDeltaForStep()
-        {
-            return 1;
-        }
-
         public override void step(float damping)
         {
             foreach (IBehaviour b in behaviours.getData())
@@ -99,11 +92,7 @@ namespace SlowRobotics.Agent
         {
             neighbours.AddRange(n);
         }
-
-        public override Vec3D getPos()
-        {
-            return null;
-        }
-
     }
+
+
 }

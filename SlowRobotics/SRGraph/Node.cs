@@ -27,6 +27,7 @@ namespace SlowRobotics.SRGraph
         public void add(IEdge<T> edge)
         {
             Edges.Add(edge);
+
         }
     }
 }

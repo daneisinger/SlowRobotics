@@ -20,10 +20,6 @@ namespace SlowRobotics.Agent
 
         void step(float damping);
 
-        float getDeltaForStep();
-
-        Vec3D getPos();
-
         void addBehaviour(IBehaviour b);
         void addBehaviours(List<IBehaviour> behaviours);
         void setBehaviours(List<IBehaviour> behaviours);
@@ -36,6 +32,8 @@ namespace SlowRobotics.Agent
     /// <typeparam name="T"></typeparam>
     public interface IAgentT<out T> : IAgent 
     {
+        //THIS SHOULD REALLY BE A LIST OF AGENTS NOT VEC3D!
+
         List<Vec3D> neighbours { get; set; }
         bool hasNeighbours();
         void addNeighbours(List<Vec3D> neighbours);

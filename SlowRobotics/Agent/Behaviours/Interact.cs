@@ -30,6 +30,8 @@ namespace SlowRobotics.Agent.Behaviours
             {
                 // Testing step - loop through all neighbours
                 // used for closest point search etc.
+
+                //TODO - should loop through agents
                 foreach (Vec3D p in a.neighbours)
                 {
                     //TODO - neighbour search doesnt return IAgent

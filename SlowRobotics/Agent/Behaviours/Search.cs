@@ -9,6 +9,9 @@ namespace SlowRobotics.Agent.Behaviours
 {
     public class Search : ScaledBehaviour<Vec3D>, IWorldBehaviour
     {
+
+        //TODO - should be a search points function and a search agents function
+
         public struct SearchMethod
         {
 

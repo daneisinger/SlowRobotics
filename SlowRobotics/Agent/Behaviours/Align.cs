@@ -151,7 +151,7 @@ namespace SlowRobotics.Agent.Behaviours
 
             public override void runOn(Plane3D a_p)
             {
-                Particle p = (Particle)a_p; //TODO - WITHOUT CASTS
+                SRParticle p = (SRParticle)a_p; //TODO - WITHOUT CASTS
                 if(p!=null) interpolateToVector(a_p, p.getVel(), strength * scaleFactor);
             }
         }

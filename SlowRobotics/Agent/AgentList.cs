@@ -9,22 +9,22 @@ namespace SlowRobotics.Agent
     {
 
         //handles adding and removing of agents from a collection
-        public List<IAgent> pop { get; set; }
-        private List<IAgent> addBuffer;
+        private Dictionary<IAgent, object> pop { get; set; }
+        private Dictionary<IAgent, object> addBuffer;
         private List<IAgent> removeBuffer;
 
-        public AgentList() : this(new List<IAgent>()) { }
+        public AgentList() : this(new Dictionary<IAgent,object>()) { }
 
-        public AgentList(List<IAgent> agents) 
+        public AgentList(Dictionary<IAgent,object> agents) 
         {
             pop = agents;
             removeBuffer = new List<IAgent>();
-            addBuffer = new List<IAgent>();
+            addBuffer = new Dictionary<IAgent,object>();
         }
 
-        public void add(IAgent a)
+        public void add(IAgent a, object o)
         {
-            addBuffer.Add(a);
+            addBuffer.Add(a,o);
         }
 
         public void remove(IAgent a)
@@ -35,21 +35,27 @@ namespace SlowRobotics.Agent
         public List<IAgent> getRandomizedAgents()
         {
             Random r = new Random();
-            return pop.OrderBy(n => r.Next()).ToList();
+            return pop.Keys.OrderBy(n => r.Next()).ToList();
         }
 
         public List<IAgent> getAgents()
         {
-            return pop;
+            return pop.Keys.ToList();
+        }
+
+        public bool getDataFor<T>(IAgent a, out T data) where T : class
+        {
+            data = pop[a] as T;
+            return data != null;
         }
 
         public void populate()
         {
-            foreach (IAgent a in addBuffer)
+            foreach (KeyValuePair<IAgent,object> a in addBuffer)
             {
-                pop.Add(a);
+                pop.Add(a.Key,a.Value);
             }
-            addBuffer = new List<IAgent>();
+            addBuffer = new Dictionary<IAgent,object>();
         }
 
         public void flush()

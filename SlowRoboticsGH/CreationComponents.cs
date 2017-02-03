@@ -4,18 +4,12 @@ using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 using System.Drawing;
-using SlowRobotics.Agent.Behaviours;
-using Grasshopper.Kernel.Parameters;
 using SlowRobotics.Rhino.IO;
 using SlowRobotics.Agent;
 using SlowRobotics.Core;
 using Grasshopper.Kernel.Types;
-using SlowRobotics.Rhino.MeshTools;
 using SlowRobotics.Field;
 using SlowRobotics.Field.Elements;
-using System.Linq;
-using Toxiclibs.core;
-using SlowRobotics.Agent.Types;
 using SlowRobotics.SRGraph;
 
 namespace SlowRoboticsGH
@@ -88,7 +82,7 @@ namespace SlowRoboticsGH
             if (!DA.GetData(0, ref m)) { return; }
             if (!DA.GetData(1, ref stiffness)) { return; }
 
-            Graph<SlowRobotics.Core.Particle,Spring> g = new Graph<SlowRobotics.Core.Particle, Spring>();
+            Graph<SlowRobotics.Core.SRParticle,Spring> g = new Graph<SlowRobotics.Core.SRParticle, Spring>();
             GH_ObjectWrapper agents = new GH_ObjectWrapper(IO.ConvertMeshToGraph(m, (float)stiffness, out g));
 
             DA.SetData(0, agents);
@@ -122,7 +116,7 @@ namespace SlowRoboticsGH
             if (!DA.GetData(0, ref _graph)) { return; }
             if (!DA.GetData(1, ref stiffness)) { return; }
 
-            Graph<SlowRobotics.Core.Particle, Spring> graph = _graph.Value;
+            Graph<SlowRobotics.Core.SRParticle, Spring> graph = _graph.Value;
             //lm.interconnectTertiaryNodes(lm.getNodes().ToList(), (float)stiffness); ----------------------TODO implement functions
 
             DA.SetData(0, new GH_ObjectWrapper(graph));
@@ -160,7 +154,7 @@ namespace SlowRoboticsGH
             if (!DA.GetData(1, ref stiffness)) { return; }
             if (!DA.GetData(2, ref minD)) { return; }
             if (!DA.GetData(3, ref maxD)) { return; }
-            Graph<SlowRobotics.Core.Particle, Spring> g = _graph.Value;
+            Graph<SlowRobotics.Core.SRParticle, Spring> g = _graph.Value;
 
             //lm.connectByProximity(lm.getNodes().ToList(), (float)minD, (float)maxD,(float)stiffness);-------------------TODO implement functions
 
@@ -194,7 +188,7 @@ namespace SlowRoboticsGH
             if (!DA.GetData(0, ref _graph)) { return; }
             if (!DA.GetData(1, ref stiffness)) { return; }
 
-            Graph<SlowRobotics.Core.Particle, Spring> g = _graph.Value;
+            Graph<SlowRobotics.Core.SRParticle, Spring> g = _graph.Value;
             //lm.braceNthLinks(lm.getLinks(), (float)stiffness);  ------------------------ TODO implement functions
 
             DA.SetData(0, new GH_ObjectWrapper(g));
@@ -221,7 +215,7 @@ namespace SlowRoboticsGH
         }
 
         public List<IAgent> agents = new List<IAgent>();
-        public Graph<SlowRobotics.Core.Particle,Spring> graph = null;
+        public Graph<SRParticle,Spring> graph = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -240,11 +234,11 @@ namespace SlowRoboticsGH
                 //first agent
                 Plane currentPlane;
                 curve.FrameAt(0, out currentPlane);
-                SlowRobotics.Core.Particle p1 = new SlowRobotics.Core.Particle(IO.ToPlane3D(currentPlane));
-                ParticleAgent a = new ParticleAgent(p1);
+                SRParticle p1 = new SRParticle(IO.ToPlane3D(currentPlane));
+                AgentT<SRParticle> a = new AgentT<SRParticle>(p1);
                 agents.Add(a);
 
-                graph = new Graph<SlowRobotics.Core.Particle, Spring>();
+                graph = new Graph<SRParticle, Spring>();
                 graph.parent = p1;
                 //all other agents
                 double[] pts = curve.DivideByCount(res, true);
@@ -252,13 +246,13 @@ namespace SlowRoboticsGH
                 for (int i = 1; i < pts.Length; i++)
                 {
                     curve.FrameAt(pts[i], out currentPlane);
-                SlowRobotics.Core.Particle p2 = new SlowRobotics.Core.Particle(IO.ToPlane3D(currentPlane));
-                ParticleAgent b = new ParticleAgent(p2);
-                Spring s = new Spring(a.getData(), b.getData());
-                s.s = (float)stiffness;
-                graph.insert(s);
-                agents.Add(b);
-                a = b;
+                    SRParticle p2 = new SRParticle(IO.ToPlane3D(currentPlane));
+                    AgentT<SRParticle> b = new AgentT<SRParticle>(p2);
+                    Spring s = new Spring(a.getData(), b.getData());
+                    s.s = (float)stiffness;
+                    graph.insert(s);
+                    agents.Add(b);
+                    a = b;
                 }
 
             DA.SetData(0, new GH_ObjectWrapper(agents));

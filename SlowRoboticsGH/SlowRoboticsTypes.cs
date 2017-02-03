@@ -1,18 +1,14 @@
 ﻿using Grasshopper.Kernel.Types;
-using Rhino.Geometry;
+
 using SlowRobotics.Agent;
-using SlowRobotics.Agent.Behaviours;
-using SlowRobotics.Agent.Types;
+
+
 using SlowRobotics.Core;
 using SlowRobotics.Field;
 using SlowRobotics.Rhino.IO;
 using SlowRobotics.SRGraph;
 using SlowRobotics.Voxels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Toxiclibs.core;
+
 
 namespace SlowRoboticsGH
 {
@@ -118,11 +114,11 @@ namespace SlowRoboticsGH
         }
     }
 
-    public class GH_Particle : GH_Goo<SlowRobotics.Core.Particle>
+    public class GH_Particle : GH_Goo<SRParticle>
     {
         public GH_Particle() { this.Value = null; }
         public GH_Particle(GH_Particle goo) { this.Value = goo.Value; }
-        public GH_Particle(SlowRobotics.Core.Particle native) { this.Value = native; }
+        public GH_Particle(SRParticle native) { this.Value = native; }
 
         public override IGH_Goo Duplicate() => new GH_Particle(this);
         public override bool IsValid => true;
@@ -135,18 +131,18 @@ namespace SlowRoboticsGH
         {
             if (source is Plane3D)
             {
-                Value = new SlowRobotics.Core.Particle((Plane3D)source);
+                Value = new SRParticle((Plane3D)source);
                 return true;
             }
             if (source is GH_Plane3D)
             {
-                Value = new SlowRobotics.Core.Particle(((GH_Plane3D)source).Value);
+                Value = new SRParticle(((GH_Plane3D)source).Value);
                 return true;
             }
 
             if (source is GH_Plane)
             {
-                SlowRobotics.Core.Particle p = new SlowRobotics.Core.Particle(IO.ToPlane3D(((GH_Plane)source).Value));
+                SRParticle p = new SRParticle(IO.ToPlane3D(((GH_Plane)source).Value));
                 Value = p;
                 return true;
             }
@@ -155,11 +151,11 @@ namespace SlowRoboticsGH
         }
 
     }
-    public class GH_Graph : GH_Goo<Graph<SlowRobotics.Core.Particle,Spring>>
+    public class GH_Graph : GH_Goo<Graph<SRParticle,Spring>>
     {
         public GH_Graph() { this.Value = null; }
         public GH_Graph(GH_Graph goo) { this.Value = goo.Value; }
-        public GH_Graph(Graph<SlowRobotics.Core.Particle, Spring> native) { this.Value = native; }
+        public GH_Graph(Graph<SRParticle, Spring> native) { this.Value = native; }
 
         public override IGH_Goo Duplicate() => new GH_Graph(this);
         public override bool IsValid => true;
@@ -170,14 +166,23 @@ namespace SlowRoboticsGH
 
         public override bool CastFrom(object source)
         {
-            if (source is Graph<SlowRobotics.Core.Particle, Spring>)
+            if (source is Graph<SRParticle, Spring>)
             {
-                Value = source as Graph<SlowRobotics.Core.Particle, Spring>;
+                Value = source as Graph<SRParticle, Spring>;
                 return true;
             }
             if (source is GH_Graph)
             {
                 Value = ((GH_Graph)source).Value;
+                return true;
+            }
+            if (source is GH_Particle)
+            {
+                Graph<SRParticle, Spring> graph = new Graph<SRParticle, Spring>();
+                SRParticle p = ((GH_Particle)source).Value;
+                graph.insert(p);
+                graph.parent = p;
+                Value = graph;
                 return true;
             }
             return false;
@@ -214,7 +219,8 @@ namespace SlowRoboticsGH
 
             if (source is IGH_Goo)
             {
-                Value = new AgentT<object>(((IGH_Goo)source).ScriptVariable());
+                object o = ((IGH_Goo)source).ScriptVariable();
+                Value = new AgentT<object>(o);
                 return true;
             }
 
