@@ -156,8 +156,8 @@ namespace SlowRoboticsGH
         }
 
     }
-    public class GH_Graph : GH_Goo<Graph<SRParticle,Spring>>
-    {
+    public class GH_Graph : GH_Goo<Graph<SRParticle, Spring>> { 
+
         public GH_Graph() { this.Value = null; }
         public GH_Graph(GH_Graph goo) { this.Value = goo.Value; }
         public GH_Graph(Graph<SRParticle, Spring> native) { this.Value = native; }
@@ -190,6 +190,7 @@ namespace SlowRoboticsGH
                 Value = graph;
                 return true;
             }
+
             return false;
         }
 
@@ -210,6 +211,8 @@ namespace SlowRoboticsGH
 
         public override bool CastFrom(object source)
         {
+
+            
             if (source is IAgent)
             {
                 Value = source as IAgent;

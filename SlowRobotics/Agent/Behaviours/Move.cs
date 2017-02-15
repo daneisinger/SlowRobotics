@@ -9,7 +9,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class Update : ScaledBehaviour<SRParticle>
+    public class Update : ScaledBehaviour<IParticle>
     {
         public float damping { get; set; }
 
@@ -18,7 +18,7 @@ namespace SlowRobotics.Agent.Behaviours
             damping = _damping;
         }
 
-        public override void runOn(SRParticle p)
+        public override void runOn(IParticle p)
         {
             p.step(damping * scaleFactor);
         }
@@ -98,12 +98,13 @@ namespace SlowRobotics.Agent.Behaviours
         public class Apart : Move
         {
             public bool inXY { get; set; }
-
+            public bool ignoreParent { get; set; }
             public Vec3D force;
 
-            public Apart(int _priority, float _strength, float _minDist, float _maxDist, bool _inXY) : base(_priority, _strength, _minDist,_maxDist)
+            public Apart(int _priority, float _strength, float _minDist, float _maxDist, bool _inXY, bool _ignoreParent) : base(_priority, _strength, _minDist,_maxDist)
             {
                 inXY = _inXY;
+                ignoreParent = _ignoreParent;
                 reset();
             }
 
@@ -115,9 +116,9 @@ namespace SlowRobotics.Agent.Behaviours
 
             public override void interactWith(SRParticle p, object b)
             {
-                Vec3D b_v = b as Vec3D;
-                if(b_v!= null) { 
-                    
+                SRParticle b_v = b as SRParticle;
+                if(b_v!= null) {
+                    if (ignoreParent && b_v.parent == p.parent) return;
                     if (!inXY)
                     {
                         force.addSelf(calcForce(p, p.sub(b_v), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
@@ -145,13 +146,14 @@ namespace SlowRobotics.Agent.Behaviours
         public class Together  : Apart
         {
 
-            public Together(int _priority, float _strength, float _minDist, float _maxDist, bool _inXY) : base(_priority, _strength, _minDist, _maxDist, _inXY){ }
+            public Together(int _priority, float _strength, float _minDist, float _maxDist, bool _inXY, bool _ignoreParent) : base(_priority, _strength, _minDist, _maxDist, _inXY, _ignoreParent){ }
 
             public override void interactWith(SRParticle p, object b)
             {
-                Vec3D b_v = b as Vec3D;
+                SRParticle b_v = b as SRParticle;
                 if (b_v != null)
                 {
+                    if (ignoreParent && b_v.parent == p.parent) return;
                     if (!inXY)
                     {
                         force.addSelf(calcForce(p, b_v.sub(p), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
@@ -166,6 +168,47 @@ namespace SlowRobotics.Agent.Behaviours
                         if (d > minDist && d < maxDist) force.addSelf(op.sub(p).normalizeTo(sf));
                     }
                 }
+            }
+        }
+
+        public class ToClosestPoint : Apart
+        {
+            Vec3D closestPt;
+            float md;
+
+            public ToClosestPoint(int _priority, float _strength, float _minDist, float _maxDist, bool _inXY, bool _ignoreParent) :
+                base(_priority, _strength, _minDist, _maxDist, _inXY, _ignoreParent)
+            {
+                closestPt = null;
+                md = 10000;
+            }
+
+            public override void interactWith(SRParticle p, object b)
+            {
+                SRParticle b_v = b as SRParticle;
+                if (b_v != null)
+                {
+                    if (ignoreParent && b_v.parent == p.parent) return;
+                    float d = b_v.distanceTo(p);
+                    if (d < md)
+                    {
+                        md = d;
+                        closestPt = b_v;
+                    }
+                }
+            }
+
+
+            public override void runOn(SRParticle p)
+            {
+                if (closestPt != null)
+                {
+                    force = calcForce(p, closestPt.sub(p), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared);
+                    p.addForce(force);
+                }
+                closestPt = null;
+                md = 1000000;
+                reset();
             }
         }
 

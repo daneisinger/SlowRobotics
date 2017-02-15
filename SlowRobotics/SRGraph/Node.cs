@@ -8,7 +8,12 @@ namespace SlowRobotics.SRGraph
     public class Node<T> : INode<T>
     {
         public int Index { get; set; }
-        public int Tag { get; set; }
+        public int Cost { get; set; }
+
+        private bool isOpenList = false;
+        private bool isClosedList = false;
+
+        public INode<T> parent { get; set; }
 
         public HashSet<IEdge<T>> Edges { get; set; }
         public T Geometry { get; set; }
@@ -17,6 +22,26 @@ namespace SlowRobotics.SRGraph
         {
             Geometry = _geometry;
             Edges = new HashSet<IEdge<T>>();
+        }
+
+		public bool IsOpenList(IEnumerable<INode<T>> openList)
+        {
+            return isOpenList;
+        }
+
+        public void SetOpenList(bool value)
+        {
+            isOpenList = value;
+        }
+
+        public bool IsClosedList(IEnumerable<INode<T>> closedList)
+        {
+            return isClosedList;
+        }
+
+        public void SetClosedList(bool value)
+        {
+            isClosedList = value;
         }
 
         public bool remove(IEdge<T> edge)

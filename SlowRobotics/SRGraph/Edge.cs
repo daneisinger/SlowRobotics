@@ -31,6 +31,21 @@ namespace SlowRobotics.SRGraph
             if (b == toThis) return a;
             return null;
         }
+
+        public bool replaceNode(INode<T> replaceThis, INode<T> withThat)
+        {
+            if (a == replaceThis)
+            {
+                a = withThat;
+                return true;
+            }else if (b == replaceThis)
+            {
+                b = withThat;
+                return true;
+            }
+            return false;
+
+        }
     }
 
     public class Spring : Edge<SRParticle>
@@ -67,17 +82,6 @@ namespace SlowRobotics.SRGraph
 
     //From old link class
 
-    public LegacyLink replaceNode(LegacyNode oldN, LegacyNode newN)
-        {
-            if(oldN== a)
-            {
-                return new LegacyLink(newN, b);
-            }else if(oldN== b)
-            {
-                return new LegacyLink(a, newN);
-            }
-            return null;
-        }
 
         public bool getNaked(out LegacyNode n)
         {

@@ -128,6 +128,7 @@ namespace SlowRobotics.Core
 
             cleanup();
             pop.flush();
+           
         }
 
         public void cleanup()

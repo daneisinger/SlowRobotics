@@ -6,14 +6,15 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Core
 {
-    public class SRParticle : Plane3D
+    public class SRParticle : Plane3D, IParticle
     {
         protected Vec3D accel = new Vec3D();
         protected Vec3D vel = new Vec3D();
-        float spd = 1;
+        public float spd = 1;
         float accLimit = 1;
         public int age = 0;
         private float inertia = 1;
+        public IParticle parent { get; set; }
 
         //TODO need mass property
 
@@ -43,25 +44,31 @@ namespace SlowRobotics.Core
             }
         }
 
-        public void step(float damping)
+        public virtual void step(float dt)
         {
-            update(damping);
-        }
-
-        public void update(float damping)
-        {
+            accel.limit(accLimit);
+            
             if (!f)
             {
-                accel.limit(accLimit);
                 vel.addSelf(accel);
                 vel.limit(spd);
-                vel.scaleSelf(damping * inertia);
+                vel.scaleSelf(dt * inertia);
                 addSelf(vel);
                 age++;
             }
 
             accel = new Vec3D();
             inertia = 0.97f; //add default inertia to slow everything down
+        }
+
+        public Vec3D getLimitedAccel()
+        {
+            return accel.getLimited(accLimit);
+        }
+
+        public void resetAccel()
+        {
+            accel = new Vec3D();
         }
 
         public void setSpeed(float s)

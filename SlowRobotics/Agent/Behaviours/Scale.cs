@@ -85,11 +85,15 @@ namespace SlowRobotics.Agent.Behaviours
 
             public override void run(IAgentT<object> a)
             {
-                IAgentT<Vec3D> typedAgent = (IAgentT<Vec3D>)a; //cast to generic
-                float f = getFactor(typedAgent.getData(), box);
-                foreach (IScaledBehaviour b in behaviours)
+
+                Vec3D v = a.getData() as Vec3D;
+                if (v != null)
                 {
-                    b.scale(f);
+                    float f = getFactor(v, box);
+                    foreach (IScaledBehaviour b in behaviours)
+                    {
+                        b.scale(f);
+                    }
                 }
             }
 

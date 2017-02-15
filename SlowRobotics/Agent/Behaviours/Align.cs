@@ -105,9 +105,12 @@ namespace SlowRobotics.Agent.Behaviours
             public override void runOn(Plane3D a_p)
             {
                 FieldData d = field.evaluate(a_p);
-                if (d.hasPlaneData()) interpolateToVector(a_p, getAxis(d.planeData), strength * scaleFactor);
-                if (d.hasVectorData()) interpolateToVector(a_p, d.vectorData, strength * scaleFactor);
+                Vec3D dir = new Vec3D();
 
+                if (d.hasPlaneData()) dir.addSelf(getAxis(d.planeData));
+                if (d.hasVectorData()) dir.addSelf(d.vectorData); 
+
+                interpolateToVector(a_p, dir, strength * scaleFactor);
             }
 
             public Vec3D getAxis(WeightedPlane3D a)

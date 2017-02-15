@@ -1013,6 +1013,7 @@ namespace SlowRoboticsGH
             pManager.AddNumberParameter("Min Distance", "Mn", "Minimum Attraction Distance", GH_ParamAccess.item);
             pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Attraction Distance", GH_ParamAccess.item);
             pManager.AddBooleanParameter("In XY", "XY", "Attract only in Plane XY", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Ignore Parent", "Ip", "Ignore particles with same parent", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
         }
 
@@ -1026,6 +1027,7 @@ namespace SlowRoboticsGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             bool inXY = false;
+            bool ignoreParent = false;
             double strength = 0.1;
             double maxDist = 10;
             double minDist = 1;
@@ -1035,7 +1037,8 @@ namespace SlowRoboticsGH
             if (!DA.GetData(1, ref minDist)) { return; }
             if (!DA.GetData(2, ref maxDist)) { return; }
             if (!DA.GetData(3, ref inXY)) { return; }
-            if (!DA.GetData(4, ref priority)) { return; }
+            if (!DA.GetData(4, ref ignoreParent)) { return; }
+            if (!DA.GetData(5, ref priority)) { return; }
 
             if (attract != null)
             {
@@ -1044,16 +1047,17 @@ namespace SlowRoboticsGH
                 attract.maxDist = (float)maxDist;
                 attract.inXY = inXY;
                 attract.priority = priority;
+                attract.ignoreParent = ignoreParent;
             }
             else
             {
                 if (!inXY)
                 {
-                    attract = new Move.Together(priority, (float)minDist, (float)maxDist, (float)strength, inXY);
+                    attract = new Move.Together(priority, (float)minDist, (float)maxDist, (float)strength, inXY, ignoreParent);
                 }
                 else
                 {
-                    attract = new Move.Together(priority, (float)minDist, (float)maxDist, (float)strength, inXY);
+                    attract = new Move.Together(priority, (float)minDist, (float)maxDist, (float)strength, inXY, ignoreParent);
                 }
             }
             DA.SetData(0, attract);
@@ -1083,6 +1087,7 @@ namespace SlowRoboticsGH
             pManager.AddNumberParameter("Min Distance", "Mn", "Minimum Separation Distance", GH_ParamAccess.item);
             pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Separation Distance", GH_ParamAccess.item);
             pManager.AddBooleanParameter("In XY", "XY", "Separate only in Plane XY", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Ignore Parent", "Ip", "Ignore particles with same parent", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
         }
 
@@ -1096,6 +1101,7 @@ namespace SlowRoboticsGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             bool inXY = false;
+            bool ignoreParent = false;
             double strength = 0.1;
             double maxDist = 10;
             double minDist = 1;
@@ -1105,7 +1111,8 @@ namespace SlowRoboticsGH
             if (!DA.GetData(1, ref minDist)) { return; }
             if (!DA.GetData(2, ref maxDist)) { return; }
             if (!DA.GetData(3, ref inXY)) { return; }
-            if (!DA.GetData(4, ref priority)) { return; }
+            if (!DA.GetData(4, ref ignoreParent)) { return; }
+            if (!DA.GetData(5, ref priority)) { return; }
 
             if (separate != null) {
 
@@ -1113,12 +1120,13 @@ namespace SlowRoboticsGH
                 separate.strength = (float)strength;
                 separate.minDist = (float)minDist;
                 separate.maxDist = (float)maxDist;
+                separate.ignoreParent = ignoreParent;
                 separate.priority = priority;
 
             }
             else
             {
-                separate = new Move.Apart(priority, (float)strength, (float)minDist, (float)maxDist, inXY);
+                separate = new Move.Apart(priority, (float)strength, (float)minDist, (float)maxDist, inXY, ignoreParent);
             }
             DA.SetData(0, separate);
         }

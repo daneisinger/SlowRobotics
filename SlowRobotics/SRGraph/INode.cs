@@ -9,9 +9,15 @@ namespace SlowRobotics.SRGraph
     public interface INode<T> 
     {
         int Index { get; set; }
-        int Tag { get; set; } // tag for topological searches, validation etc.
+        int Cost { get; set; }
+
+        bool IsOpenList(IEnumerable<INode<T>> openList);
+        void SetOpenList(bool value);
+        bool IsClosedList(IEnumerable<INode<T>> closedList);
+        void SetClosedList(bool value);
 
         HashSet<IEdge<T>> Edges { get; set; }
+        INode<T> parent { get; set; }
 
         bool remove(IEdge<T> edge);
         void add(IEdge<T> edge);

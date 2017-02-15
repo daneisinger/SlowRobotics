@@ -284,7 +284,7 @@ namespace SlowRoboticsGH
                 List<IAgent> agents = (List<IAgent>)wrapper.Value;
                 foreach (IAgent a in agents)
                 {
-                    ((IAgent)a).addBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
+                    a.addBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
                 }
             }
             else if (wrapper.Value is IAgent)
@@ -301,7 +301,7 @@ namespace SlowRoboticsGH
             }
             else if (wrapper.Value is GH_Agent)
             {
-                ((GH_Agent)wrapper.Value).Value.setBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
+                ((GH_Agent)wrapper.Value).Value.addBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
             }
 
            

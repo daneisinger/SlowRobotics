@@ -111,6 +111,7 @@ namespace SlowRobotics.Core
 
         public void transform(Matrix4x4 t)
         {
+            
             xx = t.applyTo(xx).normalize();
             zz = t.applyTo(zz).normalize();
             yy = t.applyTo(yy).normalize();

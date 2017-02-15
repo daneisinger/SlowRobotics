@@ -90,6 +90,8 @@
     <Compile Include="Agent\Behaviours\Newton.cs" />
     <Compile Include="Agent\Behaviours\Search.cs" />
     <Compile Include="Agent\Behaviours\Spring.cs" />
+    <Compile Include="Core\IParticle.cs" />
+    <Compile Include="Core\SRBody.cs" />
     <Compile Include="Core\SRParticle.cs" />
     <Compile Include="Core\Plane3D.cs" />
     <Compile Include="Core\Plane3DOctree.cs" />
@@ -109,6 +111,7 @@
     <Compile Include="Field\WeightedPlane3D.cs" />
     <Compile Include="GPGPU\GPUTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rhino\GraphTools\AStar.cs" />
     <Compile Include="Rhino\GraphTools\GraphUtils.cs" />
     <Compile Include="Rhino\IO\IO.cs" />
     <Compile Include="Rhino\MeshTools\Mesher.cs" />

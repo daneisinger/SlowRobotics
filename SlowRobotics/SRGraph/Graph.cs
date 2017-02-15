@@ -50,6 +50,21 @@ namespace SlowRobotics.SRGraph
             }
         }
 
+        
+        public List<IEdge<T>> getContainedEdges(IEnumerable<INode<T>> nodes)
+        {
+            HashSet<IEdge<T>> edges = new HashSet<IEdge<T>>();
+            foreach(INode<T> n in nodes)
+            {
+                foreach(IEdge<T> e in n.Edges)
+                {
+                    if (nodes.Contains(e.a) && nodes.Contains(e.b)) edges.Add(e);
+                }
+            }
+            return edges.ToList();
+        }
+
+
         public bool getNodeAt(T geometry, out INode<T> node)
         {
             return (_nodeMap.TryGetValue(geometry, out node));
@@ -84,6 +99,31 @@ namespace SlowRobotics.SRGraph
             a.Geometry = forThat;
             _nodeMap.Remove(swapThis);
             _nodeMap.Add(forThat, a);
+            return true;
+        }
+
+        public void merge(Graph<T,E> other)
+        {
+            foreach (E e in other.Edges) _edges.Add(e);
+            foreach (INode<T> n in other.Nodes) insert(n);
+        }
+
+        public bool mergeInto(T mergeThis, T intoThat)
+        {
+            INode<T> a;
+            INode<T> b;
+            if (!getNodeAt(mergeThis, out a) || !getNodeAt(intoThat, out b)) return false;
+
+            //add all edges of A into B
+            foreach (IEdge<T> e in a.Edges)
+            {
+                e.replaceNode(a, b);
+                b.add(e);
+
+            }
+            //remove A
+            _nodeMap.Remove(a.Geometry);
+
             return true;
         }
 
