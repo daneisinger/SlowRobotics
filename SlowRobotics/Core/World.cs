@@ -1,8 +1,10 @@
 ﻿using SlowRobotics.Agent;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Toxiclibs.core;
 
 namespace SlowRobotics.Core
@@ -123,12 +125,30 @@ namespace SlowRobotics.Core
 
             for (int i = 0; i < steps; i++)
             {
-                foreach (IAgent a in pop.getRandomizedAgents()) a.step(damping);
+                List<IAgent> agents = pop.getRandomizedAgents();
+
+                Parallel.ForEach(Partitioner.Create(0, Count), range =>
+                {
+                    for (int index = range.Item1; index < range.Item2; index++)
+                    {
+                        agents[index].step(damping);
+                    }
+                });
+
+               // foreach (IAgent a in pop.getRandomizedAgents()) a.step(damping);
             }
 
             cleanup();
             pop.flush();
            
+        }
+
+        public int Count
+        {
+            get
+            {
+                return pop.Count;
+            }
         }
 
         public void cleanup()
