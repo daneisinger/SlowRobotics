@@ -11,7 +11,7 @@ namespace SlowRobotics.Core
         protected Vec3D accel = new Vec3D();
         protected Vec3D vel = new Vec3D();
         public float spd = 1;
-        float accLimit = 1;
+        public float accLimit = 1;
         public int age = 0;
         private float inertia = 1;
         public IParticle parent { get; set; }

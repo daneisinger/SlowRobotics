@@ -56,21 +56,30 @@ namespace SlowRobotics.Core
             float d = ab.magnitude();
 
             Vec3D crossAb = ab.cross(force);
-            crossAb.scaleSelf(1f / d);
-            Torque.addSelf(crossAb);
+            float a = ab.angleBetween(ab.add(force), true);
+            //if (a > Math.PI) a = (float)(a - (Math.PI * 2));
+            //crossAb.scaleSelf(1f / d);
+            if (!float.IsNaN(a))
+            {
+                
+                Torque.addSelf(crossAb.scale(a));
+
+            }
 
         }
 
-        public void transformBody(Matrix4x4 t)
+        public void transformBody(Matrix4x4 t, float dt)
         {
-            transform(t); //transform this plane
-            addSelf(vel);
+            
             foreach (SRParticle p in pts)
             {
-                p.addSelf(vel);
+                // p.addSelf(vel);
+                p.addSelf(accel.scale(dt));
+
                 Vec3D localP = p.sub(this);
                 t.applyToSelf(localP);
                 p.set(localP.addSelf(this));
+                p.resetAccel();
             }
 
         }
@@ -78,23 +87,38 @@ namespace SlowRobotics.Core
         public override void step(float dt)
         {
             sumForces(); //sets torque and accel based on forces on particles
-            vel.addSelf(accel.scale(dt));
-            vel.limit(spd);
-            vel.scaleSelf(dt);
 
-            AngularVelocity.addSelf(Torque.scale(dt));
-            AngularVelocity.scaleSelf(0.9f);
+            //vel.addSelf(accel.scale(dt));
+            //vel.limit(spd);
+            //vel.scaleSelf(dt);
+
+            // AngularVelocity.addSelf(Torque.scale(dt));
+            // AngularVelocity.scaleSelf(0.9f);
+
+            //add linear velocity as impulse
+            addSelf(accel.scale(dt));
 
             Matrix4x4 t = new Matrix4x4();
 
+            //add angular velocity as impulse
+  
+            Quaternion rot = Quaternion.createFromAxisAngle(Torque, Torque.magnitude() * 1f * dt);
+            rot.normalize();
+            t = rot.toMatrix4x4();
+
+            transform(t); //transform this plane
+            transformBody(t, dt);
+
+            /*
             if (AngularVelocity.magnitude() > 0.1f)
             {
-                Toxiclibs.core.Quaternion rot = Toxiclibs.core.Quaternion.createFromAxisAngle(AngularVelocity, AngularVelocity.magnitude() * 0.01f * dt);
+                Quaternion rot = Quaternion.createFromAxisAngle(AngularVelocity, AngularVelocity.magnitude() * 0.01f * dt);
                 rot.normalize();
                 t = rot.toMatrix4x4();
-            }
+            }*/
 
-            transformBody(t);
+
+
             Torque = new Vec3D();
             accel = new Vec3D();
 
