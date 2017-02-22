@@ -1,5 +1,6 @@
 ﻿using SlowRobotics.Core;
 using SlowRobotics.Field;
+using SlowRobotics.SRGraph;
 using SlowRobotics.Utils;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,8 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
+
+    
     public class Update : ScaledBehaviour<IParticle>
     {
         public float damping { get; set; }
@@ -46,6 +49,9 @@ namespace SlowRobotics.Agent.Behaviours
             float f = SR_Math.map(d, minDist, maxDist, 1, 0);
             return (d > minDist && d < maxDist) ? ab.normalizeTo(interpolator.interpolate(0, maxForce, f)) : new Vec3D();
         }
+
+        
+
 
         public class InAxis : Move
         {
@@ -166,6 +172,54 @@ namespace SlowRobotics.Agent.Behaviours
                         float f = SR_Math.map(d, minDist, maxDist, 1, 0);
                         float sf = ExponentialInterpolation.Squared.interpolate(0, strength, f);
                         if (d > minDist && d < maxDist) force.addSelf(op.sub(p).normalizeTo(sf));
+                    }
+                }
+            }
+        }
+
+        public class ToLines : Apart
+        {
+            Graph<SRParticle, Spring> graph;
+            public ToLines(int _priority, Graph<SRParticle,Spring> _graph, float _strength, float _minDist, float _maxDist, bool _ignoreParent) :
+                base(_priority, _strength, _minDist, _maxDist, false, _ignoreParent)
+            {
+                graph = _graph;
+            }
+
+            public override void interactWith(SRParticle a, object b)
+            {
+                SRParticle b_p = b as SRParticle;
+                if (b_p != null)
+                {
+                    if (ignoreParent && b_p.parent == a.parent) return;
+                    //check if p has any edges 
+                    IEnumerable<Spring> a_edges = graph.getEdgesFor(a);
+
+                    //check to see if b is a node in the graph + get edges
+                    foreach (Spring b_s in graph.getEdgesFor(b_p))
+                    {
+                        if (a_edges.Count() != 0)
+                        {
+                            //average closest points for each edge
+                            foreach(Spring a_s in a_edges)
+                            {
+                                Vec3D cPt_a;
+                                Vec3D cPt_b;
+
+                                Spring.closestPoints(a_s, b_s, out cPt_a, out cPt_b);
+                                if (cPt_a != null && cPt_b != null)
+                                {
+                                    Vec3D dir = cPt_b.sub(cPt_a);
+                                    force.addSelf(calcForce(a, dir, minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            //attract to closest points on lines
+                            Vec3D cPt = b_s.closestPoint(a);
+                            force.addSelf(calcForce(a, cPt.sub(a), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
+                        }
                     }
                 }
             }

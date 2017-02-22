@@ -44,7 +44,6 @@ namespace SlowRoboticsGH
             world.Value.run(1/(float)steps);
 
             DA.SetData(0, world);
-
         }
     }
 

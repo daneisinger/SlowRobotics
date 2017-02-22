@@ -21,7 +21,21 @@ namespace SlowRobotics.SRGraph
 
         bool remove(IEdge<T> edge);
         void add(IEdge<T> edge);
-
+        bool Naked { get; }
         T Geometry { get; set; }
     }
+
+
+    //TODO
+    /*
+    public interface SearchableNode<T>
+    {
+        int Cost { get; set; }
+
+        bool IsOpenList(IEnumerable<INode<T>> openList);
+        void SetOpenList(bool value);
+        bool IsClosedList(IEnumerable<INode<T>> closedList);
+        void SetClosedList(bool value);
+    }
+    */
 }

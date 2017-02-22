@@ -44,7 +44,21 @@ namespace SlowRobotics.SRGraph
                 return true;
             }
             return false;
+        }
 
+        public IEnumerable<INode<T>> getNaked()
+        {
+            if (a.Naked) yield return a;
+            if (b.Naked) yield return b;
+        }
+
+        public IEnumerable<Edge<T>> split(INode<T> at)
+        {
+            //note - does change Node edges
+            //TODO - add flag for nodes to update / cleanup
+
+            yield return new Edge<T>(a, at);
+            yield return new Edge<T>(at, b);
         }
     }
 
@@ -55,6 +69,8 @@ namespace SlowRobotics.SRGraph
         public string tag { get; set; }
 
         public Spring(SRParticle _start, SRParticle _end) : this(new Node<SRParticle>(_start), new Node<SRParticle>(_end)) { }
+
+        public Spring(Edge<SRParticle> edge) : this(edge.a, edge.b) { }
 
         public Spring(INode<SRParticle> _start, INode<SRParticle> _end) : base(_start, _end)
         {
@@ -78,67 +94,32 @@ namespace SlowRobotics.SRGraph
             return a.Geometry.distanceTo(b.Geometry);
         }
 
-        /*
-
-    //From old link class
-
-
-        public bool getNaked(out LegacyNode n)
+        public Vec3D pointAt(float param)
         {
-            if (a.links.Count <= 1)
-            {
-                n = a;
-                return true;
-            }
-            if (b.links.Count <= 1)
-            {
-                n = b;
-                return true;
-            }
-            n = null;
-            return false;
+            Vec3D ab = b.Geometry.sub(a.Geometry);
+            ab.scaleSelf(param);
+            return a.Geometry.add(ab);
         }
 
-        public void split(LegacyNode splitPt)
-        {
-            LegacyLink a_s = new LegacyLink(splitPt, a);
-            LegacyLink b_s = new LegacyLink(splitPt, b);
-
-            splitPt.connect(a_s);
-            splitPt.connect(b_s);
-
-            a.replaceLink(this, a_s);
-            b.replaceLink(this, b_s);
-
-            
-        }
-
-        public float angleBetween(LegacyLink other, bool flip)
+        public float angleBetween(Spring other, bool flip)
         {
 
-            Vec3D ab = a.sub(b);
-            Vec3D abo = other.a.sub(other.b);
+            Vec3D ab = a.Geometry.sub(b.Geometry);
+            Vec3D abo = other.a.Geometry.sub(other.b.Geometry);
             if (flip) abo.invert();
             return ab.angleBetween(abo, true);
         }
 
-        public Vec3D closestPt(Vec3D p)
+        public Vec3D closestPoint(Vec3D p)
         {
-            Vec3D dir = b.sub(a);
-            float t = p.sub(a).dot(dir) / dir.magSquared();
+            Vec3D dir = b.Geometry.sub(a.Geometry);
+            float t = p.sub(a.Geometry).dot(dir) / dir.magSquared();
             if (t > 1) t = 1;
             if (t < 0) t = 0;
-            return a.add(dir.scaleSelf(t));
+            return a.Geometry.add(dir.scaleSelf(t));
         }
 
-        public Vec3D pointAt(float param)
-        {
-            Vec3D ab = b.sub(a);
-            ab.scaleSelf(param);
-            return a.add(ab);
-        }
-
-        public static void closestPtBetweenLinks(LegacyLink l1, LegacyLink l2, ref Vec3D a, ref Vec3D b)
+        public static void closestPoints(Spring l1, Spring l2, out Vec3D a, out Vec3D b)
         {
 
             //TODO - sort out this mess
@@ -146,13 +127,13 @@ namespace SlowRobotics.SRGraph
             a = closestOnB(l2, l1);
         }
 
-        private static Vec3D closestOnB(LegacyLink l1, LegacyLink l2)
+        private static Vec3D closestOnB(Spring l1, Spring l2)
         {
             // Algorithm is ported from the C algorithm of Paul Bourke
-            Vec3D p1 = l1.a;
-            Vec3D p2 = l1.b;
-            Vec3D p3 = l2.a;
-            Vec3D p4 = l2.b;
+            Vec3D p1 = l1.a.Geometry;
+            Vec3D p2 = l1.b.Geometry;
+            Vec3D p3 = l2.a.Geometry;
+            Vec3D p4 = l2.b.Geometry;
             Vec3D p21 = p2.sub(p1);
             Vec3D p13 = p1.sub(p3);
             Vec3D p43 = p4.sub(p3);
@@ -165,12 +146,10 @@ namespace SlowRobotics.SRGraph
             double denom = d2121 * d4343 - d4321 * d4321;
             double numer = d1343 * d4321 - d1321 * d4343;
 
-            float mua = Math.Max(Math.Min((float)(numer / denom),1),0);
-            float mub = Math.Max(Math.Min((float)((d1343 + d4321 * (mua)) / d4343), 1),0);
+            float mua = Math.Max(Math.Min((float)(numer / denom), 1), 0);
+            float mub = Math.Max(Math.Min((float)((d1343 + d4321 * (mua)) / d4343), 1), 0);
             return l2.pointAt(mub);
 
         }
-
-    */
     }
 }

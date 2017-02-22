@@ -109,7 +109,7 @@ namespace SlowRobotics.Core
             return j;
         }
 
-        public void transform(Matrix4x4 t)
+        public virtual void transform(Matrix4x4 t)
         {
             
             xx = t.applyTo(xx).normalize();

@@ -129,7 +129,9 @@
     <Compile Include="SRGraph\IGraph.cs" />
     <Compile Include="SRGraph\INode.cs" />
     <Compile Include="SRGraph\Node.cs" />
+    <Compile Include="Utils\Benchmarker.cs" />
     <Compile Include="Utils\GenericWorker.cs" />
+    <Compile Include="Utils\IBenchmark.cs" />
     <Compile Include="Utils\SR_Math.cs" />
     <Compile Include="Utils\PriorityQueue.cs" />
     <Compile Include="Voxels\ByteGrid.cs" />

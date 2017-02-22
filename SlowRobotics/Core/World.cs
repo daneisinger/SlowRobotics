@@ -1,4 +1,5 @@
 ﻿using SlowRobotics.Agent;
+using SlowRobotics.Utils;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Core
 {
-    public class World : IWorld
+    public class World : IWorld, IBenchmark
     {
 
         private AgentList pop;
@@ -17,6 +18,9 @@ namespace SlowRobotics.Core
         public Plane3DOctree dynamicTree; //this octree is rebuilt every n frames
         public Plane3DOctree staticTree;  //this octree is not rebuilt
         public float bounds;
+
+        public event EventHandler<UpdateEventArgs> OnUpdate;
+        private string txtReport;
 
         public World(float _bounds)
         {
@@ -26,6 +30,7 @@ namespace SlowRobotics.Core
             dynamicTree = new Plane3DOctree(new Vec3D(-bounds, -bounds, -bounds), bounds * 2);
             staticTree = new Plane3DOctree(new Vec3D(-bounds, -bounds, -bounds), bounds * 2);
 
+            txtReport = "";
         }
 
         public void addAgent(IAgent a)
@@ -34,7 +39,8 @@ namespace SlowRobotics.Core
 
             //TODO - fix this up so there is no casting
 
-            IAgentT<object> ao = (IAgentT<object>)a;
+            AgentT<object> ao = (AgentT<object>)a;
+
             object data = null;
             if (ao != null) data = ao.getData();
             pop.add(a,data);
@@ -116,8 +122,13 @@ namespace SlowRobotics.Core
             run(0.94f);
         }
 
+
         public void run(float damping)
         {
+
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
+
             //add any new agents
             pop.populate();
 
@@ -140,7 +151,10 @@ namespace SlowRobotics.Core
 
             cleanup();
             pop.flush();
-           
+
+            stopwatch.Stop();
+            if ((OnUpdate != null)) OnUpdate(this, new UpdateEventArgs(this.GetType().ToString(), stopwatch.ElapsedMilliseconds));
+
         }
 
         public int Count

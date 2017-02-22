@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SlowRobotics.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,9 +36,10 @@ namespace SlowRobotics.Agent
     /// by casting from the abstract object base type
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class Behaviour<T> : IBehaviourT<T> where T : class
+    public class Behaviour<T> : IBenchmark, IBehaviourT<T> where T : class
     {
         public int priority { get; set; }
+        public event EventHandler<UpdateEventArgs> OnUpdate;
 
         public Behaviour(int _priority)
         {
@@ -53,6 +55,11 @@ namespace SlowRobotics.Agent
 
         public virtual void run(IAgentT<object> a)
         {
+
+            //TODO - need to setup benchmarker to track functions
+           // System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            //stopwatch.Start();
+
             T data = a.getData() as T;
             if (data != null)
             {
@@ -62,6 +69,10 @@ namespace SlowRobotics.Agent
             {
                 throw new InvalidCastException("Behaviour of type " + typeof(T) + " cannot run on agent type:" + a.getData().GetType());
             }
+
+            //stopwatch.Stop();
+           // if ((OnUpdate != null)) OnUpdate(this, new UpdateEventArgs(this.GetType().ToString(), stopwatch.ElapsedMilliseconds));
+
         }
 
         public virtual void interact(IAgentT<object> a, object b)
@@ -89,6 +100,7 @@ namespace SlowRobotics.Agent
     public class ScaledBehaviour<T> : Behaviour<T>, IScaledBehaviour where T :class
     {
         public float scaleFactor { get; set; }
+        public new event EventHandler<UpdateEventArgs> OnUpdate;
 
         public ScaledBehaviour() : this(1) { }
 
@@ -99,6 +111,9 @@ namespace SlowRobotics.Agent
 
         public override void run(IAgentT<object> a)
         {
+           // System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+           // stopwatch.Start();
+
             T data = a.getData() as T; 
             if (data !=null)
             {
@@ -109,7 +124,10 @@ namespace SlowRobotics.Agent
             {
                 throw new InvalidCastException("Behaviour of type " + typeof(T) + " cannot run on agent type:" + a.getData().GetType());
             }
-            
+
+           // stopwatch.Stop();
+           // if ((OnUpdate != null)) OnUpdate(this, new UpdateEventArgs(this.GetType().ToString(), stopwatch.ElapsedMilliseconds));
+
         }
 
         public virtual void reset()

@@ -24,6 +24,14 @@ namespace SlowRobotics.SRGraph
             Edges = new HashSet<IEdge<T>>();
         }
 
+        public bool Naked
+        {
+            get
+            {
+                return Edges.Count <=1 ;
+            }
+        }
+
 		public bool IsOpenList(IEnumerable<INode<T>> openList)
         {
             return isOpenList;
