@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Toxiclibs", "Toxiclibs\Toxi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{4130DC4A-EC9D-4684-8363-FB2053F47047}"
 	ProjectSection(SolutionItems) = preProject
-		SlowRobotics\bin\Release\alglibnet2.dll = SlowRobotics\bin\Release\alglibnet2.dll
+		SlowRobotics\Resources\alglibnet2.dll = SlowRobotics\Resources\alglibnet2.dll
 	EndProjectSection
 EndProject
 Global
