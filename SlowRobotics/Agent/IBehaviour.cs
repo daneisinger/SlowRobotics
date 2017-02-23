@@ -35,12 +35,4 @@ namespace SlowRobotics.Agent
         float scaleFactor { get; set; }
         void scale(float factor);
     }
-
-    /// <summary>
-    /// World behaviour interface - provides access to world object
-    /// </summary>
-    public interface IWorldBehaviour : IBehaviour
-    {
-        IWorld world { get; set; }
-    }
 }

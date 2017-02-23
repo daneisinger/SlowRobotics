@@ -1,6 +1,7 @@
 ﻿using Rhino.Geometry;
 using SlowRobotics.Core;
 using SlowRobotics.SRGraph;
+using SlowRobotics.Spatial;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +18,11 @@ namespace SlowRobotics.Rhino.GraphTools
             List<Vec3D> pts = graph.Geometry.ConvertAll(x => (Vec3D)x);
             AABB bb = AABB.getBoundingBox(pts);
             Plane3DOctree tree = new Plane3DOctree(bb.getMin(), bb.getExtent().magnitude()*2);
-            tree.addAll(pts);
+            tree.AddAll(pts);
 
             foreach (SRParticle p in graph.Geometry)
             {
-                List<Vec3D> neighbours = tree.getPointsWithinSphere(p, maxDist);
+                List<Vec3D> neighbours = tree.Search(p, maxDist);
 
                 foreach (Vec3D v in neighbours)
                 {

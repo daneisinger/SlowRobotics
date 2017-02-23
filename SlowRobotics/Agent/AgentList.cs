@@ -9,7 +9,7 @@ namespace SlowRobotics.Agent
     {
 
         //handles adding and removing of agents from a collection
-        private Dictionary<IAgent, object> pop { get; set; }
+        public Dictionary<IAgent, object> pop { get; set; }
         private Dictionary<IAgent, object> addBuffer;
         private List<IAgent> removeBuffer;
 
@@ -20,6 +20,26 @@ namespace SlowRobotics.Agent
             pop = agents;
             removeBuffer = new List<IAgent>();
             addBuffer = new Dictionary<IAgent,object>();
+        }
+
+        public void addAll(IEnumerable<IAgent> agents)
+        {
+            foreach (IAgent a in agents) add(a);
+        }
+
+        public void add(IAgent a)
+        {
+
+            //try and get data
+            AgentT<object> ao = (AgentT<object>)a;
+            object data = null;
+            if (ao != null) data = ao.getData();
+            add(a, data);
+        }
+
+        public void removeAgent(IAgent a)
+        {
+            remove(a);
         }
 
         public void add(IAgent a, object o)
@@ -47,6 +67,11 @@ namespace SlowRobotics.Agent
         {
             data = pop[a] as T;
             return data != null;
+        }
+
+        public bool contains(IAgent a)
+        {
+            return pop.ContainsKey(a);
         }
 
         public void populate()

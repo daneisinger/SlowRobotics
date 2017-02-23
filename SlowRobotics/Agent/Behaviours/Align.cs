@@ -252,13 +252,11 @@ namespace SlowRobotics.Agent.Behaviours
                 reset();
             }
 
-            public override void runOn(Plane3D a)
+            public override void run(IAgentT<object> a)
             {
-                //TODO need an interface that holds neighbours
 
-                /*
-                Node a_p = (Node)a;
-                if (a.neighbours.Count >= 3)
+                Plane3D a_p = a.getData() as Plane3D;
+                if (a_p != null && a.neighbours.Count >= 3)
                 {
                     Vec3D centroid = new Vec3D();
 
@@ -268,7 +266,6 @@ namespace SlowRobotics.Agent.Behaviours
                     interpolateToVector(a_p, n, strength * scaleFactor);
                 }
                 reset();
-                */
             }
         }
     }

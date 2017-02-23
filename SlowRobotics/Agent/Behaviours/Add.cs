@@ -1,5 +1,6 @@
 ﻿
 using SlowRobotics.Core;
+using SlowRobotics.Spatial;
 using SlowRobotics.SRGraph;
 using System;
 using System.Collections.Generic;
@@ -12,29 +13,29 @@ namespace SlowRobotics.Agent.Behaviours
     public class Add
     {
 
-        public class PointToWorld : Behaviour<Vec3D>, IWorldBehaviour
+        public class PointToWorld : Behaviour<Vec3D>
         {
             public int frequency { get; set; }
-            public IWorld world {get;set;}
+            public ISearchable pts {get;set;}
             int c;
 
-            public PointToWorld(int _priority, IWorld _world, int _frequency) :base(_priority)
+            public PointToWorld(int _priority, ISearchable _pts, int _frequency) :base(_priority)
             {
-                world = _world;
+                pts = _pts;
                 frequency = _frequency;
                 c = 0;
             }
 
             public override void runOn(Vec3D a)
             {
-                if (c++ % frequency == 0)world.addPoint(a,false); 
+                if (c++ % frequency == 0)pts.Add(a); 
             }
         }
 
-        public class Extend : ScaledBehaviour<Graph<SRParticle,Spring>>, IWorldBehaviour
+        public class Extend : ScaledBehaviour<Graph<SRParticle,Spring>>
         {
-            public IWorld world { get; set; }
-
+            public ISearchable pts { get; set; }
+            public AgentList pop { get; set; }
             public Vec3D offset { get; set; }
             public List<IBehaviour> behaviours { get; set; }
 
@@ -42,9 +43,10 @@ namespace SlowRobotics.Agent.Behaviours
             public int ctr;
             public float stiffness { get; set; }
 
-            public Extend(int _priority, int _frequency, Vec3D _offset, float _stiffness,List<IBehaviour> _behaviours, IWorld _world) : base(_priority)
+            public Extend(int _priority, int _frequency, Vec3D _offset, float _stiffness,List<IBehaviour> _behaviours, AgentList _pop, ISearchable _pts) : base(_priority)
             {
-                world = _world;
+                pop = _pop;
+                pts = _pts;
                 offset = _offset;
                 frequency = _frequency;
                 ctr = 0;
@@ -74,8 +76,7 @@ namespace SlowRobotics.Agent.Behaviours
                     AgentT<SRParticle> a = new AgentT<SRParticle>(clone);
                     a.addBehaviours(behaviours);
                     //add to world -------------------------------------------TODO - use graph to store things instead
-                    world.addAgent(a);
-                    world.addPoint(clone, true);
+                    pop.add(a, clone);
                 }
             }
         }

@@ -283,39 +283,33 @@ namespace SlowRoboticsGH
 
     }
 
-    public class GH_World : GH_Goo<IWorld>
+    public class GH_AgentList : GH_Goo<AgentList>
     {
-        public GH_World() { this.Value = null; }
-        public GH_World(GH_World goo) { this.Value = goo.Value; }
-        public GH_World(IWorld native) { this.Value = native; }
-        public GH_World(float extents) { this.Value = new World(extents); }
-        
-        public override IGH_Goo Duplicate() => new GH_World(this);
+        public GH_AgentList() { this.Value = null; }
+        public GH_AgentList(GH_AgentList goo) { this.Value = goo.Value; }
+        public GH_AgentList(AgentList native) { this.Value = native; }
+
+        public override IGH_Goo Duplicate() => new GH_AgentList(this);
         public override bool IsValid => true;
-        public override string TypeName => "World";
-        public override string TypeDescription => "World";
+        public override string TypeName => "AgentList";
+        public override string TypeDescription => "AgentList";
         public override string ToString() => this.Value.ToString();
         public override object ScriptVariable() => Value;
 
-
         public override bool CastFrom(object source)
         {
-            if (typeof(IWorld).IsAssignableFrom(source.GetType()))
+            if (source is AgentList)
             {
-                Value = (IWorld)source;
+                Value = source as AgentList;
                 return true;
             }
-            
-            if (source is IWorld)
+
+            if (source is GH_AgentList)
             {
-                Value = source as IWorld;
+                Value = ((GH_AgentList)source).Value;
                 return true;
             }
-            if (source is GH_World)
-            {
-                Value = ((GH_World)source).Value;
-                return true;
-            }
+
             return false;
         }
 

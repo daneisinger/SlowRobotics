@@ -94,9 +94,7 @@
     <Compile Include="Core\SRBody.cs" />
     <Compile Include="Core\SRParticle.cs" />
     <Compile Include="Core\Plane3D.cs" />
-    <Compile Include="Core\Plane3DOctree.cs" />
-    <Compile Include="Core\World.cs" />
-    <Compile Include="Core\IWorld.cs" />
+    <Compile Include="Core\Core.cs" />
     <Compile Include="Field\Elements\BitmapFieldElement.cs" />
     <Compile Include="Field\Elements\DistanceFieldElement.cs" />
     <Compile Include="Field\Elements\MeshFieldElement.cs" />
@@ -123,6 +121,8 @@
     <Compile Include="Simulation\Noise\PerlinNoise.cs" />
     <Compile Include="Simulation\ReactionDiffusion\BZReaction.cs" />
     <Compile Include="Simulation\ReactionDiffusion\GreyScott3d.cs" />
+    <Compile Include="Spatial\ISearchable.cs" />
+    <Compile Include="Spatial\Plane3DOctree.cs" />
     <Compile Include="SRGraph\Edge.cs" />
     <Compile Include="SRGraph\Graph.cs" />
     <Compile Include="SRGraph\IEdge.cs" />

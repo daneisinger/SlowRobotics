@@ -15,6 +15,36 @@ using Toxiclibs.core;
 
 namespace SlowRoboticsGH
 {
+
+    public class CreatePopulationComponent :GH_Component
+    {
+        public CreatePopulationComponent() : base("Create Population", "CreatePop", "Creates an agent list for simulation", "SlowRobotics", "Simulation") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{de35d78e-dc9a-4e2a-ae4c-708ee7ec823c}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddParameter(new AgentParameter(), "Agents", "P", "Agents to add to population", GH_ParamAccess.list);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new AgentListParameter(), "Agents", "P", "Population", GH_ParamAccess.item);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            List<GH_Agent> pop = new List<GH_Agent>();
+
+            if (!DA.GetDataList(0, pop)) { return; }
+
+            AgentList list = new AgentList();
+            foreach (GH_Agent a in pop) list.add(a.Value);
+
+            DA.SetData(0, list);
+        }
+    }
     public class SimulateWorldComponent : GH_Component
     {
         public SimulateWorldComponent() : base("Simulate World", "SimWorld", "Updates all particles and links in the world", "SlowRobotics", "Simulation") { }
@@ -24,30 +54,30 @@ namespace SlowRoboticsGH
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddParameter(new WorldParameter(), "World", "W", "World to simulate", GH_ParamAccess.item);
+            pManager.AddParameter(new AgentListParameter(), "Agents", "P", "Population to simulate", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Solver steps", "S", "Steps per update", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddParameter(new WorldParameter(), "World", "w", "World state", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Agents", "P", "Population", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            GH_World world = null;
+            List<GH_AgentList> pop = new List<GH_AgentList>();
             int steps = 1;
 
-            if (!DA.GetData(0, ref world)) { return; }
+            if (!DA.GetDataList(0, pop)){ return; }
             if (!DA.GetData(1, ref steps)) { return; }
 
-            world.Value.run(1/(float)steps);
-
-            DA.SetData(0, world);
+            foreach(GH_AgentList o in pop)Core.run(o.Value, 1 / (float)steps);
+            
+            DA.SetDataList(0, pop);
         }
     }
 
-
+    /*
     public class AddToWorldComponent : GH_Component
     {
         public AddToWorldComponent() : base("Add Agents To World", "AddWorld", "Add Agents to a world", "SlowRobotics", "Agent") { }
@@ -112,20 +142,14 @@ namespace SlowRoboticsGH
             DA.SetData(0, world);
         }
 
-        public void addAgent(IAgent a, IWorld world, bool dynamic)
+        public void addAgent(IAgent a, bool dynamic)
         {
             IAgentT<object> defaultAgent = (IAgentT<object>)a;
-
-            if (defaultAgent != null)
-            {
-                Vec3D v = defaultAgent.getData() as Vec3D;
-                if(v!= null) world.addPoint(v, dynamic);
-            }
-            world.addAgent(a);
+            //world.addAgent(a);
 
         }
     }
-
+    */
     public class FixParticlesComponent : GH_Component
     {
         public FixParticlesComponent() : base("Fix Particles", "FixParticles", "Fix particles by proximity to a list of points", "SlowRobotics", "Simulation") { }

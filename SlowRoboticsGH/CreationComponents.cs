@@ -634,30 +634,4 @@ namespace SlowRoboticsGH
         }
     }
 
-    public class CreateSimpleWorldComponent : GH_Component
-    {
-        public CreateSimpleWorldComponent() : base("Create World", "CreateWorld", "Creates a simple world", "SlowRobotics", "Simulation") { }
-        public override GH_Exposure Exposure => GH_Exposure.primary;
-        public override Guid ComponentGuid => new Guid("{e66c21d6-b0ad-4d81-8013-67fff231e5e4}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
-
-        protected override void RegisterInputParams(GH_InputParamManager pManager)
-        {
-            pManager.AddNumberParameter("Extents", "E", "Extents of the world from the origin", GH_ParamAccess.item);
-        }
-
-        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-        {
-            pManager.AddParameter(new WorldParameter(), "World", "W", "World", GH_ParamAccess.item);
-        }
-
-        protected override void SolveInstance(IGH_DataAccess DA)
-        {
-            double extents = 100;
-
-            if (!DA.GetData(0, ref extents)) { return; }
-
-            DA.SetData(0, new GH_World(new World((float)extents)));
-        }
-    }
 }

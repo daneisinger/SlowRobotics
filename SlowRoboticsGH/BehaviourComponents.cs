@@ -11,6 +11,7 @@ using SlowRobotics.Agent;
 using SlowRobotics.Field;
 using SlowRobotics.Core;
 using Toxiclibs.core;
+using SlowRobotics.Spatial;
 
 namespace SlowRoboticsGH
 {
@@ -189,68 +190,7 @@ namespace SlowRoboticsGH
             DA.SetData(0, cZAxis);
         }
     }
-    /*
-    public class CohereToNearestLinkComponent : GH_Component
-    {
-        public CohereToNearestLinkComponent() : base("Attract to near links", "AttractLinks", "Cohere to nearest point on links (interaction behaviour)", "SlowRobotics", "Behaviours") { }
-        public override GH_Exposure Exposure => GH_Exposure.secondary;
-        public override Guid ComponentGuid => new Guid("{f23407b5-4513-4f52-97da-6b36b3ecc514}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
-
-        protected override void RegisterInputParams(GH_InputParamManager pManager)
-        {
-            pManager.AddParameter(new GraphParameter(), "Parent LinkMesh", "P", "LinkMesh to parent links to", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Strength", "S", "Cohere Strength", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Maximum Distance", "Mx", "Maximum Distance to effect", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
-        }
-
-        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-        {
-            pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
-        }
-
-        public Move.ToNearestLink cLink = null;
-
-        protected override void SolveInstance(IGH_DataAccess DA)
-        {
-            LegacyGraph parent = null;
-            double strength = 0.1;
-            double maxDist = 10;
-            int priority = 5;
-            //Object b = null;
-
-            if (!DA.GetData(0, ref parent)) { return; }
-            if (!DA.GetData(1, ref strength)) { return; }
-            if (!DA.GetData(2, ref maxDist)) { return; }
-            if (!DA.GetData(3, ref priority)) { return; }
-
-            if (cLink != null)
-            {
-
-                cLink.parent = parent;
-                cLink.strength = (float)strength;
-                cLink.maxDist = (float)maxDist;
-                cLink.priority = priority;
-            }
-            else
-            {
-                cLink = new Move.ToNearestLink(priority, parent, (float)strength, (float)maxDist);
-                
-            }
-            DA.SetData(0, cLink);
-        }
-    }
-
-        */
+   
     //TODO - too much overlap between this and the duplicate behaviour
     public class AddLinkComponent : GH_Component
     {
@@ -274,8 +214,8 @@ namespace SlowRoboticsGH
             pManager.AddNumberParameter("Stiffness", "S", "Link Stiffness", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Add Frequency", "F", "Add a link every n steps", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
-            pManager.AddParameter(new WorldParameter(), "World", "W", "World to add new agents to", GH_ParamAccess.item);
-
+            pManager.AddGenericParameter("Popuylation",  "P", "Population of Agents", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Structure", "S", "Spatial structure to add new points to", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -292,7 +232,8 @@ namespace SlowRoboticsGH
             double stiffness = 0.1;
             int freq = 1;
             int priority = 5;
-            GH_World world = null;
+            AgentList pop = null;
+            ISearchable pts = null;
             //Object b = null;
 
             if (!DA.GetDataList(0, behaviours)) { return; }
@@ -300,8 +241,8 @@ namespace SlowRoboticsGH
             if (!DA.GetData(2, ref stiffness)) { return; }
             if (!DA.GetData(3, ref freq)) { return; }
             if (!DA.GetData(4, ref priority)) { return; }
-            if (!DA.GetData(5, ref world)) { return; }
-
+            if (!DA.GetData(5, ref pop)) { return; }
+            if (!DA.GetData(6, ref pts)) { return; }
             if (addLink != null)
             {
                 addLink.behaviours = (behaviours.ConvertAll(b => { return b.Value; }));
@@ -311,11 +252,12 @@ namespace SlowRoboticsGH
                 addLink.frequency = freq;
 
                 addLink.priority = priority;
-                addLink.world = world.Value;
+                addLink.pop = pop;
+                addLink.pts = pts;
             }
             else
             {
-                addLink = new Add.Extend(priority, freq, IO.ToVec3D(offset), (float)stiffness,  behaviours.ConvertAll(b => { return b.Value; }), world.Value);
+                addLink = new Add.Extend(priority, freq, IO.ToVec3D(offset), (float)stiffness,  behaviours.ConvertAll(b => { return b.Value; }), pop,pts);
                 
             }
             DA.SetData(0, addLink);
@@ -1151,14 +1093,8 @@ namespace SlowRoboticsGH
         {
 
             pManager.AddNumberParameter("Radius", "R", "Search Radius", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Search Method", "S", "Search Method", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Structure", "S", "Spatial structure to search", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
-            pManager.AddParameter(new WorldParameter(),"World", "W", "World to search", GH_ParamAccess.item);
-
-            Param_Integer param = pManager[1] as Param_Integer;
-            param.AddNamedValue("Dynamic", 0);
-            param.AddNamedValue("Static", 1);
-            param.AddNamedValue("All", 2);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -1171,44 +1107,23 @@ namespace SlowRoboticsGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             double radius = 10;
-            int method = 2;
+            ISearchable pts = null;
             int priority = 5;
-            GH_World world = null;
 
             if (!DA.GetData(0, ref radius)) { return; }
-            if (!DA.GetData(1, ref method)) { return; }
+            if (!DA.GetData(1, ref pts)) { return; }
             if (!DA.GetData(2, ref priority)) { return; }
-            if (!DA.GetData(3, ref world)) { return; }
 
-            Search.SearchMethod search = Search.SearchMethod.All;
-
-            switch (method)
-            {
-                case (0):
-                    search= Search.SearchMethod.Dynamic;
-                    break;
-                case (1):
-                    search = Search.SearchMethod.Static;
-                    break;
-                case (2):
-                    search = Search.SearchMethod.All;
-                    break;
-                default:
-                    search = Search.SearchMethod.All;
-                    break;
-            }
 
             if (searchBehaviour != null)
             {
-                searchBehaviour.dynamicRadius = (float)radius;
-                searchBehaviour.staticRadius = (float)radius;
-                searchBehaviour.method = search;
+                searchBehaviour.radius = (float)radius;
+                searchBehaviour.pts = pts;
                 searchBehaviour.priority = priority;
-                searchBehaviour.world = world.Value;
             }
             else
             {
-                searchBehaviour = new Search(priority, (float)radius, search,world.Value);
+                searchBehaviour = new Search(priority, (float)radius, pts);
             } 
             DA.SetData(0, searchBehaviour);
         }
@@ -1298,7 +1213,7 @@ namespace SlowRoboticsGH
 
             pManager.AddIntegerParameter("Frequency", "F", "Save frequency", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
-            pManager.AddParameter(new WorldParameter(), "World", "W", "World to add to", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Structure", "S", "Structure to store point", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -1312,21 +1227,21 @@ namespace SlowRoboticsGH
         {
             int frequency = 2;
             int priority = 0;
-            GH_World world = null;
+            ISearchable pts = null;
 
             if (!DA.GetData(0, ref frequency)) { return; }
             if (!DA.GetData(1, ref priority)) { return; }
-            if (!DA.GetData(2, ref world)) { return; }
+            if (!DA.GetData(2, ref pts)) { return; }
 
             if (addBehaviour != null)
             {
                 addBehaviour.frequency = frequency;
                 addBehaviour.priority = priority;
-                addBehaviour.world = world.Value;
+                addBehaviour.pts = pts;
             }
             else
             {
-                addBehaviour = new Add.PointToWorld(priority,world.Value,frequency);
+                addBehaviour = new Add.PointToWorld(priority,pts,frequency);
             }
             DA.SetData(0, addBehaviour);
         }

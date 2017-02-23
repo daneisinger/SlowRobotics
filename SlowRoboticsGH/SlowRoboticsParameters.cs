@@ -154,42 +154,27 @@ namespace SlowRoboticsGH
         }
     }
 
-
-    public class WorldParameter : GH_PersistentParam<GH_World>
+    public class AgentListParameter : GH_PersistentParam<GH_AgentList>
     {
-        public WorldParameter() : base("World", "World", "This is a World", "SlowRobotics", "Parameters") { }
+        public AgentListParameter() : base("Agent List", "AgentList", "This is a List of Agents", "SlowRobotics", "Parameters") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
-        public override System.Guid ComponentGuid => new Guid("{220cd95c-6506-4313-87cc-ad2000e65592}");
+        public override System.Guid ComponentGuid => new Guid("{bf67f1ae-e5c0-4731-a606-b7f03e6d66fe}");
 
-        protected override GH_GetterResult Prompt_Singular(ref GH_World value)
+        protected override GH_GetterResult Prompt_Singular(ref GH_AgentList value)
         {
 
-            Rhino.Input.Custom.GetNumber go = new Rhino.Input.Custom.GetNumber();
-            go.SetCommandPrompt("World size");
-            go.AcceptNothing(true);
+            value = new GH_AgentList();
+            return GH_GetterResult.success;
 
-            switch (go.Get())
-            {
-                case Rhino.Input.GetResult.Number:
-                    value = new GH_World((float)go.Number());
-                    return GH_GetterResult.success;
-
-                case Rhino.Input.GetResult.Nothing:
-                    return GH_GetterResult.accept;
-
-                default:
-                    return GH_GetterResult.cancel;
-            }
         }
 
-        protected override GH_GetterResult Prompt_Plural(ref List<GH_World> values)
+        protected override GH_GetterResult Prompt_Plural(ref List<GH_AgentList> values)
         {
-            values = new List<GH_World>();
+            values = new List<GH_AgentList>();
             return GH_GetterResult.success;
         }
     }
-
     public class VoxelGridParameter : GH_PersistentParam<GH_VoxelGrid>
     {
         public VoxelGridParameter() : base("Voxel Grid", "VoxelGrid", "This is a Voxel Grid", "SlowRobotics", "Parameters") { }
