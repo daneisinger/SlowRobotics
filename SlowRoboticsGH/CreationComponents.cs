@@ -14,46 +14,6 @@ using SlowRobotics.SRGraph;
 
 namespace SlowRoboticsGH
 {
-    /*
-    public class CreateAgentsFromPlanesComponent : GH_Component
-    {
-        public CreateAgentsFromPlanesComponent() : base("Agents From Planes", "CreateAgents", "Create Agents from a collection of planes", "SlowRobotics", "Agent") { }
-        public override GH_Exposure Exposure => GH_Exposure.primary;
-        public override Guid ComponentGuid => new Guid("{93c48701-8b2f-43ed-8a6a-fb82ebdf3737}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
-
-        protected override void RegisterInputParams(GH_InputParamManager pManager)
-        {
-            pManager.AddPlaneParameter("Planes", "P", "Agent Planes", GH_ParamAccess.list);
-        }
-
-        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-        {
-            pManager.AddGenericParameter("Agents", "A", "Wrapped list of agents", GH_ParamAccess.item);
-        }
-
-        public List<IAgent> agents = new List<IAgent>();
-
-        protected override void SolveInstance(IGH_DataAccess DA)
-        {
-            List<Plane> planes = new List<Plane>();
-
-            if (!DA.GetDataList(0, planes)) { return; }
-          
-                agents = new List<IAgent>();
-                foreach (Plane3D p in planes.ConvertAll(x => { return IO.ToPlane3D(x); }))
-                {
-                    SlowRobotics.Core.Particle p1 = new SlowRobotics.Core.Particle(p);
-                    IAgent a = new ParticleAgent(p1);
-                    agents.Add(a);
-                }
-
-            DA.SetData(0, new GH_ObjectWrapper(agents));
-
-        }
-    }
-    */
-
     
     public class MeshToGraph : GH_Component
     {
