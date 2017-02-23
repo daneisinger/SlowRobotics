@@ -214,7 +214,7 @@ namespace SlowRoboticsGH
             pManager.AddNumberParameter("Stiffness", "S", "Link Stiffness", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Add Frequency", "F", "Add a link every n steps", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Popuylation",  "P", "Population of Agents", GH_ParamAccess.item);
+            pManager.AddParameter(new AgentListParameter(), "Population",  "P", "Population of Agents", GH_ParamAccess.item);
             pManager.AddGenericParameter("Structure", "S", "Spatial structure to add new points to", GH_ParamAccess.item);
         }
 
@@ -232,7 +232,7 @@ namespace SlowRoboticsGH
             double stiffness = 0.1;
             int freq = 1;
             int priority = 5;
-            AgentList pop = null;
+            GH_AgentList pop = null;
             ISearchable pts = null;
             //Object b = null;
 
@@ -252,12 +252,12 @@ namespace SlowRoboticsGH
                 addLink.frequency = freq;
 
                 addLink.priority = priority;
-                addLink.pop = pop;
+                addLink.pop = pop.Value;
                 addLink.pts = pts;
             }
             else
             {
-                addLink = new Add.Extend(priority, freq, IO.ToVec3D(offset), (float)stiffness,  behaviours.ConvertAll(b => { return b.Value; }), pop,pts);
+                addLink = new Add.Extend(priority, freq, IO.ToVec3D(offset), (float)stiffness,  behaviours.ConvertAll(b => { return b.Value; }), pop.Value,pts);
                 
             }
             DA.SetData(0, addLink);

@@ -120,24 +120,24 @@ namespace Toxiclibs.core
             return segments;
         }
 
-        public Vec3D a, b;
+        public Vec3D start, end;
 
         public Line3D(float x1, float y1, float z1, float x2, float y2, float z2)
         {
-            this.a = new Vec3D(x1, y1, z1);
-            this.b = new Vec3D(x2, y2, z2);
+            this.start = new Vec3D(x1, y1, z1);
+            this.end = new Vec3D(x2, y2, z2);
         }
 
         public Line3D(ReadonlyVec3D a, ReadonlyVec3D b)
         {
-            this.a = a.copy();
-            this.b = b.copy();
+            this.start = a.copy();
+            this.end = b.copy();
         }
 
         public Line3D(Vec3D a, Vec3D b)
         {
-            this.a = a;
-            this.b = b;
+            this.start = a;
+            this.end = b;
         }
 
         /**
@@ -153,39 +153,73 @@ namespace Toxiclibs.core
          * http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline3d/
          * </p>
          */
-        public LineIntersection closestLineTo(Line3D l)
-        {
-            Vec3D p43 = l.a.sub(l.b);
-            if (p43.isZeroVector())
-            {
-                return new LineIntersection(IntersectionType.NON_INTERSECTING);
-            }
-            Vec3D p21 = b.sub(a);
-            if (p21.isZeroVector())
-            {
-                return new LineIntersection(IntersectionType.NON_INTERSECTING);
-            }
-            Vec3D p13 = a.sub(l.a);
 
-            double d1343 = p13.x * p43.x + p13.y * p43.y + p13.z * p43.z;
-            double d4321 = p43.x * p21.x + p43.y * p21.y + p43.z * p21.z;
-            double d1321 = p13.x * p21.x + p13.y * p21.y + p13.z * p21.z;
-            double d4343 = p43.x * p43.x + p43.y * p43.y + p43.z * p43.z;
-            double d2121 = p21.x * p21.x + p21.y * p21.y + p21.z * p21.z;
+        /*
+    public LineIntersection closestLineTo(Line3D l)
+    {
+        Vec3D p43 = l.a.sub(l.b);
+        if (p43.isZeroVector())
+        {
+            return new LineIntersection(IntersectionType.NON_INTERSECTING);
+        }
+        Vec3D p21 = b.sub(a);
+        if (p21.isZeroVector())
+        {
+            return new LineIntersection(IntersectionType.NON_INTERSECTING);
+        }
+        Vec3D p13 = a.sub(l.a);
+
+        double d1343 = p13.x * p43.x + p13.y * p43.y + p13.z * p43.z;
+        double d4321 = p43.x * p21.x + p43.y * p21.y + p43.z * p21.z;
+        double d1321 = p13.x * p21.x + p13.y * p21.y + p13.z * p21.z;
+        double d4343 = p43.x * p43.x + p43.y * p43.y + p43.z * p43.z;
+        double d2121 = p21.x * p21.x + p21.y * p21.y + p21.z * p21.z;
+
+        double denom = d2121 * d4343 - d4321 * d4321;
+        if (Math.Abs(denom) < Math.E)
+        {
+            return new LineIntersection(IntersectionType.NON_INTERSECTING);
+        }
+        double numer = d1343 * d4321 - d1321 * d4343;
+        float mua = (float)(numer / denom);
+        float mub = (float)((d1343 + d4321 * mua) / d4343);
+
+        Vec3D pa = a.add(p21.scaleSelf(mua));
+        Vec3D pb = l.a.add(p43.scaleSelf(mub));
+        return new LineIntersection(IntersectionType.INTERSECTING, new Line3D(pa, pb), mua,
+                mub);
+    }
+    */
+        public static Vec3D closestPointBetween(Line3D l1, Line3D l2)
+        {
+            // Algorithm is ported from the C algorithm of Paul Bourke
+            Vec3D p1 = l1.start;
+            Vec3D p2 = l1.end;
+            Vec3D p3 = l2.start;
+            Vec3D p4 = l2.end;
+            Vec3D p21 = p2.sub(p1);
+            Vec3D p13 = p1.sub(p3);
+            Vec3D p43 = p4.sub(p3);
+            double d1343 = p13.x * (double)p43.x + (double)p13.y * p43.y + (double)p13.z * p43.z;
+            double d4321 = p43.x * (double)p21.x + (double)p43.y * p21.y + (double)p43.z * p21.z;
+            double d1321 = p13.x * (double)p21.x + (double)p13.y * p21.y + (double)p13.z * p21.z;
+            double d4343 = p43.x * (double)p43.x + (double)p43.y * p43.y + (double)p43.z * p43.z;
+            double d2121 = p21.x * (double)p21.x + (double)p21.y * p21.y + (double)p21.z * p21.z;
 
             double denom = d2121 * d4343 - d4321 * d4321;
-            if (Math.Abs(denom) < Math.E)
-            {
-                return new LineIntersection(IntersectionType.NON_INTERSECTING);
-            }
             double numer = d1343 * d4321 - d1321 * d4343;
-            float mua = (float)(numer / denom);
-            float mub = (float)((d1343 + d4321 * mua) / d4343);
 
-            Vec3D pa = a.add(p21.scaleSelf(mua));
-            Vec3D pb = l.a.add(p43.scaleSelf(mub));
-            return new LineIntersection(IntersectionType.INTERSECTING, new Line3D(pa, pb), mua,
-                    mub);
+            float mua = Math.Max(Math.Min((float)(numer / denom), 1), 0);
+            float mub = Math.Max(Math.Min((float)((d1343 + d4321 * (mua)) / d4343), 1), 0);
+            return l2.pointAt(mub);
+
+        }
+
+        public Vec3D pointAt(float param)
+        {
+            Vec3D ab = end.sub(start);
+            ab.scaleSelf(param);
+            return start.add(ab);
         }
 
         /**
@@ -195,26 +229,27 @@ namespace Toxiclibs.core
          *            point to check against
          * @return closest point on the line
          */
+
         public Vec3D closestPointTo(ReadonlyVec3D p)
         {
-            Vec3D v = b.sub(a);
-            float t = p.sub(a).dot(v) / v.magSquared();
+            Vec3D v = end.sub(start);
+            float t = p.sub(start).dot(v) / v.magSquared();
             // Check to see if t is beyond the extents of the line segment
             if (t < 0.0f)
             {
-                return a.copy();
+                return start.copy();
             }
             else if (t > 1.0f)
             {
-                return b.copy();
+                return end.copy();
             }
             // Return the point between 'a' and 'b'
-            return a.add(v.scaleSelf(t));
+            return start.add(v.scaleSelf(t));
         }
 
         public Line3D copy()
         {
-            return new Line3D(a.copy(), b.copy());
+            return new Line3D(start.copy(), end.copy());
         }
 
         public bool equals(Object obj)
@@ -231,8 +266,8 @@ namespace Toxiclibs.core
                 return false;
             }
             Line3D l = (Line3D)obj;
-            return (a.equals(l.a) || a.equals(l.b))
-                    && (b.equals(l.b) || b.equals(l.a));
+            return (start.equals(l.start) || start.equals(l.end))
+                    && (end.equals(l.end) || end.equals(l.start));
         }
 
         /**
@@ -243,37 +278,37 @@ namespace Toxiclibs.core
          */
         public AABB getBounds()
         {
-            return AABB.fromMinMax(a, b);
+            return AABB.fromMinMax(start, end);
         }
 
         public Vec3D getDirection()
         {
-            return b.sub(a).normalize();
+            return end.sub(start).normalize();
         }
 
         public float getLength()
         {
-            return a.distanceTo(b);
+            return start.distanceTo(end);
         }
 
         public float getLengthSquared()
         {
-            return a.distanceToSquared(b);
+            return start.distanceToSquared(end);
         }
 
         public Vec3D getMidPoint()
         {
-            return a.add(b).scaleSelf(0.5f);
+            return start.add(end).scaleSelf(0.5f);
         }
 
         public Vec3D getNormal()
         {
-            return b.cross(a);
+            return end.cross(start);
         }
 
         public bool hasEndPoint(Vec3D p)
         {
-            return a.equals(p) || b.equals(p);
+            return start.equals(p) || end.equals(p);
         }
 
         /**
@@ -286,7 +321,7 @@ namespace Toxiclibs.core
          */
         public int hashCode()
         {
-            return a.hashCode() + b.hashCode();
+            return start.hashCode() + end.hashCode();
         }
 
         /**
@@ -302,8 +337,8 @@ namespace Toxiclibs.core
         public int hashCodeWithDirection()
         {
             long bits = 1L;
-            bits = 31L * bits + a.hashCode();
-            bits = 31L * bits + b.hashCode();
+            bits = 31L * bits + start.hashCode();
+            bits = 31L * bits + end.hashCode();
             return (int)(bits ^ (bits >> 32));
         }
 
@@ -311,46 +346,57 @@ namespace Toxiclibs.core
         {
             Vec3D m = getMidPoint();
             Vec3D d = getDirection();
-            Vec3D n = a.cross(d).normalize();
+            Vec3D n = start.cross(d).normalize();
             if (refVec != null && m.sub(refVec).dot(n) < 0) {
                 n.invert();
             }
             n.normalizeTo(offset);
-            a.addSelf(n);
-            b.addSelf(n);
+            start.addSelf(n);
+            end.addSelf(n);
             d.scaleSelf(scale);
-            a.subSelf(d);
-            b.addSelf(d);
+            start.subSelf(d);
+            end.addSelf(d);
             return this;
         }
 
         public Line3D scaleLength(float scale)
         {
             float delta = (1 - scale) * 0.5f;
-            Vec3D newA = a.interpolateTo(b, delta);
-            b.interpolateToSelf(a, delta);
-            a.set(newA);
+            Vec3D newA = start.interpolateTo(end, delta);
+            end.interpolateToSelf(start, delta);
+            start.set(newA);
             return this;
         }
 
         public Line3D set(ReadonlyVec3D a, ReadonlyVec3D b)
         {
-            this.a = a.copy();
-            this.b = b.copy();
+            this.start = a.copy();
+            this.end = b.copy();
             return this;
         }
 
         public Line3D set(Vec3D a, Vec3D b)
         {
-            this.a = a;
-            this.b = b;
+            this.start = a;
+            this.end = b;
             return this;
         }
 
         public List<Vec3D> splitIntoSegments(List<Vec3D> segments,
                 float stepLength, bool addFirst)
         {
-            return splitIntoSegments(a, b, stepLength, segments, addFirst);
+            return splitIntoSegments(start, end, stepLength, segments, addFirst);
+        }
+
+
+
+        public float angleBetween(Line3D other, bool flip)
+        {
+
+            Vec3D ab = start.sub(end);
+            Vec3D abo = other.start.sub(other.end);
+            if (flip) abo.invert();
+            return ab.angleBetween(abo, true);
         }
         /*
         public Ray3D toRay3D()
@@ -360,7 +406,7 @@ namespace Toxiclibs.core
 
         public String toString()
         {
-            return a.toString() + " -> " + b.toString();
+            return start.toString() + " -> " + end.toString();
         }
     }
 }

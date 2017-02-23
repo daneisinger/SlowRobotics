@@ -54,6 +54,7 @@ namespace SlowRobotics.Agent
 
         public List<IAgent> getRandomizedAgents()
         {
+            if (Count == 0) return new List<IAgent>();
             Random r = new Random();
             return pop.Keys.OrderBy(n => r.Next()).ToList();
         }

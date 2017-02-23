@@ -217,7 +217,7 @@ namespace SlowRobotics.Agent.Behaviours
                         else
                         {
                             //attract to closest points on lines
-                            Vec3D cPt = b_s.closestPoint(a);
+                            Vec3D cPt = b_s.closestPointTo(a);
                             force.addSelf(calcForce(a, cPt.sub(a), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
                         }
                     }

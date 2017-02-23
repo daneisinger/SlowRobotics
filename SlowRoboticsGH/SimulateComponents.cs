@@ -45,9 +45,9 @@ namespace SlowRoboticsGH
             DA.SetData(0, list);
         }
     }
-    public class SimulateWorldComponent : GH_Component
+    public class SimulateComponent : GH_Component
     {
-        public SimulateWorldComponent() : base("Simulate World", "SimWorld", "Updates all particles and links in the world", "SlowRobotics", "Simulation") { }
+        public SimulateComponent() : base("Simulate", "Sim", "Updates all agents", "SlowRobotics", "Simulation") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{6d564eab-11d8-4dd7-af01-f7cfc5d435e7}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
@@ -247,31 +247,33 @@ namespace SlowRoboticsGH
             if (!DA.GetData(0, ref wrapper)) { return; }
             if (!DA.GetDataList(1, behaviours)) { return; }
 
-            if (wrapper.Value is List<IAgent>)
+            if (behaviours != null)
             {
-                List<IAgent> agents = (List<IAgent>)wrapper.Value;
-                foreach (IAgent a in agents)
+                if (wrapper.Value is List<IAgent>)
                 {
-                    ((IAgent)a).setBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
+                    List<IAgent> agents = (List<IAgent>)wrapper.Value;
+                    foreach (IAgent a in agents)
+                    {
+                        ((IAgent)a).setBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
+                    }
+                }
+                else if (wrapper.Value is IAgent)
+                {
+                    ((IAgent)wrapper.Value).setBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
+                }
+                else if (wrapper.Value is List<GH_Agent>)
+                {
+                    List<GH_Agent> agents = (List<GH_Agent>)wrapper.Value;
+                    foreach (GH_Agent a in agents)
+                    {
+                        a.Value.setBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
+                    }
+                }
+                else if (wrapper.Value is GH_Agent)
+                {
+                    ((GH_Agent)wrapper.Value).Value.setBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
                 }
             }
-            else if (wrapper.Value is IAgent)
-            {
-                ((IAgent)wrapper.Value).setBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
-            }
-            else if (wrapper.Value is List<GH_Agent>)
-            {
-                List<GH_Agent> agents = (List<GH_Agent>)wrapper.Value;
-                foreach (GH_Agent a in agents)
-                {
-                    a.Value.setBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
-                }
-            }
-            else if (wrapper.Value is GH_Agent)
-            {
-                ((GH_Agent)wrapper.Value).Value.setBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
-            }
-
             DA.SetData(0, wrapper.Value);
         }
     }
