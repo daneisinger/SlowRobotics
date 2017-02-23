@@ -59,7 +59,7 @@ namespace SlowRobotics.Agent
             //TODO - need to setup benchmarker to track functions
            // System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
             //stopwatch.Start();
-
+            
             T data = a.getData() as T;
             if (data != null)
             {
@@ -69,7 +69,7 @@ namespace SlowRobotics.Agent
             {
                 throw new InvalidCastException("Behaviour of type " + typeof(T) + " cannot run on agent type:" + a.getData().GetType());
             }
-
+            
             //stopwatch.Stop();
            // if ((OnUpdate != null)) OnUpdate(this, new UpdateEventArgs(this.GetType().ToString(), stopwatch.ElapsedMilliseconds));
 

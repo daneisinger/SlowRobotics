@@ -11,22 +11,6 @@ using Toxiclibs.core;
 namespace SlowRobotics.Agent.Behaviours
 {
 
-    
-    public class Update : ScaledBehaviour<IParticle>
-    {
-        public float damping { get; set; }
-
-        public Update(int _priority, float _damping) : base(_priority)
-        {
-            damping = _damping;
-        }
-
-        public override void runOn(IParticle p)
-        {
-            p.step(damping * scaleFactor);
-        }
-    }
-
     public class Move : ScaledBehaviour<SRParticle>
     {
         

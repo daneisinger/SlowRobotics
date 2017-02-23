@@ -15,6 +15,112 @@ using SlowRobotics.Spatial;
 
 namespace SlowRoboticsGH
 {
+
+    public class RebuildComponent : GH_Component
+    {
+        public RebuildComponent() : base("Rebuild Tree", "Rebuild", "Rebuilds spatial structure with new objects", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{71a0c2d9-bcde-4d03-b079-245205106639}");
+        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
+        protected override Bitmap Icon
+        {
+            get
+            {
+                //Return a 24x24 pixel bitmap to represent this GHA library.
+                return null;
+            }
+        }
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddParameter(new AgentListParameter(), "Agents", "A", "Try and add objects from these agents", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
+        }
+
+        public RebuildTree rebuildtree = null;
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            GH_AgentList pop = null;
+            int priority = 5;
+
+            if (!DA.GetData(0, ref pop)) { return; }
+            if (!DA.GetData(1, ref priority)) { return; }
+
+            if (rebuildtree != null)
+            {
+
+                if(pop.Value!=null)rebuildtree.pop = pop.Value;
+                rebuildtree.priority = priority;
+
+            }
+            else
+            {
+               if(pop.Value!= null) rebuildtree = new RebuildTree(priority, pop.Value);
+            }
+
+            DA.SetData(0, rebuildtree);
+
+        }
+    }
+
+    public class IntegrateComponent : GH_Component
+    {
+        public IntegrateComponent() : base("Integrate", "Integrate", "Integrates particle accelleration and velocity", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{e2df1927-29ad-4fe0-bd86-b651aff77b92}");
+        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
+        protected override Bitmap Icon
+        {
+            get
+            {
+                //Return a 24x24 pixel bitmap to represent this GHA library.
+                return null;
+            }
+        }
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddNumberParameter("Damping", "D", "Particle Damping", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
+        }
+
+        public IntegrateBehaviour integrate = null;
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            double damping = 0.1;
+            int priority = 5;
+
+            if (!DA.GetData(0, ref damping)) { return; }
+            if (!DA.GetData(1, ref priority)) { return; }
+
+            if (integrate != null)
+            {
+
+                integrate.damping = (float)damping;
+                integrate.priority = priority;
+
+            }
+            else
+            {
+                integrate = new IntegrateBehaviour(priority, (float)damping);
+
+            }
+            DA.SetData(0, integrate);
+
+        }
+    }
     public class SpringComponent : GH_Component
     {
         public SpringComponent() : base("Springs", "Spring", "Adds hookes law springs to links", "SlowRobotics", "Behaviours") { }
@@ -72,68 +178,6 @@ namespace SlowRoboticsGH
         }
     }
 
-    /*
-    public class AlignAxisToNearLinksComponent : GH_Component
-    {
-        public AlignAxisToNearLinksComponent() : base("Align to near links", "AlignLinks", "Align the X axis of a plane with the direction of neighbouring links (interaction behaviour)", "SlowRobotics", "Behaviours") { }
-        public override GH_Exposure Exposure => GH_Exposure.secondary;
-        public override Guid ComponentGuid => new Guid("{d612542b-e64f-4249-8a77-7c04fbe4028c}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
-
-        protected override void RegisterInputParams(GH_InputParamManager pManager)
-        {
-            pManager.AddNumberParameter("Strength", "S", "Cohere Strength", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Maximum Distance", "Mx", "Maximum distance for effect", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Use Parent", "U", "Include links that share a parent node with this agent", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
-        }
-
-        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-        {
-            pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
-        }
-
-        public Align.AxisToNearLinks alignNearLinks = null;
-
-        protected override void SolveInstance(IGH_DataAccess DA)
-        {
-            double strength = 0.1;
-            double maxDist = 10;
-            bool useParent = true;
-            int priority = 5;
-
-            if (!DA.GetData(0, ref strength)) { return; }
-            if (!DA.GetData(1, ref maxDist)) { return; }
-            if (!DA.GetData(2, ref useParent)) { return; }
-            if (!DA.GetData(3, ref priority)) { return; }
-
-            if (alignNearLinks != null)
-            {
-
-                alignNearLinks.strength = (float)strength;
-                alignNearLinks.maxDist = (float)maxDist;
-                alignNearLinks.useParent = useParent;
-                alignNearLinks.priority = priority;
-
-            }
-            else
-            {
-                alignNearLinks = new Align.AxisToNearLinks(priority, (float)maxDist, (float)strength, useParent);
-                
-            }
-            DA.SetData(0, alignNearLinks);
-
-        }
-    }
-    */
     public class CohereInZAxisComponent : GH_Component
     {
         public CohereInZAxisComponent() : base("Attract in Z", "AttractZ", "Cohere with neighbours by moving in ZAxis (interaction behaviour)", "SlowRobotics", "Behaviours") { }
@@ -699,68 +743,7 @@ namespace SlowRoboticsGH
         }
     }
 
-    /*
-    public class AlignAxisToLinksComponent : GH_Component
-    {
-
-        public AlignAxisToLinksComponent() : base("Align to connected links", "AlignLinks", "Align Plane with connected links", "SlowRobotics", "Behaviours") { }
-        public override GH_Exposure Exposure => GH_Exposure.primary;
-        public override Guid ComponentGuid => new Guid("{3d1a1fdf-84ce-41dc-822c-87484b9acf5f}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
-
-        protected override void RegisterInputParams(GH_InputParamManager pManager)
-        {
-            pManager.AddNumberParameter("Strength", "S", "Strength of effect", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Axis", "A", "Axis to align", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
-
-            Param_Integer param = pManager[1] as Param_Integer;
-            param.AddNamedValue("X Axis", 0);
-            param.AddNamedValue("Y Axis", 1);
-            param.AddNamedValue("Z Axis", 2);
-        }
-
-        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-        {
-            pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
-        }
-
-        public Align.AxisToLinks aAxis = null;
-
-        protected override void SolveInstance(IGH_DataAccess DA)
-        {
-            double strength = 0.1;
-            int axis = 0;
-            int priority = 5;
-
-            if (!DA.GetData(0, ref strength)) { return; }
-            if (!DA.GetData(1, ref axis)) { return; }
-            if (!DA.GetData(2, ref priority)) { return; }
-
-            if (aAxis != null)
-            {
-                aAxis.strength = (float)strength;
-                aAxis.axis = axis;
-                aAxis.priority = priority;
-
-            }
-            else
-            {
-                aAxis = new Align.AxisToLinks(priority, (float)strength, axis);
-               
-            }
-            DA.SetData(0, aAxis);
-        }
-    }
-    */
+   
     public class AlignAxisToVelocityComponent : GH_Component
     {
 
