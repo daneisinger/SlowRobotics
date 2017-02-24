@@ -79,7 +79,7 @@ namespace SlowRobotics.Agent
         {
             foreach (KeyValuePair<IAgent,object> a in addBuffer)
             {
-                pop.Add(a.Key,a.Value);
+                if(a.Key!=null && a.Value!=null) pop.Add(a.Key,a.Value);
             }
             addBuffer = new Dictionary<IAgent,object>();
         }

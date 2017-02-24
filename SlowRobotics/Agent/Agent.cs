@@ -31,7 +31,7 @@ namespace SlowRobotics.Agent
 
         public void addBehaviours(List<IBehaviour> newBehaviours)
         {
-            foreach (IBehaviour b in newBehaviours) behaviours.Enqueue(b);
+            foreach (IBehaviour b in newBehaviours) addBehaviour(b);
         }
 
         public List<IBehaviour> getBehaviours()
@@ -42,7 +42,7 @@ namespace SlowRobotics.Agent
         public void setBehaviours(List<IBehaviour> newBehaviours)
         {
             behaviours = new PriorityQueue<IBehaviour>();
-            foreach (IBehaviour b in newBehaviours) behaviours.Enqueue(b);
+            foreach (IBehaviour b in newBehaviours) addBehaviour(b);
         }
 
         public void removeBehaviours()
@@ -78,16 +78,10 @@ namespace SlowRobotics.Agent
 
         public override void step(float damping)
         {
-            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
-            stopwatch.Start();
-
             foreach (IBehaviour b in behaviours.getData())
             {
                 b.run(this);
             }
-
-            stopwatch.Stop();
-            if ((OnUpdate != null)) OnUpdate(this, new UpdateEventArgs(this.GetType().ToString(), stopwatch.ElapsedMilliseconds));
         }
 
         public bool hasNeighbours()
