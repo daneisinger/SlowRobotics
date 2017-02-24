@@ -30,7 +30,7 @@ namespace SlowRobotics.Core
             return true;
         }
 
-        public void addForce(Vec3D force)
+        public virtual void addForce(Vec3D force)
         {
             if (force.magnitude() > 0.001) accel.addSelf(force);
         }
