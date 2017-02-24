@@ -51,8 +51,8 @@ namespace SlowRobotics.Core
         {
 
             //TODO - sort out this mess
-            b = closestPointBetween(l1, l2);
-            a = closestPointBetween(l2, l1);
+            b = l1.closestPoint(l2);
+            a = l2.closestPoint(l1);
         }
 
         public void cleanup()

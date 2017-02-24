@@ -916,6 +916,122 @@ namespace SlowRoboticsGH
         }
     }
 
+    public class LineToLineComponent : GH_Component
+    {
+
+        public LineToLineComponent() : base("Line To Line", "LineLine", "Attract lines to lines (interaction behaviour)", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override Guid ComponentGuid => new Guid("{07895539-0e74-40a0-b6f1-794a89e94f26}");
+        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
+        protected override Bitmap Icon
+        {
+            get
+            {
+                //Return a 24x24 pixel bitmap to represent this GHA library.
+                return null;
+            }
+        }
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddNumberParameter("Strength", "S", "Attraction Strength", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Min Distance", "Mn", "Minimum Attraction Distance", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Attraction Distance", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
+        }
+
+        public Move.LineToLine attract = null;
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            double strength = 0.1;
+            double maxDist = 10;
+            double minDist = 1;
+            int priority = 5;
+
+            if (!DA.GetData(0, ref strength)) { return; }
+            if (!DA.GetData(1, ref minDist)) { return; }
+            if (!DA.GetData(2, ref maxDist)) { return; }
+            if (!DA.GetData(3, ref priority)) { return; }
+
+            if (attract != null)
+            {
+                attract.strength = (float)strength;
+                attract.minDist = (float)minDist;
+                attract.maxDist = (float)maxDist;
+                attract.priority = priority;
+            }
+            else
+            {
+                attract = new Move.LineToLine(priority, (float)minDist, (float)maxDist, (float)strength);
+            }
+            DA.SetData(0, attract);
+        }
+    }
+
+    public class PointToLineComponent : GH_Component
+    {
+
+        public PointToLineComponent() : base("Point To Line", "PointLine", "Attract particles to lines (interaction behaviour)", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override Guid ComponentGuid => new Guid("{099cc560-1b5b-4b94-9443-9326029e270b}");
+        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
+        protected override Bitmap Icon
+        {
+            get
+            {
+                //Return a 24x24 pixel bitmap to represent this GHA library.
+                return null;
+            }
+        }
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddNumberParameter("Strength", "S", "Attraction Strength", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Min Distance", "Mn", "Minimum Attraction Distance", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Attraction Distance", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
+        }
+
+        public Move.PointToLine attract = null;
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            double strength = 0.1;
+            double maxDist = 10;
+            double minDist = 1;
+            int priority = 5;
+
+            if (!DA.GetData(0, ref strength)) { return; }
+            if (!DA.GetData(1, ref minDist)) { return; }
+            if (!DA.GetData(2, ref maxDist)) { return; }
+            if (!DA.GetData(3, ref priority)) { return; }
+
+            if (attract != null)
+            {
+                attract.strength = (float)strength;
+                attract.minDist = (float)minDist;
+                attract.maxDist = (float)maxDist;
+                attract.priority = priority;
+            }
+            else
+            {
+                attract = new Move.PointToLine(priority, (float)minDist, (float)maxDist, (float)strength);
+            }
+            DA.SetData(0, attract);
+        }
+    }
+
     public class AttractComponent: GH_Component
     {
 
@@ -938,7 +1054,6 @@ namespace SlowRoboticsGH
             pManager.AddNumberParameter("Min Distance", "Mn", "Minimum Attraction Distance", GH_ParamAccess.item);
             pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Attraction Distance", GH_ParamAccess.item);
             pManager.AddBooleanParameter("In XY", "XY", "Attract only in Plane XY", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Ignore Parent", "Ip", "Ignore particles with same parent", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
         }
 
@@ -952,7 +1067,6 @@ namespace SlowRoboticsGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             bool inXY = false;
-            bool ignoreParent = false;
             double strength = 0.1;
             double maxDist = 10;
             double minDist = 1;
@@ -962,8 +1076,7 @@ namespace SlowRoboticsGH
             if (!DA.GetData(1, ref minDist)) { return; }
             if (!DA.GetData(2, ref maxDist)) { return; }
             if (!DA.GetData(3, ref inXY)) { return; }
-            if (!DA.GetData(4, ref ignoreParent)) { return; }
-            if (!DA.GetData(5, ref priority)) { return; }
+            if (!DA.GetData(4, ref priority)) { return; }
 
             if (attract != null)
             {
@@ -972,17 +1085,16 @@ namespace SlowRoboticsGH
                 attract.maxDist = (float)maxDist;
                 attract.inXY = inXY;
                 attract.priority = priority;
-                attract.ignoreParent = ignoreParent;
             }
             else
             {
                 if (!inXY)
                 {
-                    attract = new Move.Together(priority, (float)minDist, (float)maxDist, (float)strength, inXY, ignoreParent);
+                    attract = new Move.Together(priority, (float)minDist, (float)maxDist, (float)strength, inXY);
                 }
                 else
                 {
-                    attract = new Move.Together(priority, (float)minDist, (float)maxDist, (float)strength, inXY, ignoreParent);
+                    attract = new Move.Together(priority, (float)minDist, (float)maxDist, (float)strength, inXY);
                 }
             }
             DA.SetData(0, attract);
@@ -1012,7 +1124,6 @@ namespace SlowRoboticsGH
             pManager.AddNumberParameter("Min Distance", "Mn", "Minimum Separation Distance", GH_ParamAccess.item);
             pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Separation Distance", GH_ParamAccess.item);
             pManager.AddBooleanParameter("In XY", "XY", "Separate only in Plane XY", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Ignore Parent", "Ip", "Ignore particles with same parent", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
         }
 
@@ -1026,7 +1137,6 @@ namespace SlowRoboticsGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             bool inXY = false;
-            bool ignoreParent = false;
             double strength = 0.1;
             double maxDist = 10;
             double minDist = 1;
@@ -1036,8 +1146,7 @@ namespace SlowRoboticsGH
             if (!DA.GetData(1, ref minDist)) { return; }
             if (!DA.GetData(2, ref maxDist)) { return; }
             if (!DA.GetData(3, ref inXY)) { return; }
-            if (!DA.GetData(4, ref ignoreParent)) { return; }
-            if (!DA.GetData(5, ref priority)) { return; }
+            if (!DA.GetData(4, ref priority)) { return; }
 
             if (separate != null) {
 
@@ -1045,13 +1154,12 @@ namespace SlowRoboticsGH
                 separate.strength = (float)strength;
                 separate.minDist = (float)minDist;
                 separate.maxDist = (float)maxDist;
-                separate.ignoreParent = ignoreParent;
                 separate.priority = priority;
 
             }
             else
             {
-                separate = new Move.Apart(priority, (float)strength, (float)minDist, (float)maxDist, inXY, ignoreParent);
+                separate = new Move.Apart(priority, (float)strength, (float)minDist, (float)maxDist, inXY);
             }
             DA.SetData(0, separate);
         }

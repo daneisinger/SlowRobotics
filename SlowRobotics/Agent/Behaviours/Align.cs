@@ -38,7 +38,7 @@ namespace SlowRobotics.Agent.Behaviours
                     float d = ab.magnitude();
                     if (d > minDist && d < maxDist)
                     {
-                        float f = SR_Math.map(d, minDist, maxDist, 1, 0);
+                        float f = SRMath.map(d, minDist, maxDist, 1, 0);
                         float sf = ExponentialInterpolation.Squared.interpolate(0, strength, f);
                         a_p.interpolateToPlane3D(b_p, sf * scaleFactor);
                     }
@@ -260,7 +260,7 @@ namespace SlowRobotics.Agent.Behaviours
                 {
                     Vec3D centroid = new Vec3D();
 
-                    Vec3D n = SR_Math.getPlaneNormal(a.neighbours, out centroid);
+                    Vec3D n = SRMath.getPlaneNormal(a.neighbours, out centroid);
 
                     if (getAxis(a_p).angleBetween(n) > (float)Math.PI / 2) n.invert();
                     interpolateToVector(a_p, n, strength * scaleFactor);

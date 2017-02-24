@@ -21,7 +21,7 @@ namespace SlowRobotics.Field.Elements
 
         public override float getWeight(Vec3D loc)
         {
-            float d = SR_Math.constrain(location.distanceTo(loc), 1, maxDist);
+            float d = SRMath.constrain(location.distanceTo(loc), 1, maxDist);
             return ((d < maxDist) ? (weight * (1 / (float)Math.Pow(d, attenuation))) : 0);
         }
 

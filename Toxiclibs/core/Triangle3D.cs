@@ -222,9 +222,9 @@ namespace Toxiclibs.core
         public Vec3D getClosestPointTo(ReadonlyVec3D p)
         {
             Line3D edge = new Line3D(a, b);
-            Vec3D Rab = edge.closestPointTo(p);
-            Vec3D Rbc = edge.set(b, c).closestPointTo(p);
-            Vec3D Rca = edge.set(c, a).closestPointTo(p);
+            Vec3D Rab = edge.closestPoint(p);
+            Vec3D Rbc = edge.set(b, c).closestPoint(p);
+            Vec3D Rca = edge.set(c, a).closestPoint(p);
 
             float dAB = p.sub(Rab).magSquared();
             float dBC = p.sub(Rbc).magSquared();

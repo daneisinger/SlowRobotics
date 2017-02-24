@@ -30,7 +30,7 @@ namespace SlowRobotics.Agent.Behaviours
         public Vec3D calcForce(Vec3D a, Vec3D ab, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
         {
             float d = ab.magnitude();
-            float f = SR_Math.map(d, minDist, maxDist, 1, 0);
+            float f = SRMath.map(d, minDist, maxDist, 1, 0);
             return (d > minDist && d < maxDist) ? ab.normalizeTo(interpolator.interpolate(0, maxForce, f)) : new Vec3D();
         }
 
@@ -88,13 +88,11 @@ namespace SlowRobotics.Agent.Behaviours
         public class Apart : Move
         {
             public bool inXY { get; set; }
-            public bool ignoreParent { get; set; }
             public Vec3D force;
 
-            public Apart(int _priority, float _strength, float _minDist, float _maxDist, bool _inXY, bool _ignoreParent) : base(_priority, _strength, _minDist,_maxDist)
+            public Apart(int _priority, float _strength, float _minDist, float _maxDist, bool _inXY) : base(_priority, _strength, _minDist,_maxDist)
             {
                 inXY = _inXY;
-                ignoreParent = _ignoreParent;
                 reset();
             }
 
@@ -108,7 +106,6 @@ namespace SlowRobotics.Agent.Behaviours
             {
                 SRParticle b_v = b as SRParticle;
                 if(b_v!= null) {
-                    if (ignoreParent && b_v.parent == p.parent) return;
                     if (!inXY)
                     {
                         force.addSelf(calcForce(p, p.sub(b_v), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
@@ -118,7 +115,7 @@ namespace SlowRobotics.Agent.Behaviours
                         ToxiPlane tp = new ToxiPlane(p, p.zz);
                         Vec3D op = tp.getProjectedPoint(b_v);
                         float d = p.distanceTo(b_v);
-                        float f = SR_Math.map(d, minDist, maxDist, 1, 0);
+                        float f = SRMath.map(d, minDist, maxDist, 1, 0);
                         float sf = ExponentialInterpolation.Squared.interpolate(0, strength, f);
                         if (d > minDist && d < maxDist) force.addSelf(p.sub(op).normalizeTo(sf));
                     }
@@ -136,14 +133,13 @@ namespace SlowRobotics.Agent.Behaviours
         public class Together  : Apart
         {
 
-            public Together(int _priority, float _strength, float _minDist, float _maxDist, bool _inXY, bool _ignoreParent) : base(_priority, _strength, _minDist, _maxDist, _inXY, _ignoreParent){ }
+            public Together(int _priority, float _strength, float _minDist, float _maxDist, bool _inXY) : base(_priority, _strength, _minDist, _maxDist, _inXY){ }
 
             public override void interactWith(SRParticle p, object b)
             {
                 SRParticle b_v = b as SRParticle;
                 if (b_v != null)
                 {
-                    if (ignoreParent && b_v.parent == p.parent) return;
                     if (!inXY)
                     {
                         force.addSelf(calcForce(p, b_v.sub(p), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
@@ -153,7 +149,7 @@ namespace SlowRobotics.Agent.Behaviours
                         ToxiPlane tp = new ToxiPlane(p, p.zz);
                         Vec3D op = tp.getProjectedPoint(b_v);
                         float d = p.distanceTo(b_v);
-                        float f = SR_Math.map(d, minDist, maxDist, 1, 0);
+                        float f = SRMath.map(d, minDist, maxDist, 1, 0);
                         float sf = ExponentialInterpolation.Squared.interpolate(0, strength, f);
                         if (d > minDist && d < maxDist) force.addSelf(op.sub(p).normalizeTo(sf));
                     }
@@ -161,11 +157,51 @@ namespace SlowRobotics.Agent.Behaviours
             }
         }
 
-        public class ToLines : Apart
+        public class PointToLine : Apart
         {
+            public PointToLine(int _priority, float _strength, float _minDist, float _maxDist) : base(_priority, _strength, _minDist, _maxDist, false){ }
+
+            public override void interactWith(SRParticle p, object b)
+            {
+                ILine b_l = b as ILine;
+                if (b_l != null)
+                {
+
+                    Vec3D cPt = b_l.closestPoint(p);
+                    force.addSelf(calcForce(p, cPt.sub(p), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
+
+                }
+            }
+        }
+
+        public class LineToLine : Apart
+        {
+            public LineToLine(int _priority, float _strength, float _minDist, float _maxDist) : base(_priority, _strength, _minDist, _maxDist, false) { }
+
+            public override void interactWith(SRParticle p, object b)
+            {
+                ILine b_l = b as ILine;
+                if (b_l != null)
+                {
+                    ILine a_l = p as ILine;
+                    if(a_l != null)
+                    {
+                        Vec3D cPt_a = a_l.closestPoint(b_l);
+                        Vec3D cPt_b = b_l.closestPoint(a_l);
+                        force.addSelf(calcForce(p, cPt_b.sub(cPt_a), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
+                    }
+                }
+            }
+        }
+
+        public class ToGraphEdges : Apart
+        {
+
+            //TODO - use interfaces e.g. Graph<IParticle,ILine>
             Graph<SRParticle, Spring> graph;
-            public ToLines(int _priority, Graph<SRParticle,Spring> _graph, float _strength, float _minDist, float _maxDist, bool _ignoreParent) :
-                base(_priority, _strength, _minDist, _maxDist, false, _ignoreParent)
+
+            public ToGraphEdges(int _priority, Graph<SRParticle,Spring> _graph, float _strength, float _minDist, float _maxDist) :
+                base(_priority, _strength, _minDist, _maxDist, false)
             {
                 graph = _graph;
             }
@@ -175,7 +211,6 @@ namespace SlowRobotics.Agent.Behaviours
                 SRParticle b_p = b as SRParticle;
                 if (b_p != null)
                 {
-                    if (ignoreParent && b_p.parent == a.parent) return;
                     //check if p has any edges 
                     IEnumerable<Spring> a_edges = graph.getEdgesFor(a);
 
@@ -201,7 +236,7 @@ namespace SlowRobotics.Agent.Behaviours
                         else
                         {
                             //attract to closest points on lines
-                            Vec3D cPt = b_s.closestPointTo(a);
+                            Vec3D cPt = b_s.closestPoint(a);
                             force.addSelf(calcForce(a, cPt.sub(a), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
                         }
                     }
@@ -214,8 +249,8 @@ namespace SlowRobotics.Agent.Behaviours
             Vec3D closestPt;
             float md;
 
-            public ToClosestPoint(int _priority, float _strength, float _minDist, float _maxDist, bool _inXY, bool _ignoreParent) :
-                base(_priority, _strength, _minDist, _maxDist, _inXY, _ignoreParent)
+            public ToClosestPoint(int _priority, float _strength, float _minDist, float _maxDist, bool _inXY) :
+                base(_priority, _strength, _minDist, _maxDist, _inXY)
             {
                 closestPt = null;
                 md = 10000;
@@ -226,7 +261,6 @@ namespace SlowRobotics.Agent.Behaviours
                 SRParticle b_v = b as SRParticle;
                 if (b_v != null)
                 {
-                    if (ignoreParent && b_v.parent == p.parent) return;
                     float d = b_v.distanceTo(p);
                     if (d < md)
                     {
@@ -264,7 +298,7 @@ namespace SlowRobotics.Agent.Behaviours
                     float d = ab.magnitude();
                     if (d > minDist && d < maxDist)
                     {
-                        float f = SR_Math.map(d, 0, maxDist, 1, 0);
+                        float f = SRMath.map(d, 0, maxDist, 1, 0);
                         float sf = ExponentialInterpolation.Squared.interpolate(0, strength, f);
                         Vec3D zt = p.zz.scale(sf * scaleFactor);
                         float angle = ab.angleBetween(p.zz, true);

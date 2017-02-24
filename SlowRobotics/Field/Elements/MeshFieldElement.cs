@@ -23,7 +23,7 @@ namespace SlowRobotics.Field.Elements
             Vec3D p = IO.ToVec3D(mesh.ClosestPoint(IO.ToPoint3d(loc)));
 
             //not using get weight function to avoid dual closest point checks
-            float dist = SR_Math.constrain(p.distanceTo(loc), 1, maxDist);
+            float dist = SRMath.constrain(p.distanceTo(loc), 1, maxDist);
             float w = ((dist < maxDist) ? (weight * (1 / (float)Math.Pow(dist, attenuation))) : 0);
 
             Vec3D scaledVal = p.sub(loc).normalizeTo(w);

@@ -49,7 +49,7 @@ namespace SlowRobotics.Agent.Behaviours
 
             public virtual float getFactor(Vec3D a, List<Vec3D> _pts)
             {
-                Vec3D cPt = SR_Math.getClosestN(a, _pts, 1)[0];
+                Vec3D cPt = SRMath.getClosestN(a, _pts, 1)[0];
                 float f = a.distanceTo(cPt);
                 return f > maxDist ? 1 : f / maxDist;
             }
@@ -66,7 +66,7 @@ namespace SlowRobotics.Agent.Behaviours
 
             public override float getFactor(Vec3D a, List<Vec3D> _pts)
             {
-                Vec3D avg = SR_Math.averageVectors(SR_Math.getClosestN(a, _pts, numClosest));
+                Vec3D avg = SRMath.averageVectors(SRMath.getClosestN(a, _pts, numClosest));
                 float f = a.distanceTo(avg);
                 return f > maxDist ? 1 : f / maxDist;
             }

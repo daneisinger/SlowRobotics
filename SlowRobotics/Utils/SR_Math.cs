@@ -7,7 +7,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Utils
 {
-    public static class SR_Math
+    public static class SRMath
     {
 
         public static float constrain(float v, float min, float max)
@@ -84,17 +84,29 @@ namespace SlowRobotics.Utils
             return new Vec3D((float)u[2, 0], (float) u[2, 1], (float)u[2, 2]);
 
         }
-        /*
-        public static float normalizeDistance(Vec3D ab, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
+        
+        public static Vec3D closestPoint(ILine l1, ILine l2)
         {
-            float dist = ab.magnitude();
-            float sf = 0;
-            if (dist > minDist && dist < maxDist)
-            {
-                float f = (dist - minDist) / (maxDist - minDist);
-                sf = interpolator.interpolate(0, maxForce, f);
-            }
-            return sf;
-        }*/
+            // Algorithm is ported from the C algorithm of Paul Bourke
+            Vec3D p1 = l1.start;
+            Vec3D p2 = l1.end;
+            Vec3D p3 = l2.start;
+            Vec3D p4 = l2.end;
+            Vec3D p21 = p2.sub(p1);
+            Vec3D p13 = p1.sub(p3);
+            Vec3D p43 = p4.sub(p3);
+            double d1343 = p13.x * (double)p43.x + (double)p13.y * p43.y + (double)p13.z * p43.z;
+            double d4321 = p43.x * (double)p21.x + (double)p43.y * p21.y + (double)p43.z * p21.z;
+            double d1321 = p13.x * (double)p21.x + (double)p13.y * p21.y + (double)p13.z * p21.z;
+            double d4343 = p43.x * (double)p43.x + (double)p43.y * p43.y + (double)p43.z * p43.z;
+            double d2121 = p21.x * (double)p21.x + (double)p21.y * p21.y + (double)p21.z * p21.z;
+
+            double denom = d2121 * d4343 - d4321 * d4321;
+            double numer = d1343 * d4321 - d1321 * d4343;
+
+            float mua = Math.Max(Math.Min((float)(numer / denom), 1), 0);
+            float mub = Math.Max(Math.Min((float)((d1343 + d4321 * (mua)) / d4343), 1), 0);
+            return l2.pointAt(mub);
+        }
     }
     }

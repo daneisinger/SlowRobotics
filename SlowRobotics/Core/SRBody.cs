@@ -113,7 +113,7 @@ namespace SlowRobotics.Core
                 p.f = true; //don't move particles
                 body.insertPoint(p); //add to body
             }
-            body.set(SR_Math.averageVectors(graph.Geometry.ConvertAll(x => (Vec3D)x)));
+            body.set(SRMath.averageVectors(graph.Geometry.ConvertAll(x => (Vec3D)x)));
 
             return body;
         }

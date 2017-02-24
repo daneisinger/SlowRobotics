@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SlowRobotics.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +19,7 @@ namespace SlowRobotics.Core
         }
     }
 
-    public class SRLinearParticle : SRParticle
+    public class SRLinearParticle : SRParticle, ILine
     {
         public double length;
         private List<Impulse> impulses;
@@ -26,6 +27,34 @@ namespace SlowRobotics.Core
         public SRLinearParticle(Plane3D _p) : base(_p) {
             impulses = new List<Impulse>();
 
+        }
+
+        public Vec3D start
+        {
+            get
+            {
+                return pointAt(-1f);
+            }
+            set { }
+        }
+
+        public Vec3D end
+        {
+            get
+            {
+                return pointAt(1f);
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// returns point at normalized parameter
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public Vec3D pointAt(float f)
+        {
+            return add(zz.scale(f * (float)length));
         }
 
         public override void addForce(Vec3D force)
@@ -57,6 +86,28 @@ namespace SlowRobotics.Core
         public override IEnumerable<Impulse> getImpulse()
         {
             foreach (Impulse i in impulses) yield return i;
+        }
+
+        public Vec3D closestPoint(ReadonlyVec3D p)
+        {
+            Vec3D v = end.sub(start);
+            float t = p.sub(start).dot(v) / v.magSquared();
+            // Check to see if t is beyond the extents of the line segment
+            if (t < 0.0f)
+            {
+                return start.copy();
+            }
+            else if (t > 1.0f)
+            {
+                return end.copy();
+            }
+            // Return the point between 'a' and 'b'
+            return start.add(v.scaleSelf(t));
+        }
+
+        public Vec3D closestPoint(ILine other)
+        {
+            return SRMath.closestPoint(this, other);
         }
     }
 }

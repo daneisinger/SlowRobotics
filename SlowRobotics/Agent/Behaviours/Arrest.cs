@@ -32,7 +32,7 @@ namespace SlowRobotics.Agent.Behaviours
                     float d = ab.magnitude();
                     if (d > 0 && d < maxDist)
                     {
-                        float f = SR_Math.map(d, 0, maxDist, 1, 0);
+                        float f = SRMath.map(d, 0, maxDist, 1, 0);
                         float sf = ExponentialInterpolation.Squared.interpolate(0, frictionCof, f);
                         inertiaMod += frictionCof * scaleFactor;
                     }

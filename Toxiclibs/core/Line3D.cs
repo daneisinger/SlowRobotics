@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Toxiclibs.core
 {
-    public class Line3D
+    public class Line3D : ILine
     {
         public enum IntersectionType
         {
@@ -120,7 +120,8 @@ namespace Toxiclibs.core
             return segments;
         }
 
-        public Vec3D start, end;
+        public Vec3D start { get; set; }
+        public Vec3D end { get; set; }
 
         public Line3D(float x1, float y1, float z1, float x2, float y2, float z2)
         {
@@ -190,11 +191,11 @@ namespace Toxiclibs.core
                 mub);
     }
     */
-        public static Vec3D closestPointBetween(Line3D l1, Line3D l2)
+        public Vec3D closestPoint(ILine l2)
         {
             // Algorithm is ported from the C algorithm of Paul Bourke
-            Vec3D p1 = l1.start;
-            Vec3D p2 = l1.end;
+            Vec3D p1 = start;
+            Vec3D p2 = end;
             Vec3D p3 = l2.start;
             Vec3D p4 = l2.end;
             Vec3D p21 = p2.sub(p1);
@@ -230,7 +231,7 @@ namespace Toxiclibs.core
          * @return closest point on the line
          */
 
-        public Vec3D closestPointTo(ReadonlyVec3D p)
+        public Vec3D closestPoint(ReadonlyVec3D p)
         {
             Vec3D v = end.sub(start);
             float t = p.sub(start).dot(v) / v.magSquared();
