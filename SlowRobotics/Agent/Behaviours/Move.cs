@@ -188,7 +188,7 @@ namespace SlowRobotics.Agent.Behaviours
                     {
                         Vec3D cPt_a = a_l.closestPoint(b_l);
                         Vec3D cPt_b = b_l.closestPoint(a_l);
-                        force.addSelf(calcForce(p, cPt_b.sub(cPt_a), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
+                        force.addSelf(calcForce(p, cPt_a.sub(cPt_b), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
                     }
                 }
             }

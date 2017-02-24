@@ -74,7 +74,7 @@ namespace SlowRobotics.Core
 
         public void addForce(Vec3D pos, Vec3D force)
         {
-            impulses.Add(new Impulse(pos, force));
+            impulses.Add(new Impulse(pos, force.getLimited(accLimit)));
         }
 
         public override void reset()
