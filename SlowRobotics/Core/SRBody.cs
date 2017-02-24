@@ -38,26 +38,26 @@ namespace SlowRobotics.Core
         {
             foreach (SRParticle p in pts)
             {
-                ApplyLinearImpulse(p.getLimitedAccel());
-                ApplyAngularImpulse(p,p.getLimitedAccel());
+                ApplyImpulses(p.getImpulse());
             }
         }
 
         //adds to accel and torque
-        public void ApplyLinearImpulse(Vec3D force)
+        public void ApplyImpulses(IEnumerable<Impulse> impulses)
         {
-            accel.addSelf(force);
-        }
+            foreach (Impulse i in impulses)
+            {
 
-        public void ApplyAngularImpulse(Vec3D pos, Vec3D force)
-        {
-            Vec3D ab = pos.sub(this);
-            float d = ab.magnitude();
+                accel.addSelf(i.dir); //integrate force
 
-            Vec3D crossAb = ab.cross(force);
-            float a = ab.angleBetween(ab.add(force), true);
+                Vec3D ab = i.pos.sub(this);
+                float d = ab.magnitude();
 
-            if (!float.IsNaN(a)) Torque.addSelf(crossAb.scale(a));
+                Vec3D crossAb = ab.cross(i.dir);
+                float a = ab.angleBetween(ab.add(i.dir), true);
+
+                if (!float.IsNaN(a)) Torque.addSelf(crossAb.scale(a)); //integrate torque
+            }
         }
 
         public override void transform(Matrix4x4 t)

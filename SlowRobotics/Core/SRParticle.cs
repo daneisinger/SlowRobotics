@@ -61,9 +61,9 @@ namespace SlowRobotics.Core
             inertia = 0.97f; //add default inertia to slow everything down
         }
 
-        public Vec3D getLimitedAccel()
+        public virtual IEnumerable<Impulse> getImpulse()
         {
-            return accel.getLimited(accLimit);
+            yield return new Impulse(this, accel.getLimited(accLimit));
         }
 
         public void resetAccel()
