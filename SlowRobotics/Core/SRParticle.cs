@@ -63,7 +63,7 @@ namespace SlowRobotics.Core
 
         public virtual IEnumerable<Impulse> getImpulse()
         {
-            yield return new Impulse(this, accel.getLimited(accLimit));
+            yield return new Impulse(this, accel.getLimited(accLimit), false);
         }
 
         public virtual void reset()

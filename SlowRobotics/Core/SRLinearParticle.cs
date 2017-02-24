@@ -12,10 +12,12 @@ namespace SlowRobotics.Core
     {
         public Vec3D pos { get; }
         public Vec3D dir { get; }
-        public Impulse(Vec3D pos, Vec3D dir)
+        public bool torqueOnly { get; }
+        public Impulse(Vec3D pos, Vec3D dir, bool torqueOnly)
         {
             this.pos = pos;
             this.dir = dir;
+            this.torqueOnly = torqueOnly;
         }
     }
 
@@ -74,7 +76,12 @@ namespace SlowRobotics.Core
 
         public void addForce(Vec3D pos, Vec3D force)
         {
-            impulses.Add(new Impulse(pos, force.getLimited(accLimit)));
+            addForce(pos, force, false);
+        }
+
+        public void addForce(Vec3D pos, Vec3D force, bool torqueOnly)
+        {
+            impulses.Add(new Impulse(pos, force.getLimited(accLimit), torqueOnly));
         }
 
         public override void reset()

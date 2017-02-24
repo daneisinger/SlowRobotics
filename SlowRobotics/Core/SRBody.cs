@@ -48,7 +48,8 @@ namespace SlowRobotics.Core
             foreach (Impulse i in impulses)
             {
 
-                accel.addSelf(i.dir); //integrate force
+                if (!i.torqueOnly)
+                    accel.addSelf(i.dir); //integrate force
 
                 Vec3D ab = i.pos.sub(this);
                 float d = ab.magnitude();
