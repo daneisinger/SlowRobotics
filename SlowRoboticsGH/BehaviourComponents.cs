@@ -560,7 +560,7 @@ namespace SlowRoboticsGH
 
             int priority = 5;
 
-            if (!DA.GetData(1, ref priority)) { return; }
+            if (!DA.GetData(0, ref priority)) { return; }
 
             if (filter != null)
             {
@@ -607,7 +607,7 @@ namespace SlowRoboticsGH
 
             int priority = 5;
 
-            if (!DA.GetData(1, ref priority)) { return; }
+            if (!DA.GetData(0, ref priority)) { return; }
 
             if (filter != null)
             {
