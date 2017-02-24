@@ -527,6 +527,100 @@ namespace SlowRoboticsGH
         }
     }
 
+    public class FilterClosestNeighbourComponent : GH_Component
+    {
+
+        public FilterClosestNeighbourComponent() : base("Filter Closest", "FilterClosest", "Filter out all but closest neighbour", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{fb1100ba-1d65-4bd6-99f2-f3f0b14422b3}");
+        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
+        protected override Bitmap Icon
+        {
+            get
+            {
+                //Return a 24x24 pixel bitmap to represent this GHA library.
+                return null;
+            }
+        }
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
+        }
+
+        public FilterClosest filter = null;
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+
+            int priority = 5;
+
+            if (!DA.GetData(1, ref priority)) { return; }
+
+            if (filter != null)
+            {
+                filter.priority = priority;
+            }
+            else
+            {
+                filter = new FilterClosest(priority);
+            }
+            DA.SetData(0, filter);
+        }
+    }
+
+    public class FilterParentComponent : GH_Component
+    {
+
+        public FilterParentComponent() : base("Filter Parents", "FilterParent", "Filter out neighbours with same parent", "SlowRobotics", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{42fa9ca5-e6b5-4633-b343-73325baf86ae}");
+        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
+        protected override Bitmap Icon
+        {
+            get
+            {
+                //Return a 24x24 pixel bitmap to represent this GHA library.
+                return null;
+            }
+        }
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
+        }
+
+        public FilterParents filter = null;
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+
+            int priority = 5;
+
+            if (!DA.GetData(1, ref priority)) { return; }
+
+            if (filter != null)
+            {
+                filter.priority = priority;
+            }
+            else
+            {
+                filter = new FilterParents(priority);
+            }
+            DA.SetData(0, filter);
+        }
+    }
+
     public class NewtonComponent : GH_Component
     {
         public NewtonComponent() : base("Newton", "Newton", "Move particle with a force", "SlowRobotics", "Behaviours") { }

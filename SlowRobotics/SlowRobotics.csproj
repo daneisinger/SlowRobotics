@@ -89,6 +89,7 @@
     <Compile Include="Agent\Behaviours\Add.cs" />
     <Compile Include="Agent\Behaviours\Align.cs" />
     <Compile Include="Agent\Behaviours\Arrest.cs" />
+    <Compile Include="Agent\Behaviours\Filter.cs" />
     <Compile Include="Agent\Behaviours\Scale.cs" />
     <Compile Include="Agent\Behaviours\Update.cs" />
     <Compile Include="Agent\IAgent.cs" />
