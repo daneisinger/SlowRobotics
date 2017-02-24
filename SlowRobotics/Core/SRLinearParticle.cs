@@ -48,7 +48,7 @@ namespace SlowRobotics.Core
             impulses.Add(new Impulse(pos, force));
         }
 
-        public void reset()
+        public override void reset()
         {
             impulses = new List<Impulse>();
 

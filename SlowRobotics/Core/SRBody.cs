@@ -70,10 +70,11 @@ namespace SlowRobotics.Core
             //transform body
             foreach (SRParticle p in pts)
             {
+                p.transform(t);
                 Vec3D localP = p.sub(this);
                 t.applyToSelf(localP);
                 p.set(localP.addSelf(this));
-                p.resetAccel();
+                p.reset();
             }
         }
 

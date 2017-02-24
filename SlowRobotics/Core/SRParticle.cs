@@ -66,7 +66,7 @@ namespace SlowRobotics.Core
             yield return new Impulse(this, accel.getLimited(accLimit));
         }
 
-        public void resetAccel()
+        public virtual void reset()
         {
             accel = new Vec3D();
         }
