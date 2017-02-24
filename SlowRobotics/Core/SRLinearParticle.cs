@@ -34,7 +34,7 @@ namespace SlowRobotics.Core
         }
 
         /// <summary>
-        /// Adds a force at a parameter value between 0 and 1
+        /// Adds a force at a parameter value between -1 and 1
         /// </summary>
         /// <param name="param"></param>
         /// <param name="force"></param>
