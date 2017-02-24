@@ -99,6 +99,7 @@
     <Compile Include="Core\IParticle.cs" />
     <Compile Include="Core\Spring.cs" />
     <Compile Include="Core\SRBody.cs" />
+    <Compile Include="Core\SRLinearParticle.cs" />
     <Compile Include="Core\SRParticle.cs" />
     <Compile Include="Core\Plane3D.cs" />
     <Compile Include="Core\Core.cs" />
