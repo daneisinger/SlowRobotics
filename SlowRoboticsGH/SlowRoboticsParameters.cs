@@ -110,6 +110,28 @@ namespace SlowRoboticsGH
         }
     }
 
+    public class NStringParameter : GH_PersistentParam<GH_String>
+    {
+        public NStringParameter() : base("Nursery String", "NString", "This is a String", "SlowRobotics", "Parameters") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        public override System.Guid ComponentGuid => new Guid("{522f865a-4cbf-4b15-83f3-e23d44345d7a}");
+
+        protected override GH_GetterResult Prompt_Singular(ref GH_String value)
+        {
+
+            value = new GH_String();
+            return GH_GetterResult.success;
+
+        }
+
+        protected override GH_GetterResult Prompt_Plural(ref List<GH_String> values)
+        {
+            values = new List<GH_String>();
+            return GH_GetterResult.success;
+        }
+    }
+
     public class ParticleParameter : GH_PersistentParam<GH_Particle>
     {
         public ParticleParameter() : base("Particle", "Particle", "This is a Particle", "SlowRobotics", "Parameters") { }

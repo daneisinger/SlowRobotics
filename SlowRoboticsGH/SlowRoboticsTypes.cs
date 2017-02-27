@@ -7,6 +7,7 @@ using SlowRobotics.Core;
 using SlowRobotics.Field;
 using SlowRobotics.Rhino.IO;
 using SlowRobotics.SRGraph;
+using SlowRobotics.Utils;
 using SlowRobotics.Voxels;
 
 
@@ -65,6 +66,43 @@ namespace SlowRoboticsGH
             }
             return false;
         }
+    }
+
+    public class GH_String : GH_Goo<SRString>
+    {
+        public GH_String() { this.Value = null; }
+        public GH_String(GH_String goo) { this.Value = goo.Value; }
+        public GH_String(SRString native) { this.Value = native; }
+        //  public GH_Plane3D(Plane native) { this.Value = new Plane3D(new Vec3D()); }
+        public override IGH_Goo Duplicate() => new GH_String(this);
+        public override bool IsValid => true;
+        public override string TypeName => "NString";
+        public override string TypeDescription => "Nursery String";
+        public override string ToString() => this.Value.ToString();
+        public override object ScriptVariable() => Value;
+
+        //todo - do casts
+
+        public override bool CastFrom(object source)
+        {
+            if (source is GH_String)
+            {
+                Value = ((GH_String)source).Value;
+                return true;
+            }
+            if (source is SRString)
+            {
+                Value = source as SRString;
+                return true;
+            }
+            if (source is string)
+            {
+                Value = new SRString(source as string);
+                return true;
+            }
+            return false;
+        }
+
     }
 
     public class GH_Plane3D : GH_Goo<Plane3D>
