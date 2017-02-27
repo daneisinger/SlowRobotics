@@ -1,4 +1,5 @@
 ﻿using Grasshopper.Kernel;
+using SlowRobotics.Utils;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -120,14 +121,28 @@ namespace SlowRoboticsGH
         protected override GH_GetterResult Prompt_Singular(ref GH_String value)
         {
 
-            value = new GH_String();
-            return GH_GetterResult.success;
+            Rhino.Input.Custom.GetString go = new Rhino.Input.Custom.GetString();
+            go.SetCommandPrompt("Text");
+            go.AcceptNothing(true);
+
+            switch (go.Get())
+            {
+                case Rhino.Input.GetResult.Number:
+                    value = new GH_String(new SRString(go.GetLiteralString().ToString()));
+                    return GH_GetterResult.success;
+
+                case Rhino.Input.GetResult.Nothing:
+                    return GH_GetterResult.accept;
+
+                default:
+                    return GH_GetterResult.cancel;
+            }
 
         }
-
         protected override GH_GetterResult Prompt_Plural(ref List<GH_String> values)
         {
             values = new List<GH_String>();
+            values.Add(new GH_String(new SRString("")));
             return GH_GetterResult.success;
         }
     }
