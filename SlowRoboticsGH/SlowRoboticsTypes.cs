@@ -1,4 +1,5 @@
-﻿using Grasshopper.Kernel.Types;
+﻿using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 
 using SlowRobotics.Agent;
 
@@ -97,11 +98,27 @@ namespace SlowRoboticsGH
             }
             if (source is string)
             {
-                Value = new SRString(source as string);
+                string str;
+                if(GH_Convert.ToString(source, out str, GH_Conversion.Both))
+                {
+                    Value = new SRString(str);
+                    return true;
+                }
+                
+                return false;
+            }
+
+            // last ditch effor to cast to string
+            string tryCast;
+            if(GH_Convert.ToString(source, out tryCast, GH_Conversion.Both))
+            {
+                Value = new SRString(tryCast);
                 return true;
             }
             return false;
         }
+
+
 
     }
 
@@ -345,6 +362,18 @@ namespace SlowRoboticsGH
             if (source is GH_AgentList)
             {
                 Value = ((GH_AgentList)source).Value;
+                return true;
+            }
+
+            if (source is GH_Agent)
+            {
+                Value = new AgentList(((GH_Agent)source).Value);
+
+                return true;
+            }
+            if (source is IAgent)
+            {
+                Value = new AgentList((IAgent)source);
                 return true;
             }
 

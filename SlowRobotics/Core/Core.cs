@@ -12,6 +12,13 @@ namespace SlowRobotics.Core
 
         private static int maxThreads = Environment.ProcessorCount * 4;
 
+        public static void run(List<IAgent> pop, float damping)
+        {
+            AgentList list = new AgentList();
+            list.addAll(pop);
+            run(list, damping);
+        }
+
         public static void run(List<AgentList> pop, float damping)
         {
             foreach (AgentList p in pop) run(p, damping);

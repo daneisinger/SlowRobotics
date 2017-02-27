@@ -15,6 +15,12 @@ namespace SlowRobotics.Agent
 
         public AgentList() : this(new Dictionary<IAgent,object>()) { }
 
+        public AgentList(IAgent a) : this(new Dictionary<IAgent, object>())
+        {
+            add(a);
+            populate();
+        }
+
         public AgentList(Dictionary<IAgent,object> agents) 
         {
             pop = agents;

@@ -54,7 +54,7 @@ namespace SlowRoboticsGH
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddParameter(new AgentListParameter(), "Agents", "P", "Population to simulate", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Agents", "P", "Population to simulate", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Solver steps", "S", "Steps per update", GH_ParamAccess.item);
         }
 
@@ -65,91 +65,70 @@ namespace SlowRoboticsGH
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            List<GH_AgentList> pop = new List<GH_AgentList>();
+            List<GH_ObjectWrapper> list = new List<GH_ObjectWrapper>();
+
+            List<AgentList> pop = new List<AgentList>();
             int steps = 1;
 
-            if (!DA.GetDataList(0, pop)){ return; }
+            if (!DA.GetDataList(0, list)){ return; }
             if (!DA.GetData(1, ref steps)) { return; }
 
-            foreach(GH_AgentList o in pop)Core.run(o.Value, 1 / (float)steps);
-            
-            DA.SetDataList(0, pop);
-        }
-    }
-
-    /*
-    public class AddToWorldComponent : GH_Component
-    {
-        public AddToWorldComponent() : base("Add Agents To World", "AddWorld", "Add Agents to a world", "SlowRobotics", "Agent") { }
-        public override GH_Exposure Exposure => GH_Exposure.primary;
-        public override Guid ComponentGuid => new Guid("{25adadd2-b209-4f16-9f3b-75c5e38ec22c}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
-
-        protected override void RegisterInputParams(GH_InputParamManager pManager)
-        {
-            pManager.AddGenericParameter("Agents", "A", "Agents to add", GH_ParamAccess.list);
-            pManager.AddParameter(new WorldParameter(), "World", "W", "World to contain agents", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Add Dynamic", "D", "Toggle between adding any particles to dynamic or static trees", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Add Agents", "Add", "Add the agents", GH_ParamAccess.item);
-        }
-
-        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-        {
-            pManager.AddParameter(new WorldParameter(), "World", "W", "World", GH_ParamAccess.item);
-        }
-
-        protected override void SolveInstance(IGH_DataAccess DA)
-        {
-            List<GH_ObjectWrapper> wrapperList = new List<GH_ObjectWrapper>();
-            GH_World world = null;
-            bool dynamic = true;
-            bool add = false;
-
-            if (!DA.GetDataList(0, wrapperList)) { return; }
-            if (!DA.GetData(1, ref world)) { return; }
-            if (!DA.GetData(2, ref dynamic)) { return; }
-            if (!DA.GetData(3, ref add)) { return; }
-
-            if (add)
+            foreach(GH_ObjectWrapper wrapper in list)
             {
-                foreach (GH_ObjectWrapper wrapper in wrapperList)
+                if(wrapper.Value is GH_AgentList)
                 {
-
-                    if (wrapper.Value is IAgent)
-                    {
-                        addAgent((IAgent)wrapper.Value, world.Value, dynamic);
-                    }
-                    else if (wrapper.Value is List<IAgent>) {
-
-                        List<IAgent> agents = wrapper.Value as List<IAgent>;
-                        foreach (IAgent a in agents) addAgent(a, world.Value, dynamic);
-                    }
-
-                    else if (wrapper.Value is List<GH_Agent>)
-                    {
-                        List<GH_Agent> agents = (List<GH_Agent>)wrapper.Value;
-                        foreach (GH_Agent a in agents) addAgent(a.Value, world.Value, dynamic);
-                    }
-                    else if (wrapper.Value is GH_Agent)
-                    {
-                        GH_Agent a = (GH_Agent)wrapper.Value;
-                        addAgent(a.Value, world.Value, dynamic);
-                    }
-
+                    AgentList a = ((GH_AgentList)wrapper.Value).Value;
+                    pop.Add(a);
+                    break;
+                }
+                else if (wrapper.Value is AgentList)
+                {
+                    pop.Add((AgentList)wrapper.Value);
+                    break;
+                }
+                /*
+                if (wrapper.Value is List<IAgent>)
+                {
+                    List<IAgent> agents = (List<IAgent>)wrapper.Value;
+                    AgentList toRun = new AgentList();
+                    toRun.addAll(agents);
+                    pop.Add(toRun);
+                    break;
+                }*/
+                else if (wrapper.Value is IAgent)
+                {
+                    AgentList toRun = new AgentList();
+                    toRun.add((IAgent)wrapper.Value);
+                    pop.Add(toRun);
+                    break;
+                }
+                /*
+                else if (wrapper.Value is List<GH_Agent>)
+                {
+                    List<GH_Agent> agents = (List<GH_Agent>)wrapper.Value;
+                    AgentList toRun = new AgentList();
+                    foreach (GH_Agent a in agents) toRun.add(a.Value);
+                    pop.Add(toRun);
+                    break;
+                }
+                */
+                else if (wrapper.Value is GH_Agent)
+                {
+                    AgentList toRun = new AgentList();
+                    IAgent a = ((GH_Agent)wrapper.Value).Value;
+                    toRun.add(a);
+                    pop.Add(toRun);
+                    break;
                 }
             }
 
-            DA.SetData(0, world);
-        }
+            foreach (AgentList o in pop) Core.run(o, 1 / (float)steps);
 
-        public void addAgent(IAgent a, bool dynamic)
-        {
-            IAgentT<object> defaultAgent = (IAgentT<object>)a;
-            //world.addAgent(a);
 
+            DA.SetDataList(0, pop);
         }
     }
-    */
+    
     public class FixParticlesComponent : GH_Component
     {
         public FixParticlesComponent() : base("Fix Particles", "FixParticles", "Fix particles by proximity to a list of points", "SlowRobotics", "Simulation") { }
