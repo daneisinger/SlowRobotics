@@ -127,7 +127,7 @@ namespace SlowRoboticsGH
 
             switch (go.Get())
             {
-                case Rhino.Input.GetResult.Number:
+                case Rhino.Input.GetResult.String:
                     value = new GH_String(new SRString(go.GetLiteralString().ToString()));
                     return GH_GetterResult.success;
 
