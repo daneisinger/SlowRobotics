@@ -18,18 +18,10 @@ namespace SlowRoboticsGH
 
     public class RebuildComponent : GH_Component
     {
-        public RebuildComponent() : base("Rebuild Tree", "Rebuild", "Rebuilds spatial structure with new objects", "SlowRobotics", "Behaviours") { }
+        public RebuildComponent() : base("Rebuild Tree", "Rebuild", "Rebuilds spatial structure with new objects", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{71a0c2d9-bcde-4d03-b079-245205106639}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -71,18 +63,10 @@ namespace SlowRoboticsGH
 
     public class IntegrateComponent : GH_Component
     {
-        public IntegrateComponent() : base("Integrate", "Integrate", "Integrates particle accelleration and velocity", "SlowRobotics", "Behaviours") { }
+        public IntegrateComponent() : base("Integrate", "Integrate", "Integrates particle accelleration and velocity", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{e2df1927-29ad-4fe0-bd86-b651aff77b92}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -123,18 +107,10 @@ namespace SlowRoboticsGH
     }
     public class SpringComponent : GH_Component
     {
-        public SpringComponent() : base("Springs", "Spring", "Adds hookes law springs to links", "SlowRobotics", "Behaviours") { }
+        public SpringComponent() : base("Springs", "Spring", "Adds hookes law springs to links", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{c9a35ba6-b679-446b-860e-d28244cd6360}");
-       // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -180,18 +156,10 @@ namespace SlowRoboticsGH
 
     public class CohereInZAxisComponent : GH_Component
     {
-        public CohereInZAxisComponent() : base("Attract in Z", "AttractZ", "Cohere with neighbours by moving in ZAxis (interaction behaviour)", "SlowRobotics", "Behaviours") { }
+        public CohereInZAxisComponent() : base("Attract in Z", "AttractZ", "Cohere with neighbours by moving in ZAxis (interaction behaviour)", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{a2d895cf-bf77-4ec1-955d-dbb5151c4884}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -238,18 +206,10 @@ namespace SlowRoboticsGH
     //TODO - too much overlap between this and the duplicate behaviour
     public class AddLinkComponent : GH_Component
     {
-        public AddLinkComponent() : base("Add link", "AddLink", "Duplicate an agent and create a braced link", "SlowRobotics", "Behaviours") { }
+        public AddLinkComponent() : base("Add link", "AddLink", "Duplicate an agent and create a braced link", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
         public override Guid ComponentGuid => new Guid("{2962c6c8-c190-4a81-835f-b3b489349199}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -310,18 +270,10 @@ namespace SlowRoboticsGH
 
     public class FrictionComponent : GH_Component
     {
-        public FrictionComponent() : base("Friction", "Friction", "Add inertia from nearby particles (interaction behaviour)", "SlowRobotics", "Behaviours") { }
+        public FrictionComponent() : base("Friction", "Friction", "Add inertia from nearby particles (interaction behaviour)", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{e75e117d-6662-49d2-a06e-e38a09f9a4a6}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -366,18 +318,10 @@ namespace SlowRoboticsGH
 
     public class FreezeComponent : GH_Component
     {
-        public FreezeComponent() : base("Freeze", "Freeze", "Freeze agents with low inertia and velocity", "SlowRobotics", "Behaviours") { }
+        public FreezeComponent() : base("Freeze", "Freeze", "Freeze agents with low inertia and velocity", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{1cf1d232-9f49-40d3-97e5-02dd4dc769cf}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -426,18 +370,10 @@ namespace SlowRoboticsGH
 
     public class ArrestGroundBehaviour : GH_Component
     {
-        public ArrestGroundBehaviour() : base("Freeze ground", "Ground", "Freeze agents below Z value", "SlowRobotics", "Behaviours") { }
+        public ArrestGroundBehaviour() : base("Freeze ground", "Ground", "Freeze agents below Z value", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{94d9995e-bb05-4172-9e9d-a4d40d3cbfbb}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -479,18 +415,10 @@ namespace SlowRoboticsGH
     public class InteractComponent : GH_Component
     {
 
-        public InteractComponent() : base("Interact", "Interact", "Interact with neighbouring nodes", "SlowRobotics", "Behaviours") { }
+        public InteractComponent() : base("Interact", "Interact", "Interact with neighbouring nodes", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{9327e8c7-a048-49af-aaaa-3c29bd5201c5}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -530,18 +458,10 @@ namespace SlowRoboticsGH
     public class FilterClosestNeighbourComponent : GH_Component
     {
 
-        public FilterClosestNeighbourComponent() : base("Filter Closest", "FilterClosest", "Filter out all but closest neighbour", "SlowRobotics", "Behaviours") { }
+        public FilterClosestNeighbourComponent() : base("Filter Closest", "FilterClosest", "Filter out all but closest neighbour", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{fb1100ba-1d65-4bd6-99f2-f3f0b14422b3}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -577,18 +497,10 @@ namespace SlowRoboticsGH
     public class FilterParentComponent : GH_Component
     {
 
-        public FilterParentComponent() : base("Filter Parents", "FilterParent", "Filter out neighbours with same parent", "SlowRobotics", "Behaviours") { }
+        public FilterParentComponent() : base("Filter Parents", "FilterParent", "Filter out neighbours with same parent", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{42fa9ca5-e6b5-4633-b343-73325baf86ae}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -623,18 +535,10 @@ namespace SlowRoboticsGH
 
     public class NewtonComponent : GH_Component
     {
-        public NewtonComponent() : base("Newton", "Newton", "Move particle with a force", "SlowRobotics", "Behaviours") { }
+        public NewtonComponent() : base("Newton", "Newton", "Move particle with a force", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{8974b28e-b8d7-4783-9b9f-3d4adc85e36a}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -673,18 +577,10 @@ namespace SlowRoboticsGH
 
     public class TraverseFieldComponent : GH_Component
     {
-        public TraverseFieldComponent() : base("Traverse field", "TraverseField", "Move an agent through a field", "SlowRobotics", "Behaviours") { }
+        public TraverseFieldComponent() : base("Traverse field", "TraverseField", "Move a particle through a field", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
         public override Guid ComponentGuid => new Guid("{f21c5bee-d4b2-47f6-875c-1ce463657a02}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -727,18 +623,10 @@ namespace SlowRoboticsGH
 
     public class AlignFieldComponent : GH_Component
     {
-        public AlignFieldComponent() : base("Align to field", "AlignField", "Align an agent with a field", "SlowRobotics", "Behaviours") { }
+        public AlignFieldComponent() : base("Align to field", "AlignField", "Align a plane with a field", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
         public override Guid ComponentGuid => new Guid("{66de0eb8-09c2-4fc7-bd61-724e7d70442e}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -785,18 +673,10 @@ namespace SlowRoboticsGH
 
     public class MoveInAxisComponent : GH_Component
     {
-        public MoveInAxisComponent() : base("Move in axis", "MoveAxis", "Move an agent with one of its axes", "SlowRobotics", "Behaviours") { }
+        public MoveInAxisComponent() : base("Move in axis", "MoveAxis", "Move a particle with one of its axes", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{e8e65855-a4ec-46b2-b9e3-ee4fb426353f}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -841,18 +721,10 @@ namespace SlowRoboticsGH
     public class AlignAxisToVelocityComponent : GH_Component
     {
 
-        public AlignAxisToVelocityComponent() : base("Align to velocity", "AlignVelocity", "Align Plane with velocity", "SlowRobotics", "Behaviours") { }
+        public AlignAxisToVelocityComponent() : base("Align to velocity", "AlignVelocity", "Align Plane with velocity", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{f8540ae4-0554-427f-9c2f-4017d060285e}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -902,18 +774,10 @@ namespace SlowRoboticsGH
     public class AlignPlanesComponent : GH_Component
     {
 
-        public AlignPlanesComponent() : base("Align to planes", "AlignPlanes", "Align Plane with neighbours (interaction behaviour)", "SlowRobotics", "Behaviours") { }
+        public AlignPlanesComponent() : base("Align to planes", "AlignPlanes", "Align Plane with neighbours (interaction behaviour)", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{d6ff6e8b-5e96-44f8-a7c8-71069f9d7bf5}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -957,18 +821,10 @@ namespace SlowRoboticsGH
     public class AlignZZToBestFitComponent : GH_Component
     {
 
-        public AlignZZToBestFitComponent() : base("Align to best fit plane", "AlignBestFit", "Align Plane Z Axis to best fit plane of nearest neighbours (interaction behaviour)", "SlowRobotics", "Behaviours") { }
+        public AlignZZToBestFitComponent() : base("Align to best fit plane", "AlignBestFit", "Align Plane Z Axis to best fit plane of nearest neighbours (interaction behaviour)", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{3e0578d3-7cd5-4764-9c4d-04aa7bf0013a}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -1013,18 +869,10 @@ namespace SlowRoboticsGH
     public class LineToLineComponent : GH_Component
     {
 
-        public LineToLineComponent() : base("Line To Line", "LineLine", "Attract lines to lines (interaction behaviour)", "SlowRobotics", "Behaviours") { }
+        public LineToLineComponent() : base("Line To Line", "LineLine", "Attract lines to lines (interaction behaviour)", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{07895539-0e74-40a0-b6f1-794a89e94f26}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -1071,18 +919,10 @@ namespace SlowRoboticsGH
     public class PointToLineComponent : GH_Component
     {
 
-        public PointToLineComponent() : base("Point To Line", "PointLine", "Attract particles to lines (interaction behaviour)", "SlowRobotics", "Behaviours") { }
+        public PointToLineComponent() : base("Point To Line", "PointLine", "Attract particles to lines (interaction behaviour)", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{099cc560-1b5b-4b94-9443-9326029e270b}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -1129,18 +969,10 @@ namespace SlowRoboticsGH
     public class AttractComponent: GH_Component
     {
 
-        public AttractComponent() : base("Attract", "Attract", "Attract Agents (interaction behaviour)", "SlowRobotics", "Behaviours") { }
+        public AttractComponent() : base("Attract", "Attract", "Attract Agents (interaction behaviour)", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{d3e8a92e-16f3-4de0-98aa-73ce5d948723}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -1199,18 +1031,10 @@ namespace SlowRoboticsGH
     {
        
 
-        public RepelComponent() : base("Repel", "Repel", "Repel Agents (interaction behaviour)", "SlowRobotics", "Behaviours") { }
+        public RepelComponent() : base("Repel", "Repel", "Repel Agents (interaction behaviour)", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{38563a34-1be4-4c68-bd94-cb4b2e15a4f2}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -1261,18 +1085,10 @@ namespace SlowRoboticsGH
 
     public class SearchComponent : GH_Component
     {
-        public SearchComponent() : base("Search", "Search", "Search Nodes", "SlowRobotics", "Behaviours") { }
+        public SearchComponent() : base("Search", "Search", "Search Nodes", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{0979e24f-914b-46cc-986a-6638ffedba71}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -1316,18 +1132,10 @@ namespace SlowRoboticsGH
 
     public class ScaleBehaviourByDistanceToBoxComponent : GH_Component
     {
-        public ScaleBehaviourByDistanceToBoxComponent() : base("Scale box", "ScaleBox", "Scales a list of behaviours by distance to a box", "SlowRobotics", "Behaviours") { }
+        public ScaleBehaviourByDistanceToBoxComponent() : base("Scale box", "ScaleBox", "Scales a list of behaviours by distance to a box", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.quinary;
         public override Guid ComponentGuid => new Guid("{6e557a31-193a-4f9a-8d94-9de59f74c03d}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -1380,18 +1188,10 @@ namespace SlowRoboticsGH
 
     public class LeaveTraceComponent : GH_Component
     {
-        public LeaveTraceComponent() : base("Leave trace", "Leave Trace", "Creates a static copy of the agent plane", "SlowRobotics", "Behaviours") { }
+        public LeaveTraceComponent() : base("Leave trace", "Leave Trace", "Creates a static copy of the agent plane", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
         public override Guid ComponentGuid => new Guid("{03a7d3c3-5494-4654-bb3c-e685b9c3a7a9}");
-        // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {

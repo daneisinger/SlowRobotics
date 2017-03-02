@@ -18,7 +18,7 @@ namespace SlowRoboticsGH
 
     public class CreatePopulationComponent :GH_Component
     {
-        public CreatePopulationComponent() : base("Create Population", "CreatePop", "Creates an agent list for simulation", "SlowRobotics", "Simulation") { }
+        public CreatePopulationComponent() : base("Create Population", "CreatePop", "Creates an agent list for simulation", "Nursery", "Simulation") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{de35d78e-dc9a-4e2a-ae4c-708ee7ec823c}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
@@ -45,93 +45,97 @@ namespace SlowRoboticsGH
             DA.SetData(0, list);
         }
     }
+
+    public class SimulateFieldComponent : GH_Component
+    {
+        public SimulateFieldComponent() : base("Simulate Field", "SimField", "Traces lines through a field", "Nursery", "Field") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{995ccc70-edc1-44a3-b380-e1f33bb3c2cb}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddParameter(new Plane3DParameter(),"Planes", "P", "Starting planes", GH_ParamAccess.item);
+            pManager.AddParameter(new FieldParameter(),"Field", "F", "Field to simulate", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Simulation steps", "S", "Number of simulation steps", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Strength", "St", "Strength Multiplier", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddPlaneParameter("Planes", "P", "Field planes", GH_ParamAccess.list);
+        }
+        protected override void SolveInstance (IGH_DataAccess DA)
+        {
+
+            Plane3D plane = null;
+            GH_Field f = null;
+            int steps = 1;
+            double strength = 1;
+
+            if (!DA.GetData(0, ref plane)) { return; }
+            if (!DA.GetData(1, ref f)) { return; }
+            if (!DA.GetData(2, ref steps)) { return; }
+            if (!DA.GetData(3, ref strength)) { return; }
+
+            Plane3D init = new Plane3D(plane);
+            List<Plane> planes = new List<Plane>();
+            
+            for (int i = 0; i < steps; i++)
+            {
+                FieldData data = f.Value.evaluate(init);
+                Vec3D dir = new Vec3D();
+                float d = 1;
+                if (data.hasNumberData()) d = data.numberData;
+                if (data.hasPlaneData()) dir.addSelf(data.planeData.wx.copy());
+                if (data.hasVectorData()) dir.addSelf(data.vectorData.scale(d));
+
+                dir.normalizeTo((float)strength);
+                init.addSelf(dir);
+                init.interpolateToXX(dir, 1);
+                planes.Add(IO.ToPlane(init));
+            }
+            
+            DA.SetDataList(0, planes);
+        }
+    }
+
     public class SimulateComponent : GH_Component
     {
-        public SimulateComponent() : base("Simulate", "Sim", "Updates all agents", "SlowRobotics", "Simulation") { }
+        public SimulateComponent() : base("Simulate", "Sim", "Updates all agents", "Nursery", "Simulation") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{6d564eab-11d8-4dd7-af01-f7cfc5d435e7}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Agents", "P", "Population to simulate", GH_ParamAccess.list);
+            pManager.AddParameter(new AgentListParameter(),"Agents", "P", "Population to simulate", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Solver steps", "S", "Steps per update", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Agents", "P", "Population", GH_ParamAccess.list);
+            pManager.AddParameter(new AgentListParameter(), "Agents", "P", "Population", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            List<GH_ObjectWrapper> list = new List<GH_ObjectWrapper>();
-
-            List<AgentList> pop = new List<AgentList>();
+            List<GH_AgentList> list = new List<GH_AgentList>();
             int steps = 1;
 
             if (!DA.GetDataList(0, list)){ return; }
-            if (!DA.GetData(1, ref steps)) { return; }
+            if (!DA.GetData(1, ref steps)) { return; } 
 
-            foreach(GH_ObjectWrapper wrapper in list)
-            {
-                if(wrapper.Value is GH_AgentList)
-                {
-                    AgentList a = ((GH_AgentList)wrapper.Value).Value;
-                    pop.Add(a);
-                    break;
-                }
-                else if (wrapper.Value is AgentList)
-                {
-                    pop.Add((AgentList)wrapper.Value);
-                    break;
-                }
-                /*
-                if (wrapper.Value is List<IAgent>)
-                {
-                    List<IAgent> agents = (List<IAgent>)wrapper.Value;
-                    AgentList toRun = new AgentList();
-                    toRun.addAll(agents);
-                    pop.Add(toRun);
-                    break;
-                }*/
-                else if (wrapper.Value is IAgent)
-                {
-                    AgentList toRun = new AgentList();
-                    toRun.add((IAgent)wrapper.Value);
-                    pop.Add(toRun);
-                    break;
-                }
-                /*
-                else if (wrapper.Value is List<GH_Agent>)
-                {
-                    List<GH_Agent> agents = (List<GH_Agent>)wrapper.Value;
-                    AgentList toRun = new AgentList();
-                    foreach (GH_Agent a in agents) toRun.add(a.Value);
-                    pop.Add(toRun);
-                    break;
-                }
-                */
-                else if (wrapper.Value is GH_Agent)
-                {
-                    AgentList toRun = new AgentList();
-                    IAgent a = ((GH_Agent)wrapper.Value).Value;
-                    toRun.add(a);
-                    pop.Add(toRun);
-                    break;
-                }
-            }
-
-            foreach (AgentList o in pop) Core.run(o, 1 / (float)steps);
+            foreach(GH_AgentList l in list)Core.run(l.Value, 1 / (float)steps);
 
 
-            DA.SetDataList(0, pop);
+            DA.SetDataList(0, list);
         }
     }
     
     public class FixParticlesComponent : GH_Component
     {
-        public FixParticlesComponent() : base("Fix Particles", "FixParticles", "Fix particles by proximity to a list of points", "SlowRobotics", "Simulation") { }
+        public FixParticlesComponent() : base("Fix Particles", "FixParticles", "Fix particles by proximity to a list of points", "Nursery", "Simulation") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{e90f5cb9-f76d-4ec9-bb73-c93b3210cc40}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
@@ -202,7 +206,7 @@ namespace SlowRoboticsGH
 
     public class ReplaceAgentBehaviours : GH_Component
     {
-        public ReplaceAgentBehaviours() : base("Replace Behaviours", "ReplaceBehaviours", "Replace existing agent behaviours", "SlowRobotics", "Agent") { }
+        public ReplaceAgentBehaviours() : base("Replace Behaviours", "ReplaceBehaviours", "Replace existing agent behaviours", "Nursery", "Agent") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{8aecd428-5f62-4003-939a-baf18729a08f}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
@@ -259,7 +263,7 @@ namespace SlowRoboticsGH
 
     public class AddBehavioursToAgents : GH_Component
     {
-        public AddBehavioursToAgents() : base("Add Behaviours", "AddBehaviours", "Add behaviours to agents", "SlowRobotics", "Agent") { }
+        public AddBehavioursToAgents() : base("Add Behaviours", "AddBehaviours", "Add behaviours to agents", "Nursery", "Agent") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{674aab77-4e92-4260-b23d-01656da24a08}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;

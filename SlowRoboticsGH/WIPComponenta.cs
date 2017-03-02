@@ -82,7 +82,7 @@ namespace SlowRoboticsGH
 
     public class BehaviourInputsComponent : GH_Component
     {
-        public BehaviourInputsComponent() : base("Behaviour Inputs", "BehaviourInputs", "Provides access to the inputs of an agent behaviour (agents, neighbours etc)", "SlowRobotics", "Behaviours") { }
+        public BehaviourInputsComponent() : base("Behaviour Inputs", "BehaviourInputs", "Provides access to the inputs of an agent behaviour (agents, neighbours etc)", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.quinary;
         public override Guid ComponentGuid => new Guid("{03a7d3c3-5494-4654-bb3c-e685b9c3a7a9}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;
@@ -123,7 +123,7 @@ namespace SlowRoboticsGH
 
     public class BehaviourOutputsComponent : GH_Component
     {
-        public BehaviourOutputsComponent() : base("Behaviour Outputs", "BehaviourOutputs", "Provides access to the outputs of an agent behaviour (agents, neighbours etc)", "SlowRobotics", "Behaviours") { }
+        public BehaviourOutputsComponent() : base("Behaviour Outputs", "BehaviourOutputs", "Provides access to the outputs of an agent behaviour (agents, neighbours etc)", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.quinary;
         public override Guid ComponentGuid => new Guid("{03a7d3c3-5494-4654-bb3c-e685b9c3a7a9}");
         // protected override System.Drawing.Bitmap Icon => Properties.Resources.iconCommand;

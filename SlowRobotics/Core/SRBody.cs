@@ -24,6 +24,19 @@ namespace SlowRobotics.Core
             Torque = new Vec3D();
         }
 
+        public Plane3D calculateCoM()
+        {
+            Vec3D origin = SRMath.averageVectors(pts.Select(pt => (Vec3D)pt).ToList());
+            Vec3D xx = SRMath.averageVectors(pts.Select(pt => pt.xx).ToList());
+            Vec3D yy = SRMath.averageVectors(pts.Select(pt => pt.yy).ToList());
+            return new Plane3D(origin, xx, yy);
+        }
+
+        public void setCoM(Plane3D p)
+        {
+            set(p);
+        }
+
         public void insertPoint(SRParticle _pt)
         {
             pts.Add(_pt);

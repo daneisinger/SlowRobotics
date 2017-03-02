@@ -69,6 +69,35 @@ namespace SlowRoboticsGH
         }
     }
 
+    public class GH_Field : GH_Goo<IField>
+    {
+        public GH_Field() { this.Value = null; }
+        public GH_Field(GH_Field goo) { this.Value = goo.Value; }
+        public GH_Field(IField native) { this.Value = native; }
+
+        public override IGH_Goo Duplicate() => new GH_Field(this);
+        public override bool IsValid => true;
+        public override string TypeName => "Field";
+        public override string TypeDescription => "Field";
+        public override string ToString() => this.Value.ToString();
+        public override object ScriptVariable() => Value;
+
+        public override bool CastFrom(object source)
+        {
+            if (source is IField)
+            {
+                Value = source as IField;
+                return true;
+            }
+            if (source is GH_Field)
+            {
+                Value = ((GH_Field)source).Value;
+                return true;
+            }
+            return false;
+        }
+    }
+
     public class GH_String : GH_Goo<SRString>
     {
         public GH_String() { this.Value = null; }

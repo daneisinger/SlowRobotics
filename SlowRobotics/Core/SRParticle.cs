@@ -15,7 +15,7 @@ namespace SlowRobotics.Core
         public int age = 0;
         private float inertia = 1;
         public IParticle parent { get; set; }
-
+        public string tag { get; set; } = "";
         //TODO need mass property
 
         public bool f { get; set; } = false; //TODO sort out better locking system

@@ -11,7 +11,7 @@ namespace SlowRoboticsGH
 {
     public class CreateVoxelGridComponent : GH_Component
     {
-        public CreateVoxelGridComponent() : base("Create Voxel Grid", "CreateVoxels", "Create Voxel grid from dimensions and bounds", "SlowRobotics", "Voxels") { }
+        public CreateVoxelGridComponent() : base("Create Voxel Grid", "CreateVoxels", "Create Voxel grid from dimensions and bounds", "Nursery", "Voxels") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{76684a60-8999-40f5-8966-c20728c3198f}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;

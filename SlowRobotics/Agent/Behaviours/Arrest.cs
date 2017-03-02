@@ -84,7 +84,7 @@ namespace SlowRobotics.Agent.Behaviours
 
             public override void runOn(SRParticle a)
             {
-                if (a.z < minZ) a.setInertia(0);
+                if (a.z < minZ) a.z = minZ;
             }
         }
 

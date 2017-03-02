@@ -122,5 +122,13 @@ namespace SlowRobotics.Core
             Vec3D to = t.applyTo(copy());
             return sub(to);
         }
+
+        public void set(Plane3D p)
+        {
+            set((Vec3D)p);
+            xx = p.xx;
+            yy = p.yy;
+            zz = p.zz;
+        }
     }
 }
