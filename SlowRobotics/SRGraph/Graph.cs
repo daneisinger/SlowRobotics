@@ -136,7 +136,11 @@ namespace SlowRobotics.SRGraph
             return _nodeMap.Remove(node.Geometry);
         }
 
-
+        public void removeAllEdges()
+        {
+            foreach (E edge in _edges) edge.cleanup();
+            _edges = new HashSet<E>();
+        }
 
         public bool removeEdge(E edge)
         {
@@ -179,7 +183,6 @@ namespace SlowRobotics.SRGraph
 
             edge.a.add(edge);
             edge.b.add(edge);
-
             _edges.Add(edge);
 
         }

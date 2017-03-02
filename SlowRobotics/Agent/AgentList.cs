@@ -92,6 +92,7 @@ namespace SlowRobotics.Agent
 
         public void flush()
         {
+
             foreach (IAgent a in removeBuffer)
             {
                 pop.Remove(a);
