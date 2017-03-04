@@ -30,8 +30,7 @@ namespace SlowRoboticsGH
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Agents", "A", "Wrapped list of agents", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Graph", "L", "Graph", GH_ParamAccess.item);
+            pManager.AddParameter(new GraphParameter(),"Graph", "L", "Graph", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -42,11 +41,9 @@ namespace SlowRoboticsGH
             if (!DA.GetData(0, ref m)) { return; }
             if (!DA.GetData(1, ref stiffness)) { return; }
 
-            Graph<SlowRobotics.Core.SRParticle,Spring> g = new Graph<SlowRobotics.Core.SRParticle, Spring>();
-            GH_ObjectWrapper agents = new GH_ObjectWrapper(IO.ConvertMeshToGraph(m, (float)stiffness, out g));
+            Graph<SRParticle,Spring> g = IO.ConvertMeshToGraph(m, (float)stiffness);
 
-            DA.SetData(0, agents);
-            DA.SetData(1, new GH_ObjectWrapper(g));
+            DA.SetData(0, g);
         }
     }
 

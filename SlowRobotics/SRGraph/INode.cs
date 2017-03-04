@@ -6,7 +6,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.SRGraph
 {
-    public interface INode<T> 
+    public interface INode<T> : IComparable<INode<T>>
     {
         int Index { get; set; }
         int Cost { get; set; }
@@ -17,6 +17,7 @@ namespace SlowRobotics.SRGraph
         void SetClosedList(bool value);
 
         HashSet<IEdge<T>> Edges { get; set; }
+        IEnumerable<INode<T>> Neighbours { get; }
         INode<T> parent { get; set; }
 
         bool remove(IEdge<T> edge);

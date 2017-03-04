@@ -121,6 +121,7 @@
     <Compile Include="GPGPU\GPUTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rhino\GraphTools\AStar.cs" />
+    <Compile Include="Rhino\GraphTools\Dijkstra.cs" />
     <Compile Include="Rhino\GraphTools\GraphUtils.cs" />
     <Compile Include="Rhino\IO\IO.cs" />
     <Compile Include="Rhino\MeshTools\Mesher.cs" />

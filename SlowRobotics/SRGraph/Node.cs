@@ -18,10 +18,17 @@ namespace SlowRobotics.SRGraph
         public HashSet<IEdge<T>> Edges { get; set; }
         public T Geometry { get; set; }
 
-        public Node(T _geometry, int Index = 0, int Tag = 0)
+        public Node(T _geometry, int Index = 0, int Tag = 0, int Cost =0)
         {
             Geometry = _geometry;
             Edges = new HashSet<IEdge<T>>();
+        }
+
+        public int CompareTo(INode<T> other)
+        {
+            if (other.Cost > Cost) return -1;
+            if (other.Cost < Cost) return 1;
+            return 0;
         }
 
         public bool Naked
@@ -31,6 +38,19 @@ namespace SlowRobotics.SRGraph
                 return Edges.Count <=1 ;
             }
         }
+
+        public IEnumerable<INode<T>> Neighbours
+        {
+            get
+            {
+                foreach(IEdge<T> e in Edges)
+                {
+                    yield return e.Other(this);
+                }
+            }
+
+        }
+
 
 		public bool IsOpenList(IEnumerable<INode<T>> openList)
         {

@@ -80,36 +80,32 @@ namespace SlowRobotics.Rhino.IO
             return agents;
         }
        
-        public static List<IAgent> ConvertMeshToGraph(Mesh m, float stiffness, out Graph<SRParticle,Spring> lm)
+        public static Graph<SRParticle, Spring> ConvertMeshToGraph(Mesh m, float stiffness)
         {
 
-            
-            List<AgentT<SRParticle>> agents = new List<AgentT<SRParticle>>();
+            List<SRParticle> particles = new List<SRParticle>();
             SRParticle p1 = new SRParticle(new Plane3D(ToVec3D(m.TopologyVertices[0])));
-            AgentT<SRParticle> a = new AgentT<SRParticle>(p1);
-            lm = new Graph<SRParticle,Spring>();
+            Graph<SRParticle, Spring>  lm = new Graph<SRParticle,Spring>();
             lm.parent = p1;
-            //not sure if I need particles parented
-            agents.Add(a);
+            particles.Add(p1);
 
             for (int i = 1; i < m.TopologyVertices.Count; i++)
             {
                 Point3f p = m.TopologyVertices[i];
                 SRParticle p2 = new SRParticle(new Plane3D(ToVec3D(p)));
-                AgentT<SRParticle> aa = new AgentT<SRParticle>(p2);
-                agents.Add(aa);
+                particles.Add(p2);
             }
 
             for (int i = 0; i < m.TopologyEdges.Count; i++)
             {
                 IndexPair p = m.TopologyEdges.GetTopologyVertices(i);
-                Spring s = new Spring(agents[p.I].getData(), agents[p.J].getData());
+                Spring s = new Spring(particles[p.I], particles[p.J]);
+                s.a.Index = m.TopologyVertices.MeshVertexIndices(p.I)[0];
+                s.b.Index = m.TopologyVertices.MeshVertexIndices(p.J)[0]; //set indexes to original vertices
                 s.s = stiffness;
                 lm.insert(s);
             }
-
-            return agents.Select(x=>(IAgent)x).ToList();
-
+            return lm;
         }
 
         public static List<Line> ToLines(Graph<SRParticle, Spring> g)

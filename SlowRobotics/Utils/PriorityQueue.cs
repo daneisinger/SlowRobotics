@@ -58,6 +58,12 @@ namespace SlowRobotics.Utils
             T frontItem = data[0];
             return frontItem;
         }
+        public T Take()
+        {
+            T frontItem = data[0];
+            data.RemoveAt(0);
+            return frontItem;
+        }
 
         public List<T> getData()
         {
