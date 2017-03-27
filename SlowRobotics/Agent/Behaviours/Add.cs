@@ -43,9 +43,9 @@ namespace SlowRobotics.Agent.Behaviours
             public int ctr;
             public float stiffness { get; set; }
 
-            public Extend(int _priority, int _frequency, Vec3D _offset, float _stiffness,List<IBehaviour> _behaviours, AgentList _pop, ISearchable _pts) : base(_priority)
+            public Extend(int _priority, int _frequency, Vec3D _offset, float _stiffness,List<IBehaviour> _behaviours, ISearchable _pts) : base(_priority)
             {
-                pop = _pop;
+                pop = new AgentList();
                 pts = _pts;
                 offset = _offset;
                 frequency = _frequency;

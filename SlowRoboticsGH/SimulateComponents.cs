@@ -57,8 +57,9 @@ namespace SlowRoboticsGH
         {
             pManager.AddParameter(new Plane3DParameter(),"Planes", "P", "Starting planes", GH_ParamAccess.item);
             pManager.AddParameter(new FieldParameter(),"Field", "F", "Field to simulate", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Simulation steps", "S", "Number of simulation steps", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Strength", "St", "Strength Multiplier", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Simulation steps", "S", "Number of simulation steps", GH_ParamAccess.item,100);
+            pManager.AddNumberParameter("Strength", "St", "Strength Multiplier", GH_ParamAccess.item,1);
+            pManager.AddBooleanParameter("Normalize", "N", "Normalize field strength", GH_ParamAccess.item, false);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -72,11 +73,13 @@ namespace SlowRoboticsGH
             GH_Field f = null;
             int steps = 1;
             double strength = 1;
+            bool normalize = false;
 
             if (!DA.GetData(0, ref plane)) { return; }
             if (!DA.GetData(1, ref f)) { return; }
             if (!DA.GetData(2, ref steps)) { return; }
             if (!DA.GetData(3, ref strength)) { return; }
+            if (!DA.GetData(4, ref normalize)) { return; }
 
             Plane3D init = new Plane3D(plane);
             List<Plane> planes = new List<Plane>();
@@ -85,12 +88,12 @@ namespace SlowRoboticsGH
             {
                 FieldData data = f.Value.evaluate(init);
                 Vec3D dir = new Vec3D();
-                float d = 1;
-                if (data.hasNumberData()) d = data.numberData;
-                if (data.hasPlaneData()) dir.addSelf(data.planeData.wx.copy());
-                if (data.hasVectorData()) dir.addSelf(data.vectorData.scale(d));
+                //TODO implement number data without flipping vectors
+                
+                if (data.hasPlaneData()) dir.addSelf(data.planeData.wx);
+                if (data.hasVectorData()) dir.addSelf(data.vectorData);
 
-                dir.normalizeTo((float)strength);
+                if(normalize) dir.normalizeTo((float)strength);
                 init.addSelf(dir);
                 init.interpolateToXX(dir, 1);
                 planes.Add(IO.ToPlane(init));
@@ -232,6 +235,22 @@ namespace SlowRoboticsGH
 
             if (behaviours != null)
             {
+                if (wrapper.Value is AgentList)
+                {
+                    AgentList agents = (AgentList)wrapper.Value;
+                    foreach (IAgent a in agents.getAgents())
+                    {
+                        a.setBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
+                    }
+                }
+                if (wrapper.Value is GH_AgentList)
+                {
+                    AgentList agents = ((GH_AgentList)wrapper.Value).Value;
+                    foreach (IAgent a in agents.getAgents())
+                    {
+                        a.setBehaviours(behaviours.ConvertAll(b => { return b.Value; }));
+                    }
+                }
                 if (wrapper.Value is List<IAgent>)
                 {
                     List<IAgent> agents = (List<IAgent>)wrapper.Value;

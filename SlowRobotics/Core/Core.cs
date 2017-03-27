@@ -40,26 +40,27 @@ namespace SlowRobotics.Core
                         int numChunks = (int)Math.Ceiling(pop.Count / (double)maxThreads);
                         int runningThreads = 0;
 
-                       
-                        List<IAgent> agents = pop.getRandomizedAgents();
-                    
-                        foreach (IAgent a in agents)
-                        {
-                        
-                            System.Threading.Interlocked.Increment(ref runningThreads);
-                            System.Threading.ThreadPool.QueueUserWorkItem(delegate
-                            {
-                                a.step(damping);
-                                System.Threading.Interlocked.Decrement(ref runningThreads);
-                            });
-                            
-                    }
+                
+                 List<IAgent> agents = pop.getRandomizedAgents();
+                
+                 foreach (IAgent a in agents)
+                 {
 
+                     System.Threading.Interlocked.Increment(ref runningThreads);
+                     System.Threading.ThreadPool.QueueUserWorkItem(delegate
+                     {
+                         a.step(damping);
+                         System.Threading.Interlocked.Decrement(ref runningThreads);
+                     });
+
+
+                  }
+                  
 
                     while (runningThreads > 0) { } // wait for threads to finish
-                    
-                    }
-                    pop.flush();
+
+            }
+            pop.flush();
             
                 }
         }

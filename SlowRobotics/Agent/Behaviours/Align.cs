@@ -254,16 +254,18 @@ namespace SlowRobotics.Agent.Behaviours
 
             public override void run(IAgentT<object> a)
             {
-
+                
                 Plane3D a_p = a.getData() as Plane3D;
                 if (a_p != null && a.neighbours.Count >= 3)
                 {
                     Vec3D centroid = new Vec3D();
 
                     Vec3D n = SRMath.getPlaneNormal(a.neighbours, out centroid);
-
-                    if (getAxis(a_p).angleBetween(n) > (float)Math.PI / 2) n.invert();
-                    interpolateToVector(a_p, n, strength * scaleFactor);
+                    if (n != null)
+                    {
+                        if (getAxis(a_p).angleBetween(n) > (float)Math.PI / 2) n.invert();
+                        interpolateToVector(a_p, n, strength * scaleFactor);
+                    }
                 }
                 reset();
             }

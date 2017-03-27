@@ -10,7 +10,7 @@ using SlowRobotics.Rhino.IO;
 using SlowRobotics.SRGraph;
 using SlowRobotics.Utils;
 using SlowRobotics.Voxels;
-
+using System.Collections.Generic;
 
 namespace SlowRoboticsGH
 {
@@ -397,6 +397,25 @@ namespace SlowRoboticsGH
             if (source is GH_Agent)
             {
                 Value = new AgentList(((GH_Agent)source).Value);
+
+                return true;
+            }
+            if (source is IEnumerable<GH_Agent>)
+            {
+                AgentList l = new AgentList();
+                foreach(GH_Agent a in (IEnumerable<GH_Agent>)source)
+                {
+                    l.add(a.Value);
+                }
+                Value = l;
+
+                return true;
+            }
+            if (source is IEnumerable<IAgent>)
+            {
+                AgentList l = new AgentList();
+                l.addAll((IEnumerable<IAgent>)source);
+                Value = l;
 
                 return true;
             }

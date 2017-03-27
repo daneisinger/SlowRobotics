@@ -57,7 +57,7 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddParameter(new GraphParameter(), "Graph", "L", "Graph to contain Spings", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item, 0.15);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -90,9 +90,9 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddParameter(new GraphParameter(), "LinkMesh", "L", "LinkMesh to contain links", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Minimum Distance", "Mn", "Minimum connection distance", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Maximum Distance", "Mx", "Maximum connection distance", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item, 0.15);
+            pManager.AddNumberParameter("Minimum Distance", "Mn", "Minimum connection distance", GH_ParamAccess.item,0);
+            pManager.AddNumberParameter("Maximum Distance", "Mx", "Maximum connection distance", GH_ParamAccess.item,1);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -129,7 +129,7 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddParameter(new GraphParameter(), "LinkMesh", "L", "LinkMesh to contain links", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item,0.15);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -162,7 +162,7 @@ namespace SlowRoboticsGH
         {
             pManager.AddCurveParameter("Curve", "C", "Curve to Divide", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Res", "R", "Number of division points", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item,0.15);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)

@@ -81,7 +81,7 @@ namespace SlowRobotics.Utils
 
             bool a = alglib.svd.rmatrixsvd(dataMat, 3, planeVerts.Count, 1, 0, 2, ref w, ref u, ref t);
 
-            return new Vec3D((float)u[2, 0], (float) u[2, 1], (float)u[2, 2]);
+            return (a)?new Vec3D((float)u[2, 0], (float) u[2, 1], (float)u[2, 2]):null;
 
         }
         

@@ -58,12 +58,11 @@ namespace SlowRobotics.Agent
     /// or perform any object updates - these must be performed using behaviours
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class AgentT<T> : Agent,  IBenchmark, IAgentT<T> where T : class
+    public class AgentT<T> : Agent, IAgentT<T> where T : class
     {
 
         public List<Vec3D> neighbours { get; set; }
         private T data;
-        public event EventHandler<UpdateEventArgs> OnUpdate;
 
         public AgentT(T _data)
         {
@@ -80,7 +79,7 @@ namespace SlowRobotics.Agent
         {
             foreach (IBehaviour b in behaviours.getData())
             {
-                b.run(this);
+              b.run(this);
             }
         }
 

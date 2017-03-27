@@ -21,7 +21,7 @@ namespace SlowRobotics.Field
             vectorData = null;
             planeData = null;
             colourData = new Color();
-           numberData = 0;
+            numberData = 0;
         }
 
         public bool hasVectorData() { return vectorData != null; }

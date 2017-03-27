@@ -18,7 +18,7 @@ namespace SlowRoboticsGH
 
     public class RebuildComponent : GH_Component
     {
-        public RebuildComponent() : base("Rebuild Tree", "Rebuild", "Rebuilds spatial structure with new objects", "Nursery", "Behaviours") { }
+        public RebuildComponent() : base("Rebuild Tree", "Rebuild", "ISearchable Behaviour: Rebuilds spatial structure with new objects", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{71a0c2d9-bcde-4d03-b079-245205106639}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
@@ -26,7 +26,7 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddParameter(new AgentListParameter(), "Agents", "A", "Try and add objects from these agents", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -63,15 +63,15 @@ namespace SlowRoboticsGH
 
     public class IntegrateComponent : GH_Component
     {
-        public IntegrateComponent() : base("Integrate", "Integrate", "Integrates particle accelleration and velocity", "Nursery", "Behaviours") { }
+        public IntegrateComponent() : base("Integrate", "Integrate", "SRParticle Behaviour: Integrates particle accelleration and velocity", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{e2df1927-29ad-4fe0-bd86-b651aff77b92}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("Damping", "D", "Particle Damping", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Damping", "D", "Particle Damping", GH_ParamAccess.item,1);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,100);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -107,16 +107,16 @@ namespace SlowRoboticsGH
     }
     public class SpringComponent : GH_Component
     {
-        public SpringComponent() : base("Springs", "Spring", "Adds hookes law springs to links", "Nursery", "Behaviours") { }
+        public SpringComponent() : base("Springs", "Spring", "Spring Behaviour: Adds hookes law springs", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{c9a35ba6-b679-446b-860e-d28244cd6360}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("Damping", "D", "Spring Damping", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Hookes", "H", "Update Both Particles", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Damping", "D", "Spring Damping", GH_ParamAccess.item,1);
+            pManager.AddBooleanParameter("Hookes", "H", "Update Both Particles", GH_ParamAccess.item,true);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -156,16 +156,16 @@ namespace SlowRoboticsGH
 
     public class CohereInZAxisComponent : GH_Component
     {
-        public CohereInZAxisComponent() : base("Attract in Z", "AttractZ", "Cohere with neighbours by moving in ZAxis (interaction behaviour)", "Nursery", "Behaviours") { }
+        public CohereInZAxisComponent() : base("Attract in Z", "AttractZ", "SRParticle Interaction Behaviour: Cohere with neighbours by moving in ZAxis", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{a2d895cf-bf77-4ec1-955d-dbb5151c4884}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("Strength", "S", "Cohere Strength", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Maximum Distance", "Mx", "Maximum distance for effect", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Strength", "S", "Cohere Strength", GH_ParamAccess.item,0.1);
+            pManager.AddNumberParameter("Maximum Distance", "Mx", "Maximum distance for effect", GH_ParamAccess.item,10);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -204,9 +204,9 @@ namespace SlowRoboticsGH
     }
    
     //TODO - too much overlap between this and the duplicate behaviour
-    public class AddLinkComponent : GH_Component
+    public class SpringTrailComponent : GH_Component
     {
-        public AddLinkComponent() : base("Add link", "AddLink", "Duplicate an agent and create a braced link", "Nursery", "Behaviours") { }
+        public SpringTrailComponent() : base("Leave Spring Trail", "SpringTrail", "Graph Behaviour: Duplicate and reconnect first node in a graph", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
         public override Guid ComponentGuid => new Guid("{2962c6c8-c190-4a81-835f-b3b489349199}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
@@ -214,17 +214,17 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddParameter(new BehaviourParameter(), "New Behaviours", "B", "Behaviours for duplicated agent", GH_ParamAccess.list);
-            pManager.AddVectorParameter("Offset Vector", "V", "Offset with this vector before duplicating node", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Stiffness", "S", "Link Stiffness", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Add Frequency", "F", "Add a link every n steps", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
-            pManager.AddParameter(new AgentListParameter(), "Population",  "P", "Population of Agents", GH_ParamAccess.item);
+            pManager.AddVectorParameter("Offset Vector", "V", "Offset with this vector before duplicating node", GH_ParamAccess.item, Vector3d.ZAxis);
+            pManager.AddNumberParameter("Stiffness", "S", "Link Stiffness", GH_ParamAccess.item,0.15);
+            pManager.AddIntegerParameter("Add Frequency", "F", "Add a link every n steps", GH_ParamAccess.item,1);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
             pManager.AddGenericParameter("Structure", "S", "Spatial structure to add new points to", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
+            pManager.AddParameter(new AgentListParameter(), "New Agents", "A", "Agents", GH_ParamAccess.item);
         }
 
         public Add.Extend addLink = null;
@@ -236,50 +236,45 @@ namespace SlowRoboticsGH
             double stiffness = 0.1;
             int freq = 1;
             int priority = 5;
-            GH_AgentList pop = null;
             ISearchable pts = null;
-            //Object b = null;
 
             if (!DA.GetDataList(0, behaviours)) { return; }
             if (!DA.GetData(1, ref offset)) { return; }
             if (!DA.GetData(2, ref stiffness)) { return; }
             if (!DA.GetData(3, ref freq)) { return; }
             if (!DA.GetData(4, ref priority)) { return; }
-            if (!DA.GetData(5, ref pop)) { return; }
-            if (!DA.GetData(6, ref pts)) { return; }
+            if (!DA.GetData(5, ref pts)) { return; }
             if (addLink != null)
             {
                 addLink.behaviours = (behaviours.ConvertAll(b => { return b.Value; }));
                 addLink.stiffness = (float)stiffness;
-
                 addLink.offset = IO.ToVec3D(offset);
                 addLink.frequency = freq;
-
                 addLink.priority = priority;
-                addLink.pop = pop.Value;
                 addLink.pts = pts;
             }
             else
             {
-                addLink = new Add.Extend(priority, freq, IO.ToVec3D(offset), (float)stiffness,  behaviours.ConvertAll(b => { return b.Value; }), pop.Value,pts);
+                addLink = new Add.Extend(priority, freq, IO.ToVec3D(offset), (float)stiffness,  behaviours.ConvertAll(b => { return b.Value; }),pts);
                 
             }
             DA.SetData(0, addLink);
+            DA.SetData(1, addLink.pop);
         }
     }
 
     public class FrictionComponent : GH_Component
     {
-        public FrictionComponent() : base("Friction", "Friction", "Add inertia from nearby particles (interaction behaviour)", "Nursery", "Behaviours") { }
+        public FrictionComponent() : base("Friction", "Friction", "SRParticle Interaction Behaviour: Add inertia from nearby particles", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{e75e117d-6662-49d2-a06e-e38a09f9a4a6}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("Maximum Distance", "Mx", "Maximum distance for friction effect", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Friction Coefficient", "F", "Maximum inertia modifier", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Maximum Distance", "Mx", "Maximum distance for friction effect", GH_ParamAccess.item,10);
+            pManager.AddNumberParameter("Friction Coefficient", "F", "Maximum inertia modifier", GH_ParamAccess.item,0.1);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -318,7 +313,7 @@ namespace SlowRoboticsGH
 
     public class FreezeComponent : GH_Component
     {
-        public FreezeComponent() : base("Freeze", "Freeze", "Freeze agents with low inertia and velocity", "Nursery", "Behaviours") { }
+        public FreezeComponent() : base("Freeze", "Freeze", "SRParticle Behaviour: Freeze particles with low inertia and velocity", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{1cf1d232-9f49-40d3-97e5-02dd4dc769cf}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
@@ -328,7 +323,7 @@ namespace SlowRoboticsGH
             pManager.AddNumberParameter("Minimum Inertia", "I", "Minimum Inertia value before locking", GH_ParamAccess.item);
             pManager.AddNumberParameter("Speed Multiplier", "S", "Effect of speed on inertia", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Minimum Age", "A", "Minimum age value before locking", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -370,15 +365,15 @@ namespace SlowRoboticsGH
 
     public class ArrestGroundBehaviour : GH_Component
     {
-        public ArrestGroundBehaviour() : base("Freeze ground", "Ground", "Freeze agents below Z value", "Nursery", "Behaviours") { }
+        public ArrestGroundBehaviour() : base("Freeze ground", "Ground", "SRParticle Behaviour: Freeze particles below Z value", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{94d9995e-bb05-4172-9e9d-a4d40d3cbfbb}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("Minimum Z", "Z", "Minimum Z value before locking", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Minimum Z", "Z", "Minimum Z value before locking", GH_ParamAccess.item,0);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -415,7 +410,7 @@ namespace SlowRoboticsGH
     public class InteractComponent : GH_Component
     {
 
-        public InteractComponent() : base("Interact", "Interact", "Interact with neighbouring nodes", "Nursery", "Behaviours") { }
+        public InteractComponent() : base("Interact", "Interact", "IAgent Behaviour: Interact with neighbouring points", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{9327e8c7-a048-49af-aaaa-3c29bd5201c5}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
@@ -423,7 +418,7 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddParameter(new BehaviourParameter(), "Behaviours", "B", "Behaviours for interacting with other nodes", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -458,14 +453,14 @@ namespace SlowRoboticsGH
     public class FilterClosestNeighbourComponent : GH_Component
     {
 
-        public FilterClosestNeighbourComponent() : base("Filter Closest", "FilterClosest", "Filter out all but closest neighbour", "Nursery", "Behaviours") { }
+        public FilterClosestNeighbourComponent() : base("Filter Closest", "FilterClosest", "IAgent Behaviour: Filter out all but closest neighbour", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{fb1100ba-1d65-4bd6-99f2-f3f0b14422b3}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -497,14 +492,14 @@ namespace SlowRoboticsGH
     public class FilterParentComponent : GH_Component
     {
 
-        public FilterParentComponent() : base("Filter Parents", "FilterParent", "Filter out neighbours with same parent", "Nursery", "Behaviours") { }
+        public FilterParentComponent() : base("Filter Parents", "FilterParent", "IAgent Behaviour: Filter out neighbours with same parent", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{42fa9ca5-e6b5-4633-b343-73325baf86ae}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -535,15 +530,15 @@ namespace SlowRoboticsGH
 
     public class NewtonComponent : GH_Component
     {
-        public NewtonComponent() : base("Newton", "Newton", "Move particle with a force", "Nursery", "Behaviours") { }
+        public NewtonComponent() : base("Newton", "Newton", "SRParticle Behaviour: Move particle with a force", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{8974b28e-b8d7-4783-9b9f-3d4adc85e36a}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddVectorParameter("Force", "F", "Newton Force", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddVectorParameter("Force", "F", "Newton Force", GH_ParamAccess.item, new Vector3d(0,0,-1));
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -577,7 +572,7 @@ namespace SlowRoboticsGH
 
     public class TraverseFieldComponent : GH_Component
     {
-        public TraverseFieldComponent() : base("Traverse field", "TraverseField", "Move a particle through a field", "Nursery", "Behaviours") { }
+        public TraverseFieldComponent() : base("Traverse field", "TraverseField", "SRParticle Behaviour: Move a particle through a field", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
         public override Guid ComponentGuid => new Guid("{f21c5bee-d4b2-47f6-875c-1ce463657a02}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
@@ -585,8 +580,8 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Field", "F", "Field to evaluate", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Strength", "S", "Strength of effect", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Strength", "S", "Strength of effect", GH_ParamAccess.item,1);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -623,7 +618,7 @@ namespace SlowRoboticsGH
 
     public class AlignFieldComponent : GH_Component
     {
-        public AlignFieldComponent() : base("Align to field", "AlignField", "Align a plane with a field", "Nursery", "Behaviours") { }
+        public AlignFieldComponent() : base("Align to field", "AlignField", "Plane3D Behaviour: Align a plane with a field", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
         public override Guid ComponentGuid => new Guid("{66de0eb8-09c2-4fc7-bd61-724e7d70442e}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
@@ -631,9 +626,9 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Field", "F", "Field to evaluate", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Axis", "A", "Axis of field plane", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Strength", "S", "Strength of effect", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Axis", "A", "Axis of field plane", GH_ParamAccess.item, 0);
+            pManager.AddNumberParameter("Strength", "S", "Strength of effect", GH_ParamAccess.item, 0.1);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -673,16 +668,16 @@ namespace SlowRoboticsGH
 
     public class MoveInAxisComponent : GH_Component
     {
-        public MoveInAxisComponent() : base("Move in axis", "MoveAxis", "Move a particle with one of its axes", "Nursery", "Behaviours") { }
+        public MoveInAxisComponent() : base("Move in axis", "MoveAxis", "SRParticle Behaviour: Move a particle with one of its axes", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{e8e65855-a4ec-46b2-b9e3-ee4fb426353f}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Axis", "A", "Axis of field plane", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Strength", "S", "Strength of effect", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Axis", "A", "Axis of field plane", GH_ParamAccess.item,0);
+            pManager.AddNumberParameter("Strength", "S", "Strength of effect", GH_ParamAccess.item,0.1);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -721,16 +716,16 @@ namespace SlowRoboticsGH
     public class AlignAxisToVelocityComponent : GH_Component
     {
 
-        public AlignAxisToVelocityComponent() : base("Align to velocity", "AlignVelocity", "Align Plane with velocity", "Nursery", "Behaviours") { }
+        public AlignAxisToVelocityComponent() : base("Align to velocity", "AlignVelocity", "SRParticle Behaviour: Align particle with velocity", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{f8540ae4-0554-427f-9c2f-4017d060285e}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("Strength", "S", "Strength of effect", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Axis", "A", "Axis to align", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Strength", "S", "Strength of effect", GH_ParamAccess.item,0.1);
+            pManager.AddIntegerParameter("Axis", "A", "Axis to align", GH_ParamAccess.item,0);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
 
             Param_Integer param = pManager[1] as Param_Integer;
             param.AddNamedValue("X Axis", 0);
@@ -774,16 +769,16 @@ namespace SlowRoboticsGH
     public class AlignPlanesComponent : GH_Component
     {
 
-        public AlignPlanesComponent() : base("Align to planes", "AlignPlanes", "Align Plane with neighbours (interaction behaviour)", "Nursery", "Behaviours") { }
+        public AlignPlanesComponent() : base("Align to planes", "AlignPlanes", "Plane3D interaction Behaviour: Align Plane with neighbours", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{d6ff6e8b-5e96-44f8-a7c8-71069f9d7bf5}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("Strength", "S", "Strength of effect", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Attraction Distance", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Strength", "S", "Strength of effect", GH_ParamAccess.item,0.1);
+            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Attraction Distance", GH_ParamAccess.item,10);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -818,19 +813,25 @@ namespace SlowRoboticsGH
         }
     }
 
-    public class AlignZZToBestFitComponent : GH_Component
+    public class AlignAxisToBestFitComponent : GH_Component
     {
 
-        public AlignZZToBestFitComponent() : base("Align to best fit plane", "AlignBestFit", "Align Plane Z Axis to best fit plane of nearest neighbours (interaction behaviour)", "Nursery", "Behaviours") { }
+        public AlignAxisToBestFitComponent() : base("Align to best fit plane", "AlignBestFit", "Plane3D interaction Behaviour: Align Axis to best fit plane of nearest neighbours", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{3e0578d3-7cd5-4764-9c4d-04aa7bf0013a}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("Strength", "S", "Strength of effect", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Attraction Distance", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Strength", "S", "Strength of effect", GH_ParamAccess.item,0.1);
+            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Attraction Distance", GH_ParamAccess.item,10);
+            pManager.AddIntegerParameter("Axis", "A", "Plane axis to align", GH_ParamAccess.item,0);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
+
+            Param_Integer param = pManager[2] as Param_Integer;
+            param.AddNamedValue("X Axis", 0);
+            param.AddNamedValue("Y Axis", 1);
+            param.AddNamedValue("Z Axis", 2);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -838,28 +839,31 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public Align.AxisTo3PtTri bestFit = null;
+        public Align.AxisToBestFitPlane bestFit = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             double strength = 0.04;
             double maxDist = 10;
+            int axis = 0;
             int priority = 5;
 
             if (!DA.GetData(0, ref strength)) { return; }
             if (!DA.GetData(1, ref maxDist)) { return; }
-            if (!DA.GetData(2, ref priority)) { return; }
+            if (!DA.GetData(2, ref axis)) { return; }
+            if (!DA.GetData(3, ref priority)) { return; }
 
             if (bestFit != null)
             {
                 bestFit.strength = (float)strength;
                 bestFit.maxDist = (float)maxDist;
                 bestFit.priority = priority;
+                bestFit.axis = axis;
 
             }
             else
             {
-                bestFit = new Align.AxisTo3PtTri(priority, (float)maxDist, (float)strength);
+                bestFit = new Align.AxisToBestFitPlane(priority, (float)maxDist, (float)strength, axis);
                 
             }
             DA.SetData(0,bestFit);
@@ -869,17 +873,17 @@ namespace SlowRoboticsGH
     public class LineToLineComponent : GH_Component
     {
 
-        public LineToLineComponent() : base("Line To Line", "LineLine", "Attract lines to lines (interaction behaviour)", "Nursery", "Behaviours") { }
+        public LineToLineComponent() : base("Line To Line", "LineLine", "SRLinearParticle interaction Behaviour: Attract lines to lines", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{07895539-0e74-40a0-b6f1-794a89e94f26}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("Strength", "S", "Attraction Strength", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Min Distance", "Mn", "Minimum Attraction Distance", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Attraction Distance", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Strength", "S", "Attraction Strength", GH_ParamAccess.item,0.1);
+            pManager.AddNumberParameter("Min Distance", "Mn", "Minimum Attraction Distance", GH_ParamAccess.item,0);
+            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Attraction Distance", GH_ParamAccess.item,10);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -919,17 +923,17 @@ namespace SlowRoboticsGH
     public class PointToLineComponent : GH_Component
     {
 
-        public PointToLineComponent() : base("Point To Line", "PointLine", "Attract particles to lines (interaction behaviour)", "Nursery", "Behaviours") { }
+        public PointToLineComponent() : base("Point To Line", "PointLine", "SRParticle interaction Behaviour: Attract particles to lines", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{099cc560-1b5b-4b94-9443-9326029e270b}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("Strength", "S", "Attraction Strength", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Min Distance", "Mn", "Minimum Attraction Distance", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Attraction Distance", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Strength", "S", "Attraction Strength", GH_ParamAccess.item,0.1);
+            pManager.AddNumberParameter("Min Distance", "Mn", "Minimum Attraction Distance", GH_ParamAccess.item,0);
+            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Attraction Distance", GH_ParamAccess.item,10);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -969,18 +973,18 @@ namespace SlowRoboticsGH
     public class AttractComponent: GH_Component
     {
 
-        public AttractComponent() : base("Attract", "Attract", "Attract Agents (interaction behaviour)", "Nursery", "Behaviours") { }
+        public AttractComponent() : base("Attract", "Attract", "SRParticle interaction Behaviour: Attract particles", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{d3e8a92e-16f3-4de0-98aa-73ce5d948723}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("Strength", "S", "Attraction Strength", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Min Distance", "Mn", "Minimum Attraction Distance", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Attraction Distance", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("In XY", "XY", "Attract only in Plane XY", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Strength", "S", "Attraction Strength", GH_ParamAccess.item,0.1);
+            pManager.AddNumberParameter("Min Distance", "Mn", "Minimum Attraction Distance", GH_ParamAccess.item,0);
+            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Attraction Distance", GH_ParamAccess.item,10);
+            pManager.AddBooleanParameter("In XY", "XY", "Attract only in Plane XY", GH_ParamAccess.item,false);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -1031,18 +1035,18 @@ namespace SlowRoboticsGH
     {
        
 
-        public RepelComponent() : base("Repel", "Repel", "Repel Agents (interaction behaviour)", "Nursery", "Behaviours") { }
+        public RepelComponent() : base("Repel", "Repel", "SRParticle interaction Behaviour: Repel particles", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{38563a34-1be4-4c68-bd94-cb4b2e15a4f2}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("Strength", "S", "Seperation Strength", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Min Distance", "Mn", "Minimum Separation Distance", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Separation Distance", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("In XY", "XY", "Separate only in Plane XY", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Strength", "S", "Seperation Strength", GH_ParamAccess.item,0.1);
+            pManager.AddNumberParameter("Min Distance", "Mn", "Minimum Separation Distance", GH_ParamAccess.item,0);
+            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Separation Distance", GH_ParamAccess.item,10);
+            pManager.AddBooleanParameter("In XY", "XY", "Separate only in Plane XY", GH_ParamAccess.item,false);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -1085,7 +1089,7 @@ namespace SlowRoboticsGH
 
     public class SearchComponent : GH_Component
     {
-        public SearchComponent() : base("Search", "Search", "Search Nodes", "Nursery", "Behaviours") { }
+        public SearchComponent() : base("Search", "Search", "IAgent Behaviour: Search points", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{0979e24f-914b-46cc-986a-6638ffedba71}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
@@ -1093,9 +1097,9 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
 
-            pManager.AddNumberParameter("Radius", "R", "Search Radius", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Radius", "R", "Search Radius", GH_ParamAccess.item,10);
             pManager.AddGenericParameter("Structure", "S", "Spatial structure to search", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -1132,7 +1136,7 @@ namespace SlowRoboticsGH
 
     public class ScaleBehaviourByDistanceToBoxComponent : GH_Component
     {
-        public ScaleBehaviourByDistanceToBoxComponent() : base("Scale box", "ScaleBox", "Scales a list of behaviours by distance to a box", "Nursery", "Behaviours") { }
+        public ScaleBehaviourByDistanceToBoxComponent() : base("Scale box", "ScaleBox", "IAgent Behaviour: Scales a list of behaviours by distance to a box", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.quinary;
         public override Guid ComponentGuid => new Guid("{6e557a31-193a-4f9a-8d94-9de59f74c03d}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
@@ -1142,8 +1146,8 @@ namespace SlowRoboticsGH
 
             pManager.AddBoxParameter("Box", "Bx", "Box to scale behaviours", GH_ParamAccess.item);
             pManager.AddParameter(new BehaviourParameter(), "Behaviours", "Be", "Behaviours to scale", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Maximum Distance", "Mx", "Maximum distance from box for scaling effect", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour priority", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Maximum Distance", "Mx", "Maximum distance from box for scaling effect", GH_ParamAccess.item,10);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour priority", GH_ParamAccess.item,0);
 
         }
 
@@ -1188,7 +1192,7 @@ namespace SlowRoboticsGH
 
     public class LeaveTraceComponent : GH_Component
     {
-        public LeaveTraceComponent() : base("Leave trace", "Leave Trace", "Creates a static copy of the agent plane", "Nursery", "Behaviours") { }
+        public LeaveTraceComponent() : base("Leave trace", "Leave Trace", "Vec3D Behaviour: Creates a static copy of the point", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
         public override Guid ComponentGuid => new Guid("{03a7d3c3-5494-4654-bb3c-e685b9c3a7a9}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
@@ -1196,8 +1200,8 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
 
-            pManager.AddIntegerParameter("Frequency", "F", "Save frequency", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Frequency", "F", "Save frequency", GH_ParamAccess.item,1);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
             pManager.AddGenericParameter("Structure", "S", "Structure to store point", GH_ParamAccess.item);
         }
 
