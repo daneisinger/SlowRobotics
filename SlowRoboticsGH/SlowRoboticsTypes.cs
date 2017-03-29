@@ -8,6 +8,7 @@ using SlowRobotics.Core;
 using SlowRobotics.Field;
 using SlowRobotics.Rhino.IO;
 using SlowRobotics.SRGraph;
+using SlowRobotics.SRMath;
 using SlowRobotics.Utils;
 using SlowRobotics.Voxels;
 using System.Collections.Generic;
@@ -146,8 +147,37 @@ namespace SlowRoboticsGH
             }
             return false;
         }
+    }
 
+    public class GH_Falloff : GH_Goo<FalloffStrategy>
+    {
+        public GH_Falloff() { this.Value = null; }
+        public GH_Falloff(GH_Falloff goo) { this.Value = goo.Value; }
+        public GH_Falloff(FalloffStrategy native) { this.Value = native; }
+        public override IGH_Goo Duplicate() => new GH_Falloff(this);
+        public override bool IsValid => true;
+        public override string TypeName => "Falloff";
+        public override string TypeDescription => "Falloff Strategy";
+        public override string ToString() => this.Value.ToString();
+        public override object ScriptVariable() => Value;
 
+        //todo - do casts
+
+        public override bool CastFrom(object source)
+        {
+            if (source is GH_Falloff)
+            {
+                Value = ((GH_Falloff)source).Value;
+                return true;
+            }
+            if (source is FalloffStrategy)
+            {
+                Value = source as FalloffStrategy;
+                return true;
+            }
+           
+            return false;
+        }
 
     }
 

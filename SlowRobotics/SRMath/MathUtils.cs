@@ -1,13 +1,13 @@
-﻿using SlowRobotics.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Toxiclibs.core;
 
-namespace SlowRobotics.Utils
+namespace SlowRobotics.SRMath
 {
-    public static class SRMath
+    public static class MathUtils
     {
 
         public static float constrain(float v, float min, float max)
@@ -67,9 +67,9 @@ namespace SlowRobotics.Utils
             centroid = averageVectors(planeVerts);
             double[,] dataMat = new double[3, planeVerts.Count];
             int i = 0;
-            foreach(Vec3D v in planeVerts)
+            foreach (Vec3D v in planeVerts)
             {
-                dataMat[0, i] = v.x-centroid.x;
+                dataMat[0, i] = v.x - centroid.x;
                 dataMat[1, i] = v.y - centroid.y;
                 dataMat[2, i] = v.z - centroid.z;
                 i++;
@@ -81,10 +81,10 @@ namespace SlowRobotics.Utils
 
             bool a = alglib.svd.rmatrixsvd(dataMat, 3, planeVerts.Count, 1, 0, 2, ref w, ref u, ref t);
 
-            return (a)?new Vec3D((float)u[2, 0], (float) u[2, 1], (float)u[2, 2]):null;
+            return (a) ? new Vec3D((float)u[2, 0], (float)u[2, 1], (float)u[2, 2]) : null;
 
         }
-        
+
         public static Vec3D closestPoint(ILine l1, ILine l2)
         {
             // Algorithm is ported from the C algorithm of Paul Bourke
@@ -109,4 +109,4 @@ namespace SlowRobotics.Utils
             return l2.pointAt(mub);
         }
     }
-    }
+}

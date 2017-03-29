@@ -141,11 +141,13 @@
     <Compile Include="SRGraph\IGraph.cs" />
     <Compile Include="SRGraph\INode.cs" />
     <Compile Include="SRGraph\Node.cs" />
+    <Compile Include="SRMath\Falloff.cs" />
+    <Compile Include="SRMath\Interpolators.cs" />
+    <Compile Include="SRMath\MathUtils.cs" />
     <Compile Include="Utils\Benchmarker.cs" />
     <Compile Include="Utils\GenericWorker.cs" />
     <Compile Include="Utils\IBenchmark.cs" />
     <Compile Include="Utils\SRString.cs" />
-    <Compile Include="Utils\SRMath.cs" />
     <Compile Include="Utils\PriorityQueue.cs" />
     <Compile Include="Voxels\ByteGrid.cs" />
     <Compile Include="Voxels\ColourGrid.cs" />

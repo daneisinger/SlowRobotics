@@ -1,8 +1,10 @@
-﻿using SlowRobotics.Utils;
+﻿using SlowRobotics.SRMath;
+using SlowRobotics.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Toxiclibs.core;
 
 namespace SlowRobotics.Agent
 {
@@ -100,19 +102,18 @@ namespace SlowRobotics.Agent
     public class ScaledBehaviour<T> : Behaviour<T>, IScaledBehaviour where T :class
     {
         public float scaleFactor { get; set; }
-        public new event EventHandler<UpdateEventArgs> OnUpdate;
+        public InterpolateStrategy interpolator;
 
         public ScaledBehaviour() : this(1) { }
 
         public ScaledBehaviour(int _priority) : base(_priority)
         {
             scaleFactor = 1;
+            interpolator = new LinearInterpolation();
         }
 
         public override void run(IAgentT<object> a)
         {
-           // System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
-           // stopwatch.Start();
 
             T data = a.getData() as T; 
             if (data !=null)
@@ -124,10 +125,6 @@ namespace SlowRobotics.Agent
             {
                 throw new InvalidCastException("Behaviour of type " + typeof(T) + " cannot run on agent type:" + a.getData().GetType());
             }
-
-           // stopwatch.Stop();
-           // if ((OnUpdate != null)) OnUpdate(this, new UpdateEventArgs(this.GetType().ToString(), stopwatch.ElapsedMilliseconds));
-
         }
 
         public virtual void reset()
@@ -138,6 +135,10 @@ namespace SlowRobotics.Agent
         public void scale(float factor)
         {
             scaleFactor = factor;
+        }
+        public void setInterpolateStrategy(InterpolateStrategy _interpolator)
+        {
+            interpolator = _interpolator;
         }
 
     }

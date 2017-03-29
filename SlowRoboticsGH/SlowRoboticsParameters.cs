@@ -28,6 +28,25 @@ namespace SlowRoboticsGH
         }
     }
 
+    public class FalloffParameter : GH_PersistentParam<GH_Falloff>
+    {
+        public FalloffParameter() : base("Falloff", "Falloff", "Falloff Strategy", "Nursery", "Parameters") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        public override System.Guid ComponentGuid => new Guid("{964ba95a-0cae-4ace-a21e-3bbe948d9bbf}");
+
+        protected override GH_GetterResult Prompt_Singular(ref GH_Falloff value)
+        {
+            value = new GH_Falloff();
+            return GH_GetterResult.success;
+        }
+        protected override GH_GetterResult Prompt_Plural(ref List<GH_Falloff> values)
+        {
+            values = new List<GH_Falloff>();
+            return GH_GetterResult.success;
+        }
+    }
+
     public class FieldParameter : GH_PersistentParam<GH_Field>
     {
         public FieldParameter() : base("Field", "Field", "This is a Field", "Nursery", "Parameters") { }

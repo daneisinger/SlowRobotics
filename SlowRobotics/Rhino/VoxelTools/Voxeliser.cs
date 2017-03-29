@@ -1,5 +1,6 @@
 ﻿using Rhino.Geometry;
 using Rhino.Geometry.Intersect;
+using SlowRobotics.SRMath;
 using SlowRobotics.Utils;
 using SlowRobotics.Voxels;
 using System;
@@ -161,8 +162,8 @@ namespace SlowRobotics.Rhino.VoxelTools
                         for (int i = 0; i < xPts.Count - 1; i += 1)
                         {
 
-                            int current = (int)SRMath.constrain((float)xPts[i].X, 0, grid.w - 1);
-                            int next = (int)SRMath.constrain((float)xPts[i + 1].X, 0, grid.w - 1);
+                            int current = (int)MathUtils.constrain((float)xPts[i].X, 0, grid.w - 1);
+                            int next = (int)MathUtils.constrain((float)xPts[i + 1].X, 0, grid.w - 1);
 
                             if (f)
                             {

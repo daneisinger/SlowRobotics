@@ -1,6 +1,7 @@
 ﻿using SlowRobotics.Core;
 using SlowRobotics.Utils;
 using System;
+using SlowRobotics.SRMath;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,8 +33,8 @@ namespace SlowRobotics.Agent.Behaviours
                     float d = ab.magnitude();
                     if (d > 0 && d < maxDist)
                     {
-                        float f = SRMath.map(d, 0, maxDist, 1, 0);
-                        float sf = ExponentialInterpolation.Squared.interpolate(0, frictionCof, f);
+                        float f = MathUtils.map(d, 0, maxDist, 1, 0);
+                        float sf = interpolator.interpolate(0, frictionCof, f);
                         inertiaMod += frictionCof * scaleFactor;
                     }
                 }

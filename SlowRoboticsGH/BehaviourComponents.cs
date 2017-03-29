@@ -12,6 +12,7 @@ using SlowRobotics.Field;
 using SlowRobotics.Core;
 using Toxiclibs.core;
 using SlowRobotics.Spatial;
+using SlowRobotics.SRMath;
 
 namespace SlowRoboticsGH
 {
@@ -984,7 +985,13 @@ namespace SlowRoboticsGH
             pManager.AddNumberParameter("Min Distance", "Mn", "Minimum Attraction Distance", GH_ParamAccess.item,0);
             pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Attraction Distance", GH_ParamAccess.item,10);
             pManager.AddBooleanParameter("In XY", "XY", "Attract only in Plane XY", GH_ParamAccess.item,false);
+            pManager.AddIntegerParameter("Falloff", "F", "Falloff Strategy", GH_ParamAccess.item,0);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
+            Param_Integer param = pManager[4] as Param_Integer;
+
+            param.AddNamedValue("No Falloff", 0);
+            param.AddNamedValue("Linear Falloff", 1);
+            param.AddNamedValue("Inverse Falloff", 2);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -1001,12 +1008,32 @@ namespace SlowRoboticsGH
             double maxDist = 10;
             double minDist = 1;
             int priority = 5;
+            int falloff = 0;
 
             if (!DA.GetData(0, ref strength)) { return; }
             if (!DA.GetData(1, ref minDist)) { return; }
             if (!DA.GetData(2, ref maxDist)) { return; }
             if (!DA.GetData(3, ref inXY)) { return; }
-            if (!DA.GetData(4, ref priority)) { return; }
+            if (!DA.GetData(4, ref falloff)) { return; }
+            if (!DA.GetData(5, ref priority)) { return; }
+
+            FalloffStrategy f;
+
+            switch (falloff)
+            {
+                case (0):
+                    f = new NoFalloffStrategy();
+                    break;
+                case (1):
+                    f = new LinearFalloffStrategy();
+                    break;
+                case (2):
+                    f = new InverseFalloffStrategy();
+                    break;
+                default:
+                    f = new NoFalloffStrategy();
+                    break;
+            }
 
             if (attract != null)
             {
@@ -1015,17 +1042,12 @@ namespace SlowRoboticsGH
                 attract.maxDist = (float)maxDist;
                 attract.inXY = inXY;
                 attract.priority = priority;
+                attract.falloff = f;
             }
             else
             {
-                if (!inXY)
-                {
-                    attract = new Move.Together(priority, (float)minDist, (float)maxDist, (float)strength, inXY);
-                }
-                else
-                {
-                    attract = new Move.Together(priority, (float)minDist, (float)maxDist, (float)strength, inXY);
-                }
+                attract = new Move.Together(priority, (float)minDist, (float)maxDist, (float)strength, inXY);
+                attract.falloff = f;
             }
             DA.SetData(0, attract);
         }
@@ -1046,7 +1068,13 @@ namespace SlowRoboticsGH
             pManager.AddNumberParameter("Min Distance", "Mn", "Minimum Separation Distance", GH_ParamAccess.item,0);
             pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Separation Distance", GH_ParamAccess.item,10);
             pManager.AddBooleanParameter("In XY", "XY", "Separate only in Plane XY", GH_ParamAccess.item,false);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
+            pManager.AddIntegerParameter("Falloff", "F", "Falloff Strategy", GH_ParamAccess.item, 2);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item, 0);
+            Param_Integer param = pManager[4] as Param_Integer;
+
+            param.AddNamedValue("No Falloff", 0);
+            param.AddNamedValue("Linear Falloff", 1);
+            param.AddNamedValue("Inverse Falloff", 2);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -1063,12 +1091,32 @@ namespace SlowRoboticsGH
             double maxDist = 10;
             double minDist = 1;
             int priority = 5;
+            int falloff = 0;
 
             if (!DA.GetData(0, ref strength)) { return; }
             if (!DA.GetData(1, ref minDist)) { return; }
             if (!DA.GetData(2, ref maxDist)) { return; }
             if (!DA.GetData(3, ref inXY)) { return; }
-            if (!DA.GetData(4, ref priority)) { return; }
+            if (!DA.GetData(4, ref falloff)) { return; }
+            if (!DA.GetData(5, ref priority)) { return; }
+
+            FalloffStrategy f;
+
+            switch (falloff)
+            {
+                case (0):
+                    f = new NoFalloffStrategy();
+                    break;
+                case (1):
+                    f = new LinearFalloffStrategy();
+                    break;
+                case (2):
+                    f = new InverseFalloffStrategy();
+                    break;
+                default:
+                    f = new NoFalloffStrategy();
+                    break;
+            }
 
             if (separate != null) {
 
@@ -1077,11 +1125,12 @@ namespace SlowRoboticsGH
                 separate.minDist = (float)minDist;
                 separate.maxDist = (float)maxDist;
                 separate.priority = priority;
-
+                separate.falloff = f;
             }
             else
             {
                 separate = new Move.Apart(priority, (float)strength, (float)minDist, (float)maxDist, inXY);
+                separate.falloff = f;
             }
             DA.SetData(0, separate);
         }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Toxiclibs.core;
+using SlowRobotics.SRMath;
 
 namespace SlowRobotics.Core
 {
@@ -114,7 +115,7 @@ namespace SlowRobotics.Core
 
         public Vec3D closestPoint(ILine other)
         {
-            return SRMath.closestPoint(this, other);
+            return MathUtils.closestPoint(this, other);
         }
     }
 }

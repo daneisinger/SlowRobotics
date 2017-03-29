@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SlowRobotics.SRMath;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,12 +10,9 @@ namespace SlowRobotics.Core
     public class Plane3D : Vec3D
     {
 
-
         public Vec3D xx;
         public Vec3D zz;
         public Vec3D yy;
-
-        protected ExponentialInterpolation interp = new ExponentialInterpolation(2);
 
         public Plane3D() : this(new Vec3D()) { }
 
@@ -28,7 +26,6 @@ namespace SlowRobotics.Core
 
         public Plane3D(Vec3D _origin) : this(_origin, new Vec3D(1, 0, 0))
         {
-
         }
 
         protected Plane3D(Vec3D _origin, Vec3D _x) : this(_origin, _x, _x.cross(new Vec3D(0, 0, 1)))

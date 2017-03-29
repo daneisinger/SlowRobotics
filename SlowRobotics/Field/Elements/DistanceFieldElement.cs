@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Toxiclibs.core;
+using SlowRobotics.SRMath;
 
 namespace SlowRobotics.Field.Elements
 {
@@ -25,7 +26,7 @@ namespace SlowRobotics.Field.Elements
 
         public virtual float getWeight(Vec3D loc)
         {
-            float d = SRMath.constrain(location.distanceTo(loc), 1, maxDist);
+            float d = MathUtils.constrain(location.distanceTo(loc), 1, maxDist);
             return ((d < maxDist) ? (weight * (1 / (float)Math.Pow(d, attenuation))) : 0);
         }
 

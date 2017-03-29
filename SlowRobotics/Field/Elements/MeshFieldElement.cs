@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SlowRobotics.SRMath;
 using Toxiclibs.core;
 
 namespace SlowRobotics.Field.Elements
@@ -27,7 +28,7 @@ namespace SlowRobotics.Field.Elements
             if (dist > minDist)
             {
                 //not using get weight function to avoid dual closest point checks
-                dist = SRMath.constrain(p.distanceTo(loc), 1, maxDist);
+                dist = MathUtils.constrain(p.distanceTo(loc), 1, maxDist);
                 float w = ((dist < maxDist) ? (weight * (1 / (float)Math.Pow(dist, attenuation))) : 0);
 
                 Vec3D scaledVal = p.sub(loc).normalizeTo(w);

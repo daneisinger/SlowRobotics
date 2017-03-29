@@ -41,9 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="core\AABB.cs" />
-    <Compile Include="core\ExponentialInterpolation.cs" />
     <Compile Include="core\ILine.cs" />
-    <Compile Include="core\InterpolationStrategy.cs" />
+    <Compile Include="core\InterpolateStrategy.cs" />
     <Compile Include="core\Line3D.cs" />
     <Compile Include="core\Matrix4x4.cs" />
     <Compile Include="core\Plane.cs" />

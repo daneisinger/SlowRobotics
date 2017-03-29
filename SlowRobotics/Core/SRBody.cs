@@ -1,9 +1,7 @@
 ﻿using SlowRobotics.SRGraph;
-using SlowRobotics.Utils;
-using System;
+using SlowRobotics.SRMath;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Toxiclibs.core;
 
 namespace SlowRobotics.Core
@@ -26,9 +24,9 @@ namespace SlowRobotics.Core
 
         public Plane3D calculateCoM()
         {
-            Vec3D origin = SRMath.averageVectors(pts.Select(pt => (Vec3D)pt).ToList());
-            Vec3D xx = SRMath.averageVectors(pts.Select(pt => pt.xx).ToList());
-            Vec3D yy = SRMath.averageVectors(pts.Select(pt => pt.yy).ToList());
+            Vec3D origin = MathUtils.averageVectors(pts.Select(pt => (Vec3D)pt).ToList());
+            Vec3D xx = MathUtils.averageVectors(pts.Select(pt => pt.xx).ToList());
+            Vec3D yy = MathUtils.averageVectors(pts.Select(pt => pt.yy).ToList());
             return new Plane3D(origin, xx, yy);
         }
 
@@ -127,7 +125,7 @@ namespace SlowRobotics.Core
                 p.f = true; //don't move particles
                 body.insertPoint(p); //add to body
             }
-            body.set(SRMath.averageVectors(graph.Geometry.ConvertAll(x => (Vec3D)x)));
+            body.set(MathUtils.averageVectors(graph.Geometry.ConvertAll(x => (Vec3D)x)));
 
             return body;
         }
