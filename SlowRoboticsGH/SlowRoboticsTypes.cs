@@ -12,6 +12,9 @@ using SlowRobotics.SRMath;
 using SlowRobotics.Utils;
 using SlowRobotics.Voxels;
 using System.Collections.Generic;
+using Rhino.Geometry;
+using System;
+using Toxiclibs.core;
 
 namespace SlowRoboticsGH
 {
@@ -200,7 +203,7 @@ namespace SlowRoboticsGH
         {
             if (source is GH_Plane)
             {
-                Value = IO.ToPlane3D(((GH_Plane)source).Value);
+                Value = ((GH_Plane)source).Value.ToPlane3D();
                 return true;
             }
             if (source is Plane3D)
@@ -228,7 +231,7 @@ namespace SlowRoboticsGH
         }
     }
 
-    public class GH_Particle : GH_Goo<SRParticle>
+    public class GH_Particle : GH_Goo<SRParticle>, IGH_PreviewData
     {
         public GH_Particle() { this.Value = null; }
         public GH_Particle(GH_Particle goo) { this.Value = goo.Value; }
@@ -238,6 +241,17 @@ namespace SlowRoboticsGH
         public override bool IsValid => true;
         public override string TypeName => "Node";
         public override string TypeDescription => "Node";
+
+        public BoundingBox ClippingBox
+        {
+            get
+            {
+                SRParticle p = m_value;
+                Vec3D d = p.xx.add(p.yy).add(p.zz);
+                return new BoundingBox(p.x, p.y, p.z, p.x + d.x, p.y+d.y, p.z+d.z);
+            }
+        }
+
         public override string ToString() => this.Value.ToString();
         public override object ScriptVariable() => Value;
 
@@ -256,7 +270,7 @@ namespace SlowRoboticsGH
 
             if (source is GH_Plane)
             {
-                SRParticle p = new SRParticle(IO.ToPlane3D(((GH_Plane)source).Value));
+                SRParticle p = new SRParticle(((GH_Plane)source).Value.ToPlane3D());
                 Value = p;
                 return true;
             }
@@ -269,8 +283,24 @@ namespace SlowRoboticsGH
             return false;
         }
 
+        public void DrawViewportWires(GH_PreviewWireArgs args)
+        {
+            SRParticle p = m_value;
+            Vec3D d = p.xx.add(p.yy).add(p.zz);
+            Point3d pt = p.ToPoint3d();
+            Point3d px = p.xx.ToPoint3d();
+            Point3d py = p.yy.ToPoint3d();
+            args.Pipeline.DrawLine(pt, pt + px, System.Drawing.Color.Red, 1);
+            args.Pipeline.DrawLine(pt, pt + py, System.Drawing.Color.Blue, 1);
+        }
+
+        public void DrawViewportMeshes(GH_PreviewMeshArgs args)
+        {
+           // DrawViewportMeshes(args);
+        }
     }
-    public class GH_Graph : GH_Goo<Graph<SRParticle, Spring>> { 
+
+    public class GH_Graph : GH_Goo<Graph<SRParticle, Spring>>, IGH_PreviewData { 
 
         public GH_Graph() { this.Value = null; }
         public GH_Graph(GH_Graph goo) { this.Value = goo.Value; }
@@ -280,6 +310,15 @@ namespace SlowRoboticsGH
         public override bool IsValid => true;
         public override string TypeName => "Spring Graph";
         public override string TypeDescription => "Spring Graph";
+
+        public BoundingBox ClippingBox
+        {
+            get
+            {
+                return new BoundingBox();
+            }
+        }
+
         public override string ToString() => this.Value.ToString();
         public override object ScriptVariable() => Value;
 
@@ -304,10 +343,52 @@ namespace SlowRoboticsGH
                 Value = graph;
                 return true;
             }
-
+            if (source is Mesh)
+            {
+                Value = SRConvert.MeshToGraph((Mesh)source,0.08f);
+                return true;
+            }
+            if (source is Curve)
+            {
+                Graph<SRParticle, Spring> graph = new Graph<SRParticle, Spring>();
+                SRConvert.CurveToGraph((Curve)source, 0.08f,ref graph);
+                Value = graph;
+                return true;
+            }
             return false;
         }
 
+        public void DrawViewportWires(GH_PreviewWireArgs args)
+        {
+            Graph<SRParticle, Spring> graph = m_value;
+
+            foreach (Spring li in graph.Edges)
+            {
+                if (li.tag == "")
+                {
+                    Vec3D aa = li.a.Geometry;
+                    Vec3D bb = li.b.Geometry;
+                    Line l = new Line(new Point3d(aa.x, aa.y, aa.z), new Point3d(bb.x, bb.y, bb.z));
+                    args.Pipeline.DrawLine(l, System.Drawing.Color.Green, 1);
+                }
+            }
+
+            foreach (SRParticle p in graph.Geometry)
+            {
+                Vec3D d = p.xx.add(p.yy).add(p.zz);
+                Point3d pt = p.ToPoint3d();
+                Point3d px = p.xx.ToPoint3d();
+                Point3d py = p.yy.ToPoint3d();
+                args.Pipeline.DrawLine(pt, pt + px, System.Drawing.Color.Red, 1);
+                args.Pipeline.DrawLine(pt, pt + py, System.Drawing.Color.Blue, 1);
+            }
+
+        }
+
+        public void DrawViewportMeshes(GH_PreviewMeshArgs args)
+        {
+            //throw new NotImplementedException();
+        }
     }
 
     public class GH_Agent : GH_Goo<IAgent>
@@ -325,8 +406,6 @@ namespace SlowRoboticsGH
 
         public override bool CastFrom(object source)
         {
-
-            
             if (source is IAgent)
             {
                 Value = source as IAgent;
@@ -353,46 +432,8 @@ namespace SlowRoboticsGH
                 Value = new AgentT<object>(wrapper.Value);
                 return true;
             }
-
             Value = new AgentT<object>(source);
             return true;
-           // return false;
-
-            /*
-            if (source is SlowRobotics.Core.Particle)
-            {
-                Value = new AgentT<Node>((Node)source);
-                return true;
-            }
-
-            if (source is Node)
-            {
-                Value = new AgentT<Node>((Node)source);
-                return true;
-            }
-            if (source is GH_Node)
-            {
-                Value = new AgentT<Node>(((GH_Node)source).Value);
-                return true;
-            }
-
-            if (source is GH_Plane)
-            {
-                Value = new ParticleAgent(new SlowRobotics.Core.Particle(IO.ToPlane3D(((GH_Plane)source).Value)));
-                return true;
-            }
-
-            if (source is Plane3D)
-            {
-                Value = new ParticleAgent(new SlowRobotics.Core.Particle(source as Plane3D));
-                return true;
-            }
-            if (source is GH_Plane3D)
-            {
-                Value = new ParticleAgent(new SlowRobotics.Core.Particle(((GH_Plane3D)source).Value));
-                return true;
-            }*/
-
         }
 
     }
@@ -409,6 +450,14 @@ namespace SlowRoboticsGH
         public override string TypeDescription => "AgentList";
         public override string ToString() => this.Value.ToString();
         public override object ScriptVariable() => Value;
+
+        public BoundingBox ClippingBox
+        {
+            get
+            {
+                return new BoundingBox();
+            }
+        }
 
         public override bool CastFrom(object source)
         {

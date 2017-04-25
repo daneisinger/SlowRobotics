@@ -9,7 +9,6 @@ namespace SlowRobotics.Core
 {
     public static class Core
     {
-
         private static int maxThreads = Environment.ProcessorCount * 4;
 
         public static void run(List<IAgent> pop, float damping)
@@ -26,42 +25,36 @@ namespace SlowRobotics.Core
 
         public static void run(AgentList pop, float damping)
         {
-                System.Threading.ThreadPool.SetMaxThreads(maxThreads, maxThreads);
+            System.Threading.ThreadPool.SetMaxThreads(maxThreads, maxThreads);
 
-                //add any new agents
-                pop.populate();
+            //add any new agents
+            pop.populate();
 
-                
-                    int steps = (int)(1 / damping);
+            int steps = (int)(1 / damping);
 
-                    for (int i = 0; i < steps; i++)
+            for (int i = 0; i < steps; i++)
+            {
+                //-------------------------------------------------------------------start parallel compute loop
+                int numChunks = (int)Math.Ceiling(pop.Count / (double)maxThreads);
+                int runningThreads = 0;
+                List<IAgent> agents = pop.getRandomizedAgents();
+                foreach (IAgent a in agents)
+                {
+                    System.Threading.Interlocked.Increment(ref runningThreads);
+                    System.Threading.ThreadPool.QueueUserWorkItem(delegate
                     {
+                        a.step(damping);
+                        System.Threading.Interlocked.Decrement(ref runningThreads);
+                    });
+                }
+                while (runningThreads > 0) {} // wait for threads to finish
 
-                        int numChunks = (int)Math.Ceiling(pop.Count / (double)maxThreads);
-                        int runningThreads = 0;
-
-                
-                 List<IAgent> agents = pop.getRandomizedAgents();
-                
-                 foreach (IAgent a in agents)
-                 {
-
-                     System.Threading.Interlocked.Increment(ref runningThreads);
-                     System.Threading.ThreadPool.QueueUserWorkItem(delegate
-                     {
-                         a.step(damping);
-                         System.Threading.Interlocked.Decrement(ref runningThreads);
-                     });
-
-
-                  }
-                  
-
-                    while (runningThreads > 0) { } // wait for threads to finish
+                //-------------------------------------------------------------------late update loop
+                //hack: todo implement as event
+                foreach (IAgent a in agents) a.lateUpdate(damping);
 
             }
-            pop.flush();
-            
-                }
+            pop.flush(); 
+            }
         }
 }

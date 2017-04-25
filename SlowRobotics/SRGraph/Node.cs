@@ -9,6 +9,7 @@ namespace SlowRobotics.SRGraph
     {
         public int Index { get; set; }
         public int Cost { get; set; }
+        public string Tag { get; set; } = "";
 
         private bool isOpenList = false;
         private bool isClosedList = false;
@@ -36,6 +37,14 @@ namespace SlowRobotics.SRGraph
             get
             {
                 return Edges.Count <=1 ;
+            }
+        }
+
+        public int Valence
+        {
+            get
+            {
+                return Edges.Count;
             }
         }
 

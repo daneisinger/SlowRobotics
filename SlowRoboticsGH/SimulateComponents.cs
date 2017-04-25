@@ -96,7 +96,7 @@ namespace SlowRoboticsGH
                 if(normalize) dir.normalizeTo((float)strength);
                 init.addSelf(dir);
                 init.interpolateToXX(dir, 1);
-                planes.Add(IO.ToPlane(init));
+                planes.Add(init.ToPlane());
             }
             
             DA.SetDataList(0, planes);
@@ -207,9 +207,9 @@ namespace SlowRoboticsGH
         }
     }
 
-    public class ReplaceAgentBehaviours : GH_Component
+    public class SetBehaviours : GH_Component
     {
-        public ReplaceAgentBehaviours() : base("Replace Behaviours", "ReplaceBehaviours", "Replace existing agent behaviours", "Nursery", "Agent") { }
+        public SetBehaviours() : base("Set Behaviours", "SetBehaviours", "Set agent behaviours", "Nursery", "Agent") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{8aecd428-5f62-4003-939a-baf18729a08f}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
@@ -280,9 +280,9 @@ namespace SlowRoboticsGH
         }
     }
 
-    public class AddBehavioursToAgents : GH_Component
+    public class AddBehaviours : GH_Component
     {
-        public AddBehavioursToAgents() : base("Add Behaviours", "AddBehaviours", "Add behaviours to agents", "Nursery", "Agent") { }
+        public AddBehaviours() : base("Add Behaviours", "AddBehaviours", "Add behaviours to agents", "Nursery", "Agent") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{674aab77-4e92-4260-b23d-01656da24a08}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;

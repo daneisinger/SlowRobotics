@@ -13,6 +13,8 @@ namespace SlowRobotics.Agent
     public interface IBehaviour : IComparable<IBehaviour>
     {
         int priority { get; set; }
+        void onAdd();
+        bool lateUpdate { get; set; }
         void run(IAgentT<object> a);
         void interact(IAgentT<object> a, object b);
     }

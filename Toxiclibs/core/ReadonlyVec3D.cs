@@ -140,12 +140,6 @@ namespace Toxiclibs.core
          */
          float dot(ReadonlyVec3D v);
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
-         bool equals(Object obj);
 
         /**
          * Compares this vector with the one given. The vectors are deemed equal if

@@ -23,10 +23,12 @@ namespace SlowRobotics.Agent
         }
 
         public abstract void step(float damping);
+        public abstract void lateUpdate(float damping);
 
         public void addBehaviour(IBehaviour b)
         {
             behaviours.Enqueue(b);
+            b.onAdd();
         }
 
         public void addBehaviours(List<IBehaviour> newBehaviours)
@@ -79,7 +81,15 @@ namespace SlowRobotics.Agent
         {
             foreach (IBehaviour b in behaviours.getData())
             {
-              b.run(this);
+              if(!b.lateUpdate)b.run(this);
+            }
+        }
+
+        public override void lateUpdate(float damping)
+        {
+            foreach (IBehaviour b in behaviours.getData())
+            {
+                if (b.lateUpdate) b.run(this);
             }
         }
 
@@ -93,6 +103,4 @@ namespace SlowRobotics.Agent
             neighbours.AddRange(n);
         }
     }
-
-
 }

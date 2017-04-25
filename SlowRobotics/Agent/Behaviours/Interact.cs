@@ -18,6 +18,8 @@ namespace SlowRobotics.Agent.Behaviours
             foreach (IBehaviour b in _interactionBehaviours) behaviours.Enqueue(b);
         }
 
+        public override void onAdd() { }
+
         public override void interact(IAgentT<object> a, object b)
         {
             throw new NotImplementedException();

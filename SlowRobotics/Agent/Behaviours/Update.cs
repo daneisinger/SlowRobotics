@@ -16,6 +16,7 @@ namespace SlowRobotics.Agent.Behaviours
         public IntegrateBehaviour(int _priority, float _damping) : base(_priority)
         {
             damping = _damping;
+            lateUpdate = true;
         }
 
         public override void runOn(IParticle p)
@@ -32,6 +33,7 @@ namespace SlowRobotics.Agent.Behaviours
         public RebuildTree(int _p, AgentList _pop) : base(_p)
         {
             pop = _pop;
+            //lateUpdate = true;
         }
 
         public override void runOn(ISearchable tree)

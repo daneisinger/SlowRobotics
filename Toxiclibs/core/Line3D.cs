@@ -267,8 +267,8 @@ namespace Toxiclibs.core
                 return false;
             }
             Line3D l = (Line3D)obj;
-            return (start.equals(l.start) || start.equals(l.end))
-                    && (end.equals(l.end) || end.equals(l.start));
+            return (start.Equals(l.start) || start.Equals(l.end))
+                    && (end.Equals(l.end) || end.Equals(l.start));
         }
 
         /**
@@ -309,7 +309,7 @@ namespace Toxiclibs.core
 
         public bool hasEndPoint(Vec3D p)
         {
-            return start.equals(p) || end.equals(p);
+            return start.Equals(p) || end.Equals(p);
         }
 
         /**

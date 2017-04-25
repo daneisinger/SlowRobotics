@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Rhino.Geometry;
+using SlowRobotics.Core;
 
 namespace SlowRoboticsGH
 {
@@ -85,12 +87,32 @@ namespace SlowRoboticsGH
         }
     }
 
-    public class GraphParameter : GH_PersistentParam<GH_Graph>
+    public class GraphParameter : GH_PersistentParam<GH_Graph>, IGH_PreviewObject
     {
         public GraphParameter() : base("Graph", "Graph", "This is a Graph", "Nursery", "Parameters") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
         public override System.Guid ComponentGuid => new Guid("{de92ea40-4472-4351-a1ec-eb948d096d8e}");
+
+        bool _hidden;
+        public bool Hidden
+        {
+            get { return _hidden; }
+            set { _hidden = value; }
+        }
+
+        public bool IsPreviewCapable
+        {
+            get  { return true; }
+        }
+
+        public BoundingBox ClippingBox
+        {
+            get
+            {
+                return Preview_ComputeClippingBox();
+            }
+        }
 
         protected override GH_GetterResult Prompt_Singular(ref GH_Graph value)
         {
@@ -102,31 +124,18 @@ namespace SlowRoboticsGH
             values = new List<GH_Graph>();
             return GH_GetterResult.success;
         }
-    }
 
-    /*
-    public class NodeParameter : GH_PersistentParam<GH_Node>
-    {
-        public NodeParameter() : base("Node", "Node", "This is a Node", "Nursery", "Parameters") { }
-        public override GH_Exposure Exposure => GH_Exposure.secondary;
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
-        public override System.Guid ComponentGuid => new Guid("{3f999a67-553e-438d-9c10-8115d04e045e}");
-
-        protected override GH_GetterResult Prompt_Singular(ref GH_Node value)
+        public void DrawViewportWires(IGH_PreviewArgs args)
         {
-
-            value = new GH_Node();
-            return GH_GetterResult.success;
-
+            Preview_DrawWires(args);
         }
 
-        protected override GH_GetterResult Prompt_Plural(ref List<GH_Node> values)
+        public void DrawViewportMeshes(IGH_PreviewArgs args)
         {
-            values = new List<GH_Node>();
-            return GH_GetterResult.success;
+            Preview_DrawMeshes(args);
         }
     }
-    */
+
     public class Plane3DParameter : GH_PersistentParam<GH_Plane3D>
     {
         public Plane3DParameter() : base("Plane3D", "Plane3D", "This is a Plane3D", "Nursery", "Parameters") { }
@@ -185,12 +194,35 @@ namespace SlowRoboticsGH
         }
     }
 
-    public class ParticleParameter : GH_PersistentParam<GH_Particle>
+    public class ParticleParameter : GH_PersistentParam<GH_Particle>, IGH_PreviewObject
     {
         public ParticleParameter() : base("Particle", "Particle", "This is a Particle", "Nursery", "Parameters") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
         public override System.Guid ComponentGuid => new Guid("{742c9e9f-e8a6-4fd8-a89f-ae3b590d0d4a}");
+
+        public BoundingBox ClippingBox
+        {
+            get
+            {
+                return Preview_ComputeClippingBox();
+            }
+        }
+
+        bool _hidden;
+        public bool Hidden
+        {
+            get { return _hidden; }
+            set { _hidden = value; }
+        }
+
+        public bool IsPreviewCapable
+        {
+            get
+            {
+                return true;
+            }
+        }
 
         protected override GH_GetterResult Prompt_Singular(ref GH_Particle value)
         {
@@ -204,6 +236,16 @@ namespace SlowRoboticsGH
         {
             values = new List<GH_Particle>();
             return GH_GetterResult.success;
+        }
+
+        public void DrawViewportWires(IGH_PreviewArgs args)
+        {
+            Preview_DrawWires(args);
+        }
+
+        public void DrawViewportMeshes(IGH_PreviewArgs args)
+        {
+            Preview_DrawMeshes(args);
         }
     }
 

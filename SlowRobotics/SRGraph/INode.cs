@@ -10,6 +10,7 @@ namespace SlowRobotics.SRGraph
     {
         int Index { get; set; }
         int Cost { get; set; }
+        string Tag { get; set; }
 
         bool IsOpenList(IEnumerable<INode<T>> openList);
         void SetOpenList(bool value);
@@ -23,6 +24,7 @@ namespace SlowRobotics.SRGraph
         bool remove(IEdge<T> edge);
         void add(IEdge<T> edge);
         bool Naked { get; }
+        int Valence { get; }
         T Geometry { get; set; }
     }
 

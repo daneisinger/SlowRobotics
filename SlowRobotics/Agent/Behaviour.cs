@@ -15,10 +15,11 @@ namespace SlowRobotics.Agent
     public abstract class Behaviour : IBehaviour
     {
         public int priority { get; set; }
-
+        public bool lateUpdate { get; set; }
         public Behaviour(int _priority)
         {
             priority = _priority;
+            lateUpdate = false;
         }
 
         public int CompareTo(IBehaviour other)
@@ -28,6 +29,7 @@ namespace SlowRobotics.Agent
             return 0;
         }
 
+        public abstract void onAdd();
         public abstract void run(IAgentT<object> a);
         public abstract void interact(IAgentT<object> a, object b);
 
@@ -38,14 +40,15 @@ namespace SlowRobotics.Agent
     /// by casting from the abstract object base type
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class Behaviour<T> : IBenchmark, IBehaviourT<T> where T : class
+    public class Behaviour<T> : IBehaviourT<T> where T : class
     {
         public int priority { get; set; }
-        public event EventHandler<UpdateEventArgs> OnUpdate;
+        public bool lateUpdate { get; set; }
 
         public Behaviour(int _priority)
         {
             priority = _priority;
+            lateUpdate = false;
         }
 
         public int CompareTo(IBehaviour other)
@@ -58,10 +61,6 @@ namespace SlowRobotics.Agent
         public virtual void run(IAgentT<object> a)
         {
 
-            //TODO - need to setup benchmarker to track functions
-           // System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
-            //stopwatch.Start();
-            
             T data = a.getData() as T;
             if (data != null)
             {
@@ -71,9 +70,6 @@ namespace SlowRobotics.Agent
             {
                 throw new InvalidCastException("Behaviour of type " + typeof(T) + " cannot run on agent type:" + a.getData().GetType());
             }
-            
-            //stopwatch.Stop();
-           // if ((OnUpdate != null)) OnUpdate(this, new UpdateEventArgs(this.GetType().ToString(), stopwatch.ElapsedMilliseconds));
 
         }
 
@@ -89,6 +85,8 @@ namespace SlowRobotics.Agent
                 throw new InvalidCastException("Behaviour of type " + typeof(T) + " cannot run on agent type:" + a.getData().GetType());
             }
         }
+
+        public virtual void onAdd() { }
 
         public virtual void runOn(T a){}
 

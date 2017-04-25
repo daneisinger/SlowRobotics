@@ -476,7 +476,8 @@ namespace Toxiclibs.core
      *            the Object with which the comparison is made
      * @return true or false
      */
-    public bool equals(Object v)
+     
+    public override bool Equals(Object v)
     {
         try
         {
@@ -501,7 +502,8 @@ namespace Toxiclibs.core
      *            the vector with which the comparison is made
      * @return true or false
      */
-    public bool equals(ReadonlyVec3D v)
+     
+    public bool Equals(ReadonlyVec3D v)
     {
         try
         {
@@ -808,6 +810,7 @@ namespace Toxiclibs.core
                 return BitConverter.ToInt32(BitConverter.GetBytes(f), 0);
             }
         }
+
 
         public int hashCode()
     {

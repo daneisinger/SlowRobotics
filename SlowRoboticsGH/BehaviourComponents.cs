@@ -220,6 +220,7 @@ namespace SlowRoboticsGH
             pManager.AddIntegerParameter("Add Frequency", "F", "Add a link every n steps", GH_ParamAccess.item,1);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
             pManager.AddGenericParameter("Structure", "S", "Spatial structure to add new points to", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Reset", "R", "Delete existing agents", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -238,6 +239,7 @@ namespace SlowRoboticsGH
             int freq = 1;
             int priority = 5;
             ISearchable pts = null;
+            bool reset = false;
 
             if (!DA.GetDataList(0, behaviours)) { return; }
             if (!DA.GetData(1, ref offset)) { return; }
@@ -245,25 +247,82 @@ namespace SlowRoboticsGH
             if (!DA.GetData(3, ref freq)) { return; }
             if (!DA.GetData(4, ref priority)) { return; }
             if (!DA.GetData(5, ref pts)) { return; }
+            if (!DA.GetData(6, ref reset)) { return; }
+
             if (addLink != null)
             {
                 addLink.behaviours = (behaviours.ConvertAll(b => { return b.Value; }));
                 addLink.stiffness = (float)stiffness;
-                addLink.offset = IO.ToVec3D(offset);
+                addLink.offset = offset.ToVec3D();
                 addLink.frequency = freq;
                 addLink.priority = priority;
                 addLink.pts = pts;
             }
             else
             {
-                addLink = new Add.Extend(priority, freq, IO.ToVec3D(offset), (float)stiffness,  behaviours.ConvertAll(b => { return b.Value; }),pts);
-                
+                addLink = new Add.Extend(priority, freq, offset.ToVec3D(), (float)stiffness,  behaviours.ConvertAll(b => { return b.Value; }),pts);
             }
+            if (reset) addLink.pop = new AgentList();
             DA.SetData(0, addLink);
             DA.SetData(1, addLink.pop);
         }
     }
+    
+    public class SplitSpringByMinLength : GH_Component
+    {
+        public SplitSpringByMinLength() : base("Split Springs", "SpringSplit", "Graph Behaviour: Split springs over a given length", "Nursery", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.quarternary;
+        public override Guid ComponentGuid => new Guid("{00b9cafa-8464-4304-b1d3-e2180d194848}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddParameter(new BehaviourParameter(), "New Behaviours", "B", "Behaviours for duplicated agent", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Max Length", "Mx", "Max length before split", GH_ParamAccess.item, 1);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item, 0);
+            pManager.AddGenericParameter("Structure", "S", "Spatial structure to add new points to", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Reset", "R", "Delete existing agents", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
+            pManager.AddParameter(new AgentListParameter(), "New Agents", "A", "Agents", GH_ParamAccess.item);
+        }
+
+        public Add.Split addLink = null;
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            List<GH_Behaviour> behaviours = new List<GH_Behaviour>();
+            double maxLength = 1; 
+            int priority = 5;
+            ISearchable pts = null;
+            bool reset = false;
+
+            if (!DA.GetDataList(0, behaviours)) { return; }
+            if (!DA.GetData(1, ref maxLength)) { return; }
+            if (!DA.GetData(2, ref priority)) { return; }
+            if (!DA.GetData(3, ref pts)) { return; }
+            if (!DA.GetData(4, ref reset)) { return; }
+
+            if (addLink != null)
+            {
+                addLink.behaviours = (behaviours.ConvertAll(b => { return b.Value; }));
+                addLink.maxLength = (float)maxLength;
+                addLink.priority = priority;
+                addLink.pts = pts;
+            }
+            else
+            {
+                addLink = new Add.Split(priority, behaviours.ConvertAll(b => { return b.Value; }), (float) maxLength, pts);
+            }
+            if (reset) addLink.pop = new AgentList();
+            DA.SetData(0, addLink);
+            DA.SetData(1, addLink.pop);
+        }
+    }
+    
     public class FrictionComponent : GH_Component
     {
         public FrictionComponent() : base("Friction", "Friction", "SRParticle Interaction Behaviour: Add inertia from nearby particles", "Nursery", "Behaviours") { }
@@ -559,12 +618,12 @@ namespace SlowRoboticsGH
 
             if (newton != null)
             {
-                newton.force = IO.ToVec3D(force);
+                newton.force = force.ToVec3D();
                 newton.priority = priority;
             }
             else
             {
-                newton = new Newton(priority, IO.ToVec3D(force));
+                newton = new Newton(priority, force.ToVec3D());
 
             }
             DA.SetData(0, newton);
@@ -1222,7 +1281,7 @@ namespace SlowRoboticsGH
             List<IScaledBehaviour> behaviours = new List<IScaledBehaviour>();
             foreach (GH_Behaviour _b in ghBehaviours) if (_b.Value is IScaledBehaviour)behaviours.Add((IScaledBehaviour)_b.Value);
 
-            AABB bounds = IO.ToAABB(b);
+            AABB bounds = b.ToAABB();
 
             if (scaleBox != null)
             {

@@ -70,8 +70,8 @@
       <HintPath>..\packages\NUnit.3.2.1\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="RhinoCommon">
-      <HintPath>..\..\..\..\..\..\Program Files\Rhinoceros 5 (64-bit)\System\RhinoCommon.dll</HintPath>
+    <Reference Include="RhinoCommon512">
+      <HintPath>..\..\..\..\..\..\Work\RMIT\Robotanist\Code\RhinoCommon512.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -123,7 +123,8 @@
     <Compile Include="Rhino\GraphTools\AStar.cs" />
     <Compile Include="Rhino\GraphTools\Dijkstra.cs" />
     <Compile Include="Rhino\GraphTools\GraphUtils.cs" />
-    <Compile Include="Rhino\IO\IO.cs" />
+    <Compile Include="Rhino\IO\SRConvert.cs" />
+    <Compile Include="Rhino\IO\SRExtensions.cs" />
     <Compile Include="Rhino\MeshTools\Mesher.cs" />
     <Compile Include="Rhino\MeshTools\MFace.cs" />
     <Compile Include="Rhino\Visualisation\Draw.cs" />

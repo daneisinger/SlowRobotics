@@ -19,6 +19,7 @@ namespace SlowRobotics.Agent
         PriorityQueue<IBehaviour> behaviours { get; set; }
 
         void step(float damping);
+        void lateUpdate(float damping);
 
         void addBehaviour(IBehaviour b);
         void addBehaviours(List<IBehaviour> behaviours);

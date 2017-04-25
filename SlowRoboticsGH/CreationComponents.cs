@@ -41,7 +41,7 @@ namespace SlowRoboticsGH
             if (!DA.GetData(0, ref m)) { return; }
             if (!DA.GetData(1, ref stiffness)) { return; }
 
-            Graph<SRParticle,Spring> g = IO.ConvertMeshToGraph(m, (float)stiffness);
+            Graph<SRParticle, Spring> g = SlowRobotics.Rhino.IO.SRConvert.MeshToGraph(m, (float)stiffness);
 
             DA.SetData(0, g);
         }
@@ -191,7 +191,7 @@ namespace SlowRoboticsGH
                 //first agent
                 Plane currentPlane;
                 curve.FrameAt(0, out currentPlane);
-                SRParticle p1 = new SRParticle(IO.ToPlane3D(currentPlane));
+                SRParticle p1 = new SRParticle(currentPlane.ToPlane3D());
                 AgentT<SRParticle> a = new AgentT<SRParticle>(p1);
                 agents.Add(a);
 
@@ -203,7 +203,7 @@ namespace SlowRoboticsGH
                 for (int i = 1; i < pts.Length; i++)
                 {
                     curve.FrameAt(pts[i], out currentPlane);
-                    SRParticle p2 = new SRParticle(IO.ToPlane3D(currentPlane));
+                    SRParticle p2 = new SRParticle(currentPlane.ToPlane3D());
                     AgentT<SRParticle> b = new AgentT<SRParticle>(p2);
                     Spring s = new Spring(a.getData(), b.getData());
                     s.s = (float)stiffness;
@@ -251,7 +251,7 @@ namespace SlowRoboticsGH
             if (!DA.GetData(3, ref attens)) { return; }
 
                     IFieldElement pts = new PlaneFieldElement(
-                        IO.ToPlane3D(p),
+                        p.ToPlane3D(),
                         (float)weights,
                         (float)distances,
                         (float)attens);
@@ -395,7 +395,7 @@ namespace SlowRoboticsGH
                 {
                     pts = new BitmapFieldElement(
                         bmp,
-                        IO.ToVec3D(locs),
+                        locs.ToVec3D(),
                         (float)scales,
                         (float)weights,
                         (float)distances,
@@ -440,7 +440,7 @@ namespace SlowRoboticsGH
 
 
                     IFieldElement pts = new PolarFieldElement(
-                        IO.ToPlane3D(geometry),
+                        geometry.ToPlane3D(),
                         (float)weights,
                         (float)distances,
                         (float)attens);

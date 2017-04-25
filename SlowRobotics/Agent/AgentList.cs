@@ -5,15 +5,15 @@ using System.Text;
 
 namespace SlowRobotics.Agent
 {
-    public class AgentList 
+    public class AgentList
     {
 
         //handles adding and removing of agents from a collection
         public Dictionary<IAgent, object> pop { get; set; }
-        private Dictionary<IAgent, object> addBuffer;
+        private List<IAgent> addBuffer;
         private List<IAgent> removeBuffer;
 
-        public AgentList() : this(new Dictionary<IAgent,object>()) { }
+        public AgentList() : this(new Dictionary<IAgent, object>()) { }
 
         public AgentList(IAgent a) : this(new Dictionary<IAgent, object>())
         {
@@ -21,11 +21,16 @@ namespace SlowRobotics.Agent
             populate();
         }
 
-        public AgentList(Dictionary<IAgent,object> agents) 
+        public AgentList(Dictionary<IAgent, object> agents)
         {
             pop = agents;
             removeBuffer = new List<IAgent>();
-            addBuffer = new Dictionary<IAgent,object>();
+            addBuffer = new List<IAgent>();
+        }
+
+        public IEnumerable<object> getByType(Type T)
+        {
+            return pop.Values.Where(t => t.GetType()==T);
         }
 
         public void addAll(IEnumerable<IAgent> agents)
@@ -35,22 +40,24 @@ namespace SlowRobotics.Agent
 
         public void add(IAgent a)
         {
+            addBuffer.Add(a);
+        }
 
-            //try and get data
-            AgentT<object> ao = (AgentT<object>)a;
-            object data = null;
-            if (ao != null) data = ao.getData();
-            add(a, data);
+        private void insert(IAgent a)
+        {
+            //dont add duplicate agents, check for GH nulls
+            if (a!=null && !pop.ContainsKey(a))
+            {
+                IAgentT<object> ao = (IAgentT<object>)a;
+                object data = null;
+                if (ao != null) data = ao.getData();
+                pop.Add(a, data);
+            }
         }
 
         public void removeAgent(IAgent a)
         {
             remove(a);
-        }
-
-        public void add(IAgent a, object o)
-        {
-            addBuffer.Add(a,o);
         }
 
         public void remove(IAgent a)
@@ -83,16 +90,12 @@ namespace SlowRobotics.Agent
 
         public void populate()
         {
-            foreach (KeyValuePair<IAgent,object> a in addBuffer)
-            {
-                if(a.Key!=null && a.Value!=null) pop.Add(a.Key,a.Value);
-            }
-            addBuffer = new Dictionary<IAgent,object>();
+            foreach(IAgent a in addBuffer) insert(a);
+            addBuffer = new List<IAgent>();
         }
 
         public void flush()
         {
-
             foreach (IAgent a in removeBuffer)
             {
                 pop.Remove(a);

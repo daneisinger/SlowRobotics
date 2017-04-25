@@ -15,7 +15,7 @@ namespace SlowRobotics.Field.Elements
         Mesh mesh;
         public float minDist;
 
-        public MeshFieldElement(Mesh _mesh, float _weight, float _maxDist, float _attenuation, float _minDist) :base (IO.ToVec3D(_mesh.GetBoundingBox(false).Center),_weight,_maxDist,_attenuation)
+        public MeshFieldElement(Mesh _mesh, float _weight, float _maxDist, float _attenuation, float _minDist) :base (_mesh.GetBoundingBox(false).Center.ToVec3D(),_weight,_maxDist,_attenuation)
         {
             mesh = _mesh;
             minDist = _minDist;
@@ -23,7 +23,7 @@ namespace SlowRobotics.Field.Elements
 
         public override void integrate(ref FieldData d, Vec3D loc)
         {
-            Vec3D p = IO.ToVec3D(mesh.ClosestPoint(IO.ToPoint3d(loc)));
+            Vec3D p = mesh.ClosestPoint(loc.ToPoint3d()).ToVec3D();
             float dist = p.distanceTo(loc);
             if (dist > minDist)
             {
