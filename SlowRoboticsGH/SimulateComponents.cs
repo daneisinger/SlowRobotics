@@ -114,7 +114,7 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddParameter(new AgentListParameter(),"Agents", "P", "Population to simulate", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("Solver steps", "S", "Steps per update", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Solver steps", "S", "Steps per update", GH_ParamAccess.item,1);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
