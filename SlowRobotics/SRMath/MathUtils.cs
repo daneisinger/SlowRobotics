@@ -67,6 +67,7 @@ namespace SlowRobotics.SRMath
             centroid = averageVectors(planeVerts);
             double[,] dataMat = new double[3, planeVerts.Count];
             int i = 0;
+
             foreach (Vec3D v in planeVerts)
             {
                 dataMat[0, i] = v.x - centroid.x;

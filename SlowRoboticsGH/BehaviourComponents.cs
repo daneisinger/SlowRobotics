@@ -883,7 +883,7 @@ namespace SlowRoboticsGH
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("Strength", "S", "Strength of effect", GH_ParamAccess.item,0.1);
+            pManager.AddNumberParameter("Strength", "S", "Strength of effect", GH_ParamAccess.item,0.005);
             pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Attraction Distance", GH_ParamAccess.item,10);
             pManager.AddIntegerParameter("Axis", "A", "Plane axis to align", GH_ParamAccess.item,0);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
@@ -903,7 +903,7 @@ namespace SlowRoboticsGH
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            double strength = 0.04;
+            double strength = 0.004;
             double maxDist = 10;
             int axis = 0;
             int priority = 5;
@@ -923,7 +923,7 @@ namespace SlowRoboticsGH
             }
             else
             {
-                bestFit = new Align.AxisToBestFitPlane(priority, (float)maxDist, (float)strength, axis);
+                bestFit = new Align.AxisToBestFitPlane(priority,(float)strength,(float)maxDist,axis);
                 
             }
             DA.SetData(0,bestFit);
