@@ -114,10 +114,7 @@ namespace SlowRoboticsGH
                 Plane3D p = a.getData() as Plane3D;
                 if (p != null)
                 {
-                    foreach (Vec3D v in a.neighbours)
-                    {
-                        planes.Add(new GH_Plane(p.ToPlane()));
-                    }
+                  planes.Add(new GH_Plane(p.ToPlane()));
                 }
             }
             DA.SetDataList(0, planes);
