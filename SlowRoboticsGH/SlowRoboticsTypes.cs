@@ -231,11 +231,11 @@ namespace SlowRoboticsGH
         }
     }
 
-    public class GH_Particle : GH_Goo<SRParticle>, IGH_PreviewData
+    public class GH_Particle : GH_Goo<IParticle>, IGH_PreviewData
     {
         public GH_Particle() { this.Value = null; }
         public GH_Particle(GH_Particle goo) { this.Value = goo.Value; }
-        public GH_Particle(SRParticle native) { this.Value = native; }
+        public GH_Particle(IParticle native) { this.Value = native; }
 
         public override IGH_Goo Duplicate() => new GH_Particle(this);
         public override bool IsValid => true;
@@ -246,8 +246,9 @@ namespace SlowRoboticsGH
         {
             get
             {
-                SRParticle p = m_value;
-                Vec3D d = p.xx.add(p.yy).add(p.zz);
+                IParticle particle = m_value;
+                Vec3D d = particle.getExtents();
+                Vec3D p = particle.get();
                 return new BoundingBox(p.x, p.y, p.z, p.x + d.x, p.y+d.y, p.z+d.z);
             }
         }
@@ -275,23 +276,44 @@ namespace SlowRoboticsGH
                 return true;
             }
 
-            if(source is SRParticle)
+            if (source is GH_Line)
+            {
+                Line l = ((GH_Line)source).Value;
+                double length = l.Length / 2;
+                Plane pln = Plane.Unset;
+                NurbsCurve n = l.ToNurbsCurve();
+                double lp = 0;
+                n.NormalizedLengthParameter(length, out lp);
+                n.PerpendicularFrameAt(lp, out pln);
+                SRLinearParticle p = new SRLinearParticle(pln.ToPlane3D());
+                p.length = (float)length;
+                Value = p;
+                return true;
+            }else if (source is SRLinearParticle)
+            {
+                Value = (SRLinearParticle)source;
+                return true;
+            }
+            else if (source is SRParticle)
             {
                 Value = (SRParticle)source;
                 return true;
             }
+            
             return false;
         }
 
         public void DrawViewportWires(GH_PreviewWireArgs args)
         {
-            SRParticle p = m_value;
-            Vec3D d = p.xx.add(p.yy).add(p.zz);
-            Point3d pt = p.ToPoint3d();
-            Point3d px = p.xx.ToPoint3d();
-            Point3d py = p.yy.ToPoint3d();
+            IParticle p = m_value;
+            Vec3D d = p.getExtents();
+            Plane3D pln = p.get();
+            Point3d pt = pln.ToPoint3d();
+            Point3d px = pln.xx.ToPoint3d();
+            Point3d py = pln.yy.ToPoint3d();
             args.Pipeline.DrawLine(pt, pt + px, System.Drawing.Color.Red, 1);
             args.Pipeline.DrawLine(pt, pt + py, System.Drawing.Color.Blue, 1);
+
         }
 
         public void DrawViewportMeshes(GH_PreviewMeshArgs args)
@@ -337,9 +359,12 @@ namespace SlowRoboticsGH
             if (source is GH_Particle)
             {
                 Graph<SRParticle, Spring> graph = new Graph<SRParticle, Spring>();
-                SRParticle p = ((GH_Particle)source).Value;
-                graph.insert(p);
-                graph.parent = p;
+                SRParticle p = (SRParticle)((GH_Particle)source).Value;
+                if (p !=null)
+                {
+                    graph.insert(p);
+                    graph.parent = p;
+                }
                 Value = graph;
                 return true;
             }

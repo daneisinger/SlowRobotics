@@ -26,6 +26,7 @@ namespace SlowRobotics.Core
     {
         public double length;
         private List<Impulse> impulses;
+        public Vec3D Torque { get; set; }
 
         public SRLinearParticle(Plane3D _p) : base(_p) {
             impulses = new List<Impulse>();
@@ -82,7 +83,7 @@ namespace SlowRobotics.Core
 
         public void addForce(Vec3D pos, Vec3D force, bool torqueOnly)
         {
-            impulses.Add(new Impulse(pos, force.getLimited(accLimit), torqueOnly));
+            impulses.Add(new Impulse(pos, force, torqueOnly));
         }
 
         public override void reset()
@@ -90,11 +91,30 @@ namespace SlowRobotics.Core
             impulses = new List<Impulse>();
 
         }
-        
-        public override Vec3D getAccel()
+
+        //adds to accel and torque
+        public void ApplyImpulses(IEnumerable<Impulse> impulses)
         {
-            foreach(Impulse i in getImpulse()) accel.addSelf(i.dir); //integrate force
-            return accel.getLimited(accLimit);
+            foreach (Impulse i in impulses)
+            {
+
+                if (!i.torqueOnly)
+                    accel.addSelf(i.dir); //integrate force
+
+                Vec3D ab = i.pos.sub(this);
+                float d = ab.magnitude();
+
+                Vec3D crossAb = ab.cross(i.dir);
+                float a = ab.angleBetween(ab.add(i.dir), true);
+
+                if (!float.IsNaN(a)) Torque.addSelf(crossAb.scale(a)); //integrate torque
+            }
+        }
+
+        public override void integrate(float dt)
+        {
+            ApplyImpulses(impulses);
+            base.integrate(dt);
         }
 
         public override IEnumerable<Impulse> getImpulse()

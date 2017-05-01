@@ -15,38 +15,6 @@ using Toxiclibs.core;
 
 namespace SlowRoboticsGH
 {
-
-    public class CreatePopulationComponent :GH_Component
-    {
-        public CreatePopulationComponent() : base("Create Population", "CreatePop", "Creates an agent list for simulation", "Nursery", "Simulation") { }
-        public override GH_Exposure Exposure => GH_Exposure.primary;
-        public override Guid ComponentGuid => new Guid("{de35d78e-dc9a-4e2a-ae4c-708ee7ec823c}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
-
-        protected override void RegisterInputParams(GH_InputParamManager pManager)
-        {
-            pManager.AddParameter(new AgentParameter(), "Agents", "P", "Agents to add to population", GH_ParamAccess.list);
-        }
-
-        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-        {
-            pManager.AddParameter(new AgentListParameter(), "Agents", "P", "Population", GH_ParamAccess.item);
-        }
-
-        protected override void SolveInstance(IGH_DataAccess DA)
-        {
-            List<GH_Agent> pop = new List<GH_Agent>();
-
-            if (!DA.GetDataList(0, pop)) { return; }
-
-            AgentList list = new AgentList();
-            foreach (GH_Agent a in pop) list.add(a.Value);
-            list.populate();
-
-            DA.SetData(0, list);
-        }
-    }
-
     public class SimulateFieldComponent : GH_Component
     {
         public SimulateFieldComponent() : base("Simulate Field", "SimField", "Traces lines through a field", "Nursery", "Field") { }
