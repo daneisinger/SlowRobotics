@@ -16,7 +16,7 @@ namespace SlowRobotics.Core
         //public float accLimit = 1;
 
         public int age = 0;
-        private float inertia = 1;
+        protected float inertia = 1;
         public float mass { get; set; } = 1;
 
         public string tag { get; set; } = "";

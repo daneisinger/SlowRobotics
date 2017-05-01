@@ -30,7 +30,7 @@ namespace SlowRobotics.Core
 
         public SRLinearParticle(Plane3D _p) : base(_p) {
             impulses = new List<Impulse>();
-
+            Torque = new Vec3D();
         }
 
         public Vec3D start
@@ -89,7 +89,6 @@ namespace SlowRobotics.Core
         public override void reset()
         {
             impulses = new List<Impulse>();
-
         }
 
         //adds to accel and torque
@@ -98,23 +97,49 @@ namespace SlowRobotics.Core
             foreach (Impulse i in impulses)
             {
 
-                if (!i.torqueOnly)
-                    accel.addSelf(i.dir); //integrate force
+                if (!i.torqueOnly) accel.addSelf(i.dir); //integrate force
 
                 Vec3D ab = i.pos.sub(this);
                 float d = ab.magnitude();
+                if (d > 0)
+                {
+                    Vec3D crossAb = ab.cross(i.dir);
+                    float a = ab.angleBetween(ab.add(i.dir), true);
 
-                Vec3D crossAb = ab.cross(i.dir);
-                float a = ab.angleBetween(ab.add(i.dir), true);
-
-                if (!float.IsNaN(a)) Torque.addSelf(crossAb.scale(a)); //integrate torque
+                    if (!float.IsNaN(a)) Torque.addSelf(crossAb.scale(a)); //integrate torque
+                }
             }
+        }
+
+        public override void step(float dt)
+        {
+            if (!f && mass > 0)
+            {
+                integrate(dt);
+                age++;
+            }
+
+            reset();
+            Torque = new Vec3D();
+            accel = new Vec3D();
+            inertia = 0.97f;
+
         }
 
         public override void integrate(float dt)
         {
             ApplyImpulses(impulses);
             base.integrate(dt);
+
+            Matrix4x4 t = new Matrix4x4();
+            if (Torque.magSquared() > 0)
+            {
+                Quaternion rot = Quaternion.createFromAxisAngle(Torque, Torque.magnitude() * 1f * dt);
+                rot.normalize();
+                t = rot.toMatrix4x4();
+                transform(t); //transform this plane
+            }
+            
         }
 
         public override IEnumerable<Impulse> getImpulse()

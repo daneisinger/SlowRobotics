@@ -57,7 +57,7 @@ namespace SlowRoboticsGH
             pManager.AddPlaneParameter("Plane", "P", "Location and orientation of particle", GH_ParamAccess.item, Plane.WorldXY);
             pManager.AddNumberParameter("Mass", "M", "Mass of the particle", GH_ParamAccess.item,1);
             pManager.AddTextParameter("Tag", "T", "Additional data attached to the particle", GH_ParamAccess.item, "");
-            pManager.AddNumberParameter("Length", "L", "Extent of the particle z axis for simulating line interactions", GH_ParamAccess.item, 1);
+            pManager.AddNumberParameter("Length", "L", "Extent of the particle z axis for simulating line interactions", GH_ParamAccess.item, 0);
 
         }
 
