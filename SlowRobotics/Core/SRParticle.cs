@@ -46,11 +46,10 @@ namespace SlowRobotics.Core
 
         public virtual void step(float dt)
         {
-            accel.limit(accLimit);
-            
+
             if (!f)
             {
-                vel.addSelf(accel);
+                vel.addSelf(getAccel());
                 vel.limit(spd);
                 vel.scaleSelf(dt * inertia);
                 addSelf(vel);
@@ -59,6 +58,11 @@ namespace SlowRobotics.Core
 
             accel = new Vec3D();
             inertia = 0.97f; //add default inertia to slow everything down
+        }
+
+        public virtual Vec3D getAccel()
+        {
+            return accel.getLimited(accLimit);
         }
 
         public virtual IEnumerable<Impulse> getImpulse()

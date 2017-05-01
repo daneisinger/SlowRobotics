@@ -37,7 +37,8 @@ namespace SlowRobotics.Core
                 //-------------------------------------------------------------------start parallel compute loop
                 int numChunks = (int)Math.Ceiling(pop.Count / (double)maxThreads);
                 int runningThreads = 0;
-                List<IAgent> agents = pop.getRandomizedAgents();
+                //List<IAgent> agents = pop.getRandomizedAgents();
+                List<IAgent> agents = pop.getAgents();
                 foreach (IAgent a in agents)
                 {
                     System.Threading.Interlocked.Increment(ref runningThreads);

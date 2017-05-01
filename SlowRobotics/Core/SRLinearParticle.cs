@@ -90,6 +90,12 @@ namespace SlowRobotics.Core
             impulses = new List<Impulse>();
 
         }
+        
+        public override Vec3D getAccel()
+        {
+            foreach(Impulse i in getImpulse()) accel.addSelf(i.dir); //integrate force
+            return accel.getLimited(accLimit);
+        }
 
         public override IEnumerable<Impulse> getImpulse()
         {
