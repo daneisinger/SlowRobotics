@@ -23,16 +23,14 @@ namespace SlowRobotics.Agent.Behaviours
 
         public override void run(IAgentT<object> a)
         {
+
             Vec3D n = a.getData() as Vec3D;
             if (n != null)
             {
                 a.neighbours = pts.Search(n, radius);
                 a.neighbours.Remove(n);
             }
-            else
-            {
-                throw new InvalidCastException("Search behaviours require an agent of type Vec3D and cannot run on agent type: " + a.getData().GetType());
-            }
+
         }
     }
 }
