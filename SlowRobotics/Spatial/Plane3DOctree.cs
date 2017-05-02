@@ -53,7 +53,13 @@ namespace SlowRobotics.Spatial
         public List<Vec3D> Search(Vec3D pt, float radius)
         {
             NearestNeighbour<Vec3D> n = tree.NearestNeighbors(new double[] { pt.x, pt.y, pt.z }, 255, radius * radius);
-            if (n!=null) return n.ToList();
+            try {
+                if (n != null) return n.ToList();
+            }
+            catch (NullReferenceException)
+            {
+                return new List<Vec3D>();
+            }
             return new List<Vec3D>();
         }
 

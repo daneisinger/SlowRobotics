@@ -101,7 +101,9 @@ namespace SlowRobotics.Agent.Behaviours
                 SRParticle b_v = b as SRParticle;
                 if(b_v!= null) {
                     Vec3D ab = (!inXY) ? p.sub(b_v) : getProjectedAB(p, p.zz, b_v);
-                    force.addSelf(falloff.getForce(ab, minDist, maxDist, strength * scaleFactor, interpolator));
+                    float radiusSum = b_v.radius + p.radius;
+                    float repelDist = maxDist > radiusSum ? maxDist : radiusSum;
+                    force.addSelf(falloff.getForce(ab, minDist, repelDist, strength * scaleFactor, interpolator));
                 }
             }
 

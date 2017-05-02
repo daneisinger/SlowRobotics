@@ -18,7 +18,7 @@ namespace SlowRobotics.Agent.Behaviours
         {
             pts = _pts;
             radius = _radius;
-          //  lateUpdate = true;
+            //lateUpdate = true;
         }
 
         public override void run(IAgentT<object> a)

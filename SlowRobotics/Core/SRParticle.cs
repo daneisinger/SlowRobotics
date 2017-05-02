@@ -18,6 +18,7 @@ namespace SlowRobotics.Core
         public int age = 0;
         protected float inertia = 1;
         public float mass { get; set; } = 1;
+        public float radius { get; set; } = 0;
 
         public string tag { get; set; } = "";
         public bool f { get; set; } = false; //TODO sort out better locking system

@@ -191,7 +191,10 @@ namespace SlowRobotics.SRGraph
             edge.b.add(edge);
 
             //insert in graph
-            _edges.Add(edge);
+            lock (_edges)
+            {
+                _edges.Add(edge);
+            }
 
         }
     }

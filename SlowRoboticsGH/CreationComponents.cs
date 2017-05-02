@@ -59,7 +59,7 @@ namespace SlowRoboticsGH
             pManager.AddNumberParameter("Mass", "M", "Mass of the particle", GH_ParamAccess.item,1);
             pManager.AddTextParameter("Tag", "T", "Additional data attached to the particle", GH_ParamAccess.item, "");
             pManager.AddNumberParameter("Length", "L", "Extent of the particle z axis for simulating line interactions", GH_ParamAccess.item, 0);
-
+            pManager.AddNumberParameter("Radius", "R", "Radius of particle sphere", GH_ParamAccess.item, 0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -73,11 +73,13 @@ namespace SlowRoboticsGH
             double mass = 1;
             string tag = "";
             double length = 1;
+            double radius = 0;
 
             if (!DA.GetData(0, ref p)) { return; }
             if (!DA.GetData(1, ref mass)) { return; }
             if (!DA.GetData(2, ref tag)) { return; }
             if (!DA.GetData(3, ref length)) { return; }
+            if (!DA.GetData(4, ref radius)) { return; }
 
             IParticle particle = null;
 
@@ -95,6 +97,7 @@ namespace SlowRoboticsGH
 
             particle.mass = (float)mass;
             particle.tag = tag;
+            particle.radius = (float)radius;
             DA.SetData(0, new GH_Particle(particle));
         }
     }
@@ -108,6 +111,8 @@ namespace SlowRoboticsGH
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
+            pManager.AddParameter(new Plane3DParameter(), "Plane", "P", "Location and orientation of initial points in tree", GH_ParamAccess.list);
+            pManager[0].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -117,7 +122,16 @@ namespace SlowRoboticsGH
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            DA.SetData(0, new Plane3DKDTree());
+            List<GH_Plane3D> planes = new List<GH_Plane3D>();
+            Plane3DKDTree tree = new Plane3DKDTree();
+            if (DA.GetDataList(0, planes))
+            {
+                foreach(GH_Plane3D p in planes)
+                {
+                    tree.Add(p.Value);
+                }
+            }
+            DA.SetData(0, tree);
         }
     }
 
