@@ -39,13 +39,12 @@ namespace SlowRobotics.Core
 
         public virtual void step(float dt)
         {
-            if (!f && mass>0)
+            if (!f)
             {
                 integrate(dt);
                 age++;
             }
-            accel = new Vec3D();
-            inertia = 0.97f; 
+            reset();
         }
 
         /// <summary>
@@ -54,8 +53,16 @@ namespace SlowRobotics.Core
         /// <param name="dt"></param>
         public virtual void integrate(float dt)
         {
-            vel.addSelf(accel.scale(1 / mass));
-            vel.scaleSelf(dt * inertia);
+            if (mass > 0)
+            {
+                vel.addSelf(accel.scale(1 / mass));
+                vel.scaleSelf(dt * inertia);
+            }
+            else
+            {
+                //vel = accel
+                vel.set(accel.scale((dt*inertia)));
+            }
             addSelf(vel);
         }
 
@@ -67,6 +74,7 @@ namespace SlowRobotics.Core
         public virtual void reset()
         {
             accel = new Vec3D();
+            inertia = 0.97f;
         }
 
         public float getInertia()

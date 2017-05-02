@@ -89,6 +89,9 @@ namespace SlowRobotics.Core
         public override void reset()
         {
             impulses = new List<Impulse>();
+            Torque = new Vec3D();
+            accel = new Vec3D();
+            inertia = 0.97f;
         }
 
         //adds to accel and torque
@@ -109,21 +112,6 @@ namespace SlowRobotics.Core
                     if (!float.IsNaN(a)) Torque.addSelf(crossAb.scale(a)); //integrate torque
                 }
             }
-        }
-
-        public override void step(float dt)
-        {
-            if (!f && mass > 0)
-            {
-                integrate(dt);
-                age++;
-            }
-
-            reset();
-            Torque = new Vec3D();
-            accel = new Vec3D();
-            inertia = 0.97f;
-
         }
 
         public override void integrate(float dt)

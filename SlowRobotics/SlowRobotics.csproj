@@ -150,6 +150,7 @@
     <Compile Include="Utils\IBenchmark.cs" />
     <Compile Include="Utils\SRString.cs" />
     <Compile Include="Utils\PriorityQueue.cs" />
+    <Compile Include="Utils\ThreadedRandom.cs" />
     <Compile Include="Voxels\ByteGrid.cs" />
     <Compile Include="Voxels\ColourGrid.cs" />
     <Compile Include="Voxels\ColourVoxel.cs" />

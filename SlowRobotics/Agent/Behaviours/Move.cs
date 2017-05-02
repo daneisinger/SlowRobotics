@@ -298,4 +298,29 @@ namespace SlowRobotics.Agent.Behaviours
             }
         }
     }
+
+    public class Brownian : ScaledBehaviour<SRParticle>
+    {
+
+        public float strength;
+        public bool inXY;
+
+        public Brownian(int _priority, float _strength, bool _inXY) : base(_priority)
+        {
+            strength = _strength;
+            inXY = _inXY;
+        }
+
+        public override void runOn(SRParticle v)
+        {
+            Vec3D randomVector = new Vec3D((float)ThreadedRandom.RandDouble() - 0.5f, 
+                (float)ThreadedRandom.RandDouble() - 0.5f, 
+                inXY?0: (float)ThreadedRandom.RandDouble() - 0.5f);
+
+            randomVector.scaleSelf(strength);
+            v.addForce(randomVector);
+        }
+
+
+    }
 }

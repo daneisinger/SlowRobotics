@@ -11,6 +11,7 @@ using Grasshopper.Kernel.Types;
 using SlowRobotics.Field;
 using SlowRobotics.Field.Elements;
 using SlowRobotics.SRGraph;
+using SlowRobotics.Spatial;
 
 namespace SlowRoboticsGH
 {
@@ -95,6 +96,28 @@ namespace SlowRoboticsGH
             particle.mass = (float)mass;
             particle.tag = tag;
             DA.SetData(0, new GH_Particle(particle));
+        }
+    }
+
+    public class CreateKDTreeComponent : GH_Component
+    {
+        public CreateKDTreeComponent() : base("Create KDTree", "KDTree", "Creates a KDTree", "Nursery", "Simulation") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override Guid ComponentGuid => new Guid("{76fcc476-f4d6-4f09-a31b-f9d3365989d3}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Tree", "T", "The KDTree", GH_ParamAccess.item);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            DA.SetData(0, new Plane3DKDTree());
         }
     }
 

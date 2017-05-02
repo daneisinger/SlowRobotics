@@ -930,6 +930,54 @@ namespace SlowRoboticsGH
         }
     }
 
+
+    public class BrownianComponent : GH_Component
+    {
+
+        public BrownianComponent() : base("Brownian Motion", "Brownian", "Adds a random force to particles", "Nursery", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override Guid ComponentGuid => new Guid("{1fdbdc42-9cef-43e9-bd33-bef99b9028fe}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddNumberParameter("Strength", "S", "Strength of effect", GH_ParamAccess.item, 0.1);
+            pManager.AddBooleanParameter("XY", "XY", "Toggle to limit random vector to World XY plane", GH_ParamAccess.item, false);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item, 0);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
+        }
+
+        public Brownian brownian = null;
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            double strength = 0.1;
+            bool inXY = false;
+            int priority = 5;
+
+            if (!DA.GetData(0, ref strength)) { return; }
+            if (!DA.GetData(1, ref inXY)) { return; }
+            if (!DA.GetData(2, ref priority)) { return; }
+
+            if (brownian != null)
+            {
+                brownian.strength = (float)strength;
+                brownian.inXY = inXY;
+                brownian.priority = priority;
+            }
+            else
+            {
+                brownian = new Brownian(priority, (float)strength, inXY);
+
+            }
+            DA.SetData(0, brownian);
+        }
+    }
+
     public class LineToLineComponent : GH_Component
     {
 

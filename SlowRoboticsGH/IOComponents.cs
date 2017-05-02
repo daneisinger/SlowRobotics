@@ -5,6 +5,7 @@ using Rhino.Geometry;
 using SlowRobotics.Agent;
 using SlowRobotics.Core;
 using SlowRobotics.Rhino.IO;
+using SlowRobotics.SRGraph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -121,4 +122,44 @@ namespace SlowRoboticsGH
         }
     }
 
+    public class DrawGraphComponent : GH_Component
+    {
+        public DrawGraphComponent() : base("Draw Graph", "Draw", "Draws any agents that contain Graph<ILine> data", "Nursery", "Draw") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{2b489ae4-cfc9-4d8d-b9d2-643df7011c73}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Agents", "P", "Agents to draw planes for", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddLineParameter("Edges", "E", "Graph Edges", GH_ParamAccess.list);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            GH_ObjectWrapper wrapper = null;
+
+            if (!DA.GetData(0, ref wrapper)) { return; }
+
+            List<GH_Line> lines = new List<GH_Line>();
+
+            foreach (IAgent agent in SR_GH_IO.getFromWrapper(wrapper))
+            {
+                IAgentT<object> a = (IAgentT<object>)agent;
+                Graph<SRParticle,Spring> g = a.getData() as Graph<SRParticle, Spring>;
+                if (g != null)
+                {
+                    foreach(Spring s in g.Edges)
+                    {
+                        lines.Add(new GH_Line(new Line(s.start.ToPoint3d(), s.end.ToPoint3d())));
+                    }
+                }
+            }
+            DA.SetDataList(0, lines);
+        }
+    }
 }
