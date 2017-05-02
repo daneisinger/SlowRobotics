@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-    public class FilterClosest : ScaledBehaviour<SRParticle>
+    public class FilterClosest : ScaledBehaviour<Vec3D>
     {
         public FilterClosest(int priority) : base(priority)
         {
@@ -15,32 +16,31 @@ namespace SlowRobotics.Agent.Behaviours
 
         public override void run(IAgentT<object> agent)
         {
-            var a = (AgentT<object>)agent;
 
-            var particle = (SRParticle)a.getData();
+            Vec3D pos = agent.getData() as Vec3D;
+            if(pos!= null) { 
 
-            var neighbours = a.neighbours;
+            var neighbours = agent.neighbours;
 
-            if (neighbours.Count > 0)
-            {
-
-                double cd = Double.MaxValue;
-                SRParticle closest = null;
-                foreach (var nn in neighbours)
+                if (neighbours.Count > 0)
                 {
-                    var neighbour = (SRParticle)nn;
 
-                    var dist = neighbour.distanceToSquared(particle);
-                    if (dist < cd)
+                    double cd = Double.MaxValue;
+                    Vec3D closest = null;
+                    foreach (Vec3D nn in neighbours)
                     {
-                        cd = dist;
-                        closest = neighbour;
+                        var dist = nn.distanceToSquared(pos);
+                        if (dist < cd)
+                        {
+                            cd = dist;
+                            closest = nn;
+                        }
                     }
-                }
-                if (closest != null)
-                {
-                    a.neighbours.Clear();
-                    a.neighbours.Add(closest);
+                    if (closest != null)
+                    {
+                        agent.neighbours.Clear();
+                        agent.neighbours.Add(closest);
+                    }
                 }
             }
         }
@@ -54,8 +54,7 @@ namespace SlowRobotics.Agent.Behaviours
 
         public override void run(IAgentT<object> agent)
         {
-            var a = (AgentT<object>)agent;
-            a.neighbours = a.neighbours.Where(n => ((SRParticle)n).parent != ((SRParticle)a.getData()).parent).ToList();
+            agent.neighbours = agent.neighbours.Where(n => ((SRParticle)n).parent != ((SRParticle)agent.getData()).parent).ToList();
         }
     }
 }
