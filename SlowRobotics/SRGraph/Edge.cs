@@ -32,6 +32,13 @@ namespace SlowRobotics.SRGraph
             return null;
         }
 
+        public INode<T> Common (IEdge<T> toThis)
+        {
+            if (a == toThis.a || a == toThis.b) return a;
+            if (b == toThis.b || b == toThis.b) return b;
+            return null;
+        }
+
         public bool replaceNode(INode<T> replaceThis, INode<T> withThat)
         {
             if (a == replaceThis)

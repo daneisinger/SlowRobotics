@@ -60,7 +60,7 @@ namespace SlowRobotics.Agent
 
         public virtual void run(IAgentT<object> a)
         {
-
+            
             T data = a.getData() as T;
             if (data != null)
             {
@@ -70,11 +70,11 @@ namespace SlowRobotics.Agent
             {
                 throw new InvalidCastException("Behaviour of type " + typeof(T) + " cannot run on agent type:" + a.getData().GetType());
             }
-
         }
 
         public virtual void interact(IAgentT<object> a, object b)
         {
+            
             T data = a.getData() as T;
             if (data != null)
             {
@@ -112,7 +112,7 @@ namespace SlowRobotics.Agent
 
         public override void run(IAgentT<object> a)
         {
-
+            
             T data = a.getData() as T; 
             if (data !=null)
             {

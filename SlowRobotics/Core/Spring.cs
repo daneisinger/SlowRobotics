@@ -68,6 +68,13 @@ namespace SlowRobotics.Core
             return null;
         }
 
+        public INode<SRParticle> Common (IEdge<SRParticle> toThis)
+        {
+            if (a == toThis.a || a == toThis.b) return a;
+            if (b == toThis.b || b == toThis.b) return b;
+            return null;
+        }
+
         public bool replaceNode(INode<SRParticle> replaceThis, INode<SRParticle> withThat)
         {
             if (a == replaceThis)
