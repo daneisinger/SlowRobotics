@@ -68,7 +68,7 @@ namespace SlowRobotics.Agent
             }
             else
             {
-                throw new InvalidCastException("Behaviour of type " + typeof(T) + " cannot run on agent type:" + a.getData().GetType());
+                //throw new InvalidCastException("Behaviour of type " + typeof(T) + " cannot run on agent type:" + a.getData().GetType());
             }
         }
 
@@ -82,7 +82,7 @@ namespace SlowRobotics.Agent
             }
             else
             {
-                throw new InvalidCastException("Behaviour of type " + typeof(T) + " cannot run on agent type:" + a.getData().GetType());
+               // throw new InvalidCastException("Behaviour of type " + typeof(T) + " cannot run on agent type:" + a.getData().GetType());
             }
         }
 
@@ -121,7 +121,7 @@ namespace SlowRobotics.Agent
             }
             else
             {
-                throw new InvalidCastException("Behaviour of type " + typeof(T) + " cannot run on agent type:" + a.getData().GetType());
+               // throw new InvalidCastException("Behaviour of type " + typeof(T) + " cannot run on agent type:" + a.getData().GetType());
             }
         }
 

@@ -139,6 +139,19 @@ namespace SlowRoboticsGH
             pManager.AddLineParameter("Edges", "E", "Graph Edges", GH_ParamAccess.list);
         }
 
+        protected override void AppendAdditionalComponentMenuItems(System.Windows.Forms.ToolStripDropDown menu)
+        {
+            base.AppendAdditionalComponentMenuItems(menu);
+            Menu_AppendItem(menu, "Draw Bracing", Menu_DoClick);
+        }
+
+        private void Menu_DoClick(object sender, EventArgs e)
+        {
+            brace = !brace;
+        }
+
+        public bool brace = false;
+
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             GH_ObjectWrapper wrapper = null;
@@ -155,7 +168,7 @@ namespace SlowRoboticsGH
                 {
                     foreach(Spring s in g.Edges)
                     {
-                        lines.Add(new GH_Line(new Line(s.start.ToPoint3d(), s.end.ToPoint3d())));
+                        if(brace || (!brace & s.tag=="") )lines.Add(new GH_Line(new Line(s.a.Geometry.ToPoint3d(), s.b.Geometry.ToPoint3d())));
                     }
                 }
             }

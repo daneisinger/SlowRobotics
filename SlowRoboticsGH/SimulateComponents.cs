@@ -114,64 +114,48 @@ namespace SlowRoboticsGH
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Particles", "P", "Particles (agents) to fix", GH_ParamAccess.list);
+            pManager.AddParameter(new ParticleParameter(),"Particle", "P", "Particle to fix", GH_ParamAccess.item);
             pManager.AddPointParameter("Points", "P", "Fix Points", GH_ParamAccess.list);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Agents", "A", "Agents", GH_ParamAccess.list);
+            pManager.AddParameter(new ParticleParameter(), "Particles", "P", "Particles", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            List<Point3d> points = new List<Point3d>();
-            List<GH_ObjectWrapper> wlist = new List<GH_ObjectWrapper>();
+            //making a new particle for some reason... 
 
-            if (!DA.GetDataList(0, wlist)) { return; }
+            List<Point3d> points = new List<Point3d>();
+            GH_Particle ghP = null; 
+
+            if (!DA.GetData(0, ref ghP)) { return; }
             if (!DA.GetDataList(1, points)) { return; }
 
-            List<IAgent> outAgents = new List<IAgent>();
-
-            foreach(GH_ObjectWrapper wrapper in wlist)
+            IParticle part = ghP.Value;
+            foreach (Point3d p in points)
             {
-                if (wrapper.Value is List<IAgent>)
+                if (part.get().distanceTo(new Vec3D((float)p.X, (float)p.Y, (float)p.Z)) < 1)
                 {
-                    List<IAgent> agents = (List<IAgent>)wrapper.Value;
-                    foreach (IAgent a in agents)
-                    {
-                        testPt(a, points);
-                        outAgents.Add(a);
-                    }
-                }
-                else if (wrapper.Value is IAgent)
-                {
-                    testPt((IAgent)wrapper.Value, points);
-                    outAgents.Add((IAgent)wrapper.Value);
+                    part.f = true;
+                    break;
                 }
             }
 
-            DA.SetData(0, new GH_ObjectWrapper(outAgents));
+            DA.SetData(0, part);
         }
 
-        public void testPt(IAgent agent, List<Point3d> pts)
+        public void testPt(IParticle part, List<Point3d> pts)
         {
-            IAgentT<Vec3D> typedAgent = (IAgentT<Vec3D>)agent;
-            if (typedAgent != null)
+
+            foreach (Point3d p in pts)
             {
-                foreach (Point3d p in pts)
+                if (part.get().distanceTo(new Vec3D((float)p.X, (float)p.Y, (float)p.Z)) < 1)
                 {
-                    if (typedAgent.getData().distanceTo(new Vec3D((float)p.X, (float)p.Y, (float)p.Z)) < 1)
-                    {
-                        agent.removeBehaviours();
-                        if (agent is SlowRobotics.Core.SRParticle) ((SlowRobotics.Core.SRParticle)agent).f = true;
-                        return;
-                    }
+                    part.f = true;
+                    return;
                 }
-            }
-            else
-            {
-                throw new TypeAccessException("Incorrect agent type, try implementing IAgentT<Vec3D>");
             }
         }
     }

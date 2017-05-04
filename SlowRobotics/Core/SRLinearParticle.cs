@@ -91,7 +91,7 @@ namespace SlowRobotics.Core
             impulses = new List<Impulse>();
             Torque = new Vec3D();
             accel = new Vec3D();
-            inertia = 0.97f;
+            inertia = 0.99f;
         }
 
         //adds to accel and torque

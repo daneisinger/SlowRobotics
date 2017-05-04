@@ -24,27 +24,28 @@ namespace SlowRobotics.Agent
 
         public abstract void step(float damping);
         public abstract void lateUpdate(float damping);
-
+       
         public void addBehaviour(IBehaviour b)
         {
             behaviours.Enqueue(b);
             b.onAdd();
         }
-
+        
         public void addBehaviours(List<IBehaviour> newBehaviours)
         {
             foreach (IBehaviour b in newBehaviours) addBehaviour(b);
         }
 
-        public List<IBehaviour> getBehaviours()
-        {
-            return behaviours.getData();
-        }
-
         public void setBehaviours(List<IBehaviour> newBehaviours)
         {
             behaviours = new PriorityQueue<IBehaviour>();
-            foreach (IBehaviour b in newBehaviours) addBehaviour(b);
+            addBehaviours(newBehaviours);
+        }
+     
+
+        public List<IBehaviour> getBehaviours()
+        {
+            return behaviours.getData();
         }
 
         public void removeBehaviours()

@@ -11,6 +11,7 @@ namespace SlowRobotics.Core
         string tag { get; set; }
         float mass { get; set; }
         float radius { get; set; }
+        bool f { get; set; }
 
         Plane3D get();
 

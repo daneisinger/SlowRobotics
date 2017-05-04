@@ -20,7 +20,6 @@ namespace SlowRobotics.Agent
 
         void step(float damping);
         void lateUpdate(float damping);
-
         void addBehaviour(IBehaviour b);
         void addBehaviours(List<IBehaviour> behaviours);
         void setBehaviours(List<IBehaviour> behaviours);
@@ -31,10 +30,9 @@ namespace SlowRobotics.Agent
     /// Generic extension - provides generic data to behaviours
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IAgentT<out T> : IAgent 
+    public interface IAgentT<out T> : IAgent where T :class
     {
         //THIS SHOULD REALLY BE A LIST OF AGENTS NOT VEC3D!
-
         List<Vec3D> neighbours { get; set; }
         bool hasNeighbours();
         void addNeighbours(List<Vec3D> neighbours);

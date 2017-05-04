@@ -105,7 +105,7 @@ namespace SlowRobotics.SRGraph
 
         public void merge(Graph<T,E> other)
         {
-            foreach (E e in other.Edges) _edges.Add(e);
+            foreach (E e in other.Edges) insert(e);
             foreach (INode<T> n in other.Nodes) insert(n);
         }
 
@@ -114,13 +114,12 @@ namespace SlowRobotics.SRGraph
             INode<T> a;
             INode<T> b;
             if (!getNodeAt(mergeThis, out a) || !getNodeAt(intoThat, out b)) return false;
-
+            if (a == b) return false;
             //add all edges of A into B
             foreach (IEdge<T> e in a.Edges)
             {
                 e.replaceNode(a, b);
                 b.add(e);
-
             }
             //remove A
             _nodeMap.Remove(a.Geometry);

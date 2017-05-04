@@ -80,11 +80,13 @@ namespace SlowRobotics.Core
             if (a == replaceThis)
             {
                 a = withThat;
+                start = withThat.Geometry;
                 return true;
             }
             else if (b == replaceThis)
             {
                 b = withThat;
+                end = withThat.Geometry;
                 return true;
             }
             return false;

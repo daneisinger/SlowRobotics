@@ -258,25 +258,40 @@ namespace SlowRoboticsGH
 
         public override bool CastFrom(object source)
         {
-            if (source is Plane3D)
+            if(source is IParticle)
+            {
+                Value = (IParticle)source;
+                return true;
+            }
+            /*
+            else if (source is SRLinearParticle)
+            {
+                Value = (SRLinearParticle)source;
+                return true;
+            }
+            else if (source is SRParticle)
+            {
+                Value = (SRParticle)source;
+                return true;
+            }*/
+            else if (source is Plane3D)
             {
                 Value = new SRParticle((Plane3D)source);
                 return true;
             }
-            if (source is GH_Plane3D)
+            else if (source is GH_Plane3D)
             {
                 Value = new SRParticle(((GH_Plane3D)source).Value);
                 return true;
             }
 
-            if (source is GH_Plane)
+            else if (source is GH_Plane)
             {
                 SRParticle p = new SRParticle(((GH_Plane)source).Value.ToPlane3D());
                 Value = p;
                 return true;
             }
-
-            if (source is GH_Line)
+            else if (source is GH_Line)
             {
                 Line l = ((GH_Line)source).Value;
                 double length = l.Length / 2;
@@ -289,18 +304,9 @@ namespace SlowRoboticsGH
                 p.length = (float)length;
                 Value = p;
                 return true;
-            }else if (source is SRLinearParticle)
-            {
-                Value = (SRLinearParticle)source;
-                return true;
             }
-            else if (source is SRParticle)
-            {
-                Value = (SRParticle)source;
-                return true;
-            }
-            
-            return false;
+
+                return false;
         }
 
         public void DrawViewportWires(GH_PreviewWireArgs args)

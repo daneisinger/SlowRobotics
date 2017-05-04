@@ -75,7 +75,7 @@ namespace SlowRobotics.Core
         public virtual void reset()
         {
             accel = new Vec3D();
-            inertia = 0.97f;
+            inertia = 0.99f;
         }
 
         public float getInertia()

@@ -51,28 +51,28 @@ namespace SlowRobotics.Rhino.GraphTools
             }
         }
 
-        public static void spanSprings(Graph<SRParticle, Spring> graph, float stiffness)
+        public static void spanSprings(Graph<SRParticle, Spring> graph, float stiffness, float lengthRatio, int dimension)
         {
-            if (graph.Edges.Count > 1)
+            List<Spring> bucket = new List<Spring>();
+
+            for (int dim = 1; dim <= dimension; dim++)
             {
-                List<Spring> bucket = new List<Spring>();
-                for (int i = 1; i < graph.Edges.Count; i += 1)
+                if (graph.Edges.Count > dim)
                 {
-                    Spring a = graph.Edges[i - 1];
-                    Spring b = graph.Edges[i];
-                    // INode<SRParticle> common = a.Common(b);
-                    //  if (common != null)
-                    //  {
-                    Spring s = new Spring(a.a, b.b);
-                    s.s = stiffness;
-                    s.l = a.l + b.l;
-                    s.tag = "brace";
-                    bucket.Add(s);
+                    for (int i = dim; i < graph.Edges.Count; i += dim)
+                    {
+                        Spring a = graph.Edges[i - dim];
+                        Spring b = graph.Edges[i];
+                        Spring s = new Spring(a.a, b.b);
+                        s.s = stiffness;
+                        float len = graph.Edges.GetRange(i - dim, dim + 1).Sum(spr => spr.l);
+                        s.l = len * lengthRatio;
+                        s.tag = "brace";
+                        bucket.Add(s);
+                    }
                 }
-
-                foreach (Spring s in bucket) graph.insert(s);
             }
-
+            foreach (Spring s in bucket) graph.insert(s);
         }
 
         public  static void connectNthNodesWithLength(Graph<SRParticle, Spring> graph, int n, float stiffness)
