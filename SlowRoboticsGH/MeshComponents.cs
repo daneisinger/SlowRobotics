@@ -25,9 +25,9 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddCurveParameter("Curve", "C", "Curve to pipe", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Number of Sections", "S", "Divides the curve into n polygons", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Radius", "R", "Radius of the pipe polygon", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Number of Sides", "F", "Sides to the pipe polygon", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Number of Sections", "S", "Divides the curve into n polygons", GH_ParamAccess.item,10);
+            pManager.AddNumberParameter("Radius", "R", "Radius of the pipe polygon", GH_ParamAccess.item,1);
+            pManager.AddIntegerParameter("Number of Sides", "F", "Sides to the pipe polygon", GH_ParamAccess.item,4);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -61,8 +61,8 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddCurveParameter("Polylines", "P", "Polylines to loft", GH_ParamAccess.list);
-            pManager.AddBooleanParameter("Cap Start", "Cs", "Mesh the first section", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Cap End", "Ce", "Mesh the last section", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Cap Start", "Cs", "Mesh the first section", GH_ParamAccess.item, true);
+            pManager.AddBooleanParameter("Cap End", "Ce", "Mesh the last section", GH_ParamAccess.item,true);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -87,6 +87,67 @@ namespace SlowRoboticsGH
             }
 
             DA.SetData(0, Mesher.buildClosedMeshFromPolylineSections(polylines, cS, cE));
+        }
+    }
+
+    public class FillMeshComponent : GH_Component
+    {
+        public FillMeshComponent() : base("Fill Mesh", "FillMesh", "Fill a mesh with maximum n planes that align with the nearest normal on the mesh. Will try n*10 times to fill. Creates planes on surface of mesh if not closed", "Nursery", "Mesh") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{f7c2509a-4b87-49a6-b29d-0bc251a95b28}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddMeshParameter("Mesh", "M", "Mesh to Populate", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Number", "N", "Number of points to generate", GH_ParamAccess.item, 100);
+            pManager.AddNumberParameter("Tolerance", "T", "Acceptable tolerance for pop", GH_ParamAccess.item, 1);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddPlaneParameter("Points", "P", "Points in mesh", GH_ParamAccess.list);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            
+            Mesh mesh = null;
+            int n = 100;
+            double t = 1;
+            if (!DA.GetData(0, ref mesh)) { return; }
+            if (!DA.GetData(1, ref n)) { return; }
+            if (!DA.GetData(2, ref t)) { return; }
+
+            Random r = new Random();
+            BoundingBox b = mesh.GetBoundingBox(false);
+            List<Plane> pts = new List<Plane>();
+            int ctr = 0;
+            int i = 0;
+            mesh.FaceNormals.ComputeFaceNormals();
+
+            while (ctr < n && i < n*10)
+            {
+                i += 1;
+                Point3d tmp = new Point3d(b.PointAt(r.NextDouble(), r.NextDouble(), r.NextDouble()));
+                if (!mesh.IsClosed)
+                {
+                    Point3d cpt = mesh.ClosestPoint(tmp);
+                    MeshPoint mpt = mesh.ClosestMeshPoint(cpt, t);
+                    pts.Add(new Plane(mpt.Point, mesh.FaceNormals[mpt.FaceIndex]));
+                    ctr += 1;
+                }
+                else {
+                    if (mesh.IsPointInside(tmp, t, false))
+                    {
+                        Point3d cpt = mesh.ClosestPoint(tmp);
+                        MeshPoint mpt = mesh.ClosestMeshPoint(cpt, t);
+                        pts.Add(new Plane(tmp, mesh.FaceNormals[mpt.FaceIndex]));
+                        ctr += 1;
+                    }
+                }
+            }
+            DA.SetDataList(0,pts);
         }
     }
 }

@@ -438,8 +438,8 @@ namespace SlowRoboticsGH
             pManager.AddMeshParameter("Mesh", "M", "Mesh defining field", GH_ParamAccess.item);
             pManager.AddNumberParameter("Weight", "W", "Field element weight", GH_ParamAccess.item,1);
             pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Distance for field element", GH_ParamAccess.item,50);
-            pManager.AddNumberParameter("Min Distance", "Mn", "Minimum Distance for field element", GH_ParamAccess.item, 1);
-            pManager.AddNumberParameter("Attenuation", "A", "Attenuation of field element", GH_ParamAccess.item,2);
+            pManager.AddNumberParameter("Min Distance", "Mn", "Minimum Distance for field element - weight reduces below this distance", GH_ParamAccess.item, 1);
+            pManager.AddNumberParameter("Attenuation", "A", "Attenuation of field element - linear falloff above min distance", GH_ParamAccess.item,2);
 
         }
 

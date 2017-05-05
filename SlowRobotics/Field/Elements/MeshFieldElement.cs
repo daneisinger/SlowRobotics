@@ -24,14 +24,17 @@ namespace SlowRobotics.Field.Elements
         public override void integrate(ref FieldData d, Vec3D loc)
         {
             Vec3D p = mesh.ClosestPoint(loc.ToPoint3d()).ToVec3D();
-            float dist = p.distanceTo(loc);
-            if (dist > minDist)
+            Vec3D ap = p.sub(loc);
+            float dist = ap.magnitude();
+            if (dist < maxDist)
             {
                 //not using get weight function to avoid dual closest point checks
-                dist = MathUtils.constrain(p.distanceTo(loc), 1, maxDist);
-                float w = ((dist < maxDist) ? (weight * (1 / (float)Math.Pow(dist, attenuation))) : 0);
+                //dist = MathUtils.constrain(p.distanceTo(loc), minDist, maxDist);
+                //float w = ((dist < maxDist) ? (weight * (1 / (float)Math.Pow(dist, attenuation))) : 0);
 
-                Vec3D scaledVal = p.sub(loc).normalizeTo(w);
+                //linear falloff when < minDist
+                float f = (float) Math.Pow((dist< minDist)? MathUtils.map(dist, 0, minDist, 0, 1) : 1, attenuation);
+                Vec3D scaledVal = ap.scale(weight*f);
 
                 if (d.hasVectorData())
                 {

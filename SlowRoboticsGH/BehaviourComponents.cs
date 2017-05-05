@@ -1163,7 +1163,6 @@ namespace SlowRoboticsGH
     public class RepelComponent : GH_Component
     {
        
-
         public RepelComponent() : base("Repel", "Repel", "SRParticle interaction Behaviour: Repel particles", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{38563a34-1be4-4c68-bd94-cb4b2e15a4f2}");

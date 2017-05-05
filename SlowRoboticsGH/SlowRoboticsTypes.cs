@@ -216,6 +216,11 @@ namespace SlowRoboticsGH
                 Value = ((GH_Plane3D)source).Value;
                 return true;
             }
+            if (source is GH_Point)
+            {
+                Value = new Plane3D(((GH_Point)source).Value.ToVec3D());
+                return true;
+            }
             return false;
         }
 
@@ -225,6 +230,16 @@ namespace SlowRoboticsGH
             if (typeof(Q) == typeof(Plane3D))
             {
                 target = (Q)(object)Value;
+                return true;
+            }
+            if (typeof(Q) == typeof(GH_Plane))
+            {
+                target = (Q)(object)new GH_Plane(Value.ToPlane());
+                return true;
+            }
+            if (typeof(Q) == typeof(Plane))
+            {
+                target = (Q)(object)Value.ToPlane();
                 return true;
             }
             return base.CastTo<Q>(ref target);
@@ -263,17 +278,6 @@ namespace SlowRoboticsGH
                 Value = (IParticle)source;
                 return true;
             }
-            /*
-            else if (source is SRLinearParticle)
-            {
-                Value = (SRLinearParticle)source;
-                return true;
-            }
-            else if (source is SRParticle)
-            {
-                Value = (SRParticle)source;
-                return true;
-            }*/
             else if (source is Plane3D)
             {
                 Value = new SRParticle((Plane3D)source);
@@ -305,8 +309,33 @@ namespace SlowRoboticsGH
                 Value = p;
                 return true;
             }
+            if (source is Plane)
+            {
+                Value = new SRParticle(((Plane)source).ToPlane3D());
+                return true;
+            }
+            if (source is GH_Point)
+            {
+                Value = new SRParticle(new Plane3D(((GH_Point)source).Value.ToVec3D()));
+                return true;
+            }
+            return false;
+        }
 
-                return false;
+        //test castTo override
+        public override bool CastTo<Q>(ref Q target)
+        {
+            if (typeof(Q) == typeof(Plane))
+            {
+                target = (Q)(object)Value.get().ToPlane();
+                return true;
+            }
+            if (typeof(Q) == typeof(GH_Plane))
+            {
+                target = (Q)(object)new GH_Plane(Value.get().ToPlane());
+                return true;
+            }
+            return base.CastTo<Q>(ref target);
         }
 
         public void DrawViewportWires(GH_PreviewWireArgs args)
@@ -416,8 +445,10 @@ namespace SlowRoboticsGH
 
         }
 
+
         public void DrawViewportMeshes(GH_PreviewMeshArgs args)
         {
+            
             //throw new NotImplementedException();
         }
     }
