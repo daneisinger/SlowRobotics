@@ -85,4 +85,38 @@ namespace SlowRobotics.Spatial
             }
         }
     }
+
+    public class BruteForceSearch : ISearchable
+    {
+        public List<Vec3D> allPts;
+        public BruteForceSearch()
+        {
+            allPts = new List<Vec3D>();
+        }
+
+        public void Add(Vec3D pt)
+        {
+            allPts.Add(pt);
+        }
+
+        public List<Vec3D> Search(Vec3D pt, float radius)
+        {
+            List<Vec3D> returnPts = new List<Vec3D>();
+            float[] distances = new float[allPts.Count()];
+            int c = 0;
+            foreach(Vec3D p in allPts)
+            {
+                distances[c] = p.distanceTo(pt);
+            }
+            Array.Sort(distances);
+
+            //etc etc
+            return returnPts;
+        }
+
+        public void Update(IEnumerable<Vec3D> pts)
+        {
+            allPts = pts.ToList();
+        }
+    }
 }

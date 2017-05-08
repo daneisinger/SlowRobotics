@@ -13,6 +13,23 @@ namespace SlowRobotics.Rhino.GraphTools
     public static class GraphUtils
     {
 
+        public static void interconnectNodes(Graph<SRParticle,Spring> graph, float stiffness)
+        {
+            foreach(SRParticle p in graph.Geometry)
+            {
+                foreach(SRParticle pp in graph.Geometry)
+                {
+                    if (pp!= p)
+                    {
+                        Spring brace = new Spring(p, pp);
+                        brace.tag = "brace";
+                        brace.s = stiffness;
+                        graph.insert(brace);
+                    }
+                }
+            }
+        }
+
         public static void createProximateSprings(Graph<SRParticle, Spring> graph, float stiffness, float minDist, float maxDist, string tag)
         {
             List<Vec3D> pts = graph.Geometry.ConvertAll(x => (Vec3D)x);
@@ -51,11 +68,11 @@ namespace SlowRobotics.Rhino.GraphTools
             }
         }
 
-        public static void spanSprings(Graph<SRParticle, Spring> graph, float stiffness, float lengthRatio, int dimension)
+        public static void spanSprings(Graph<SRParticle, Spring> graph, float stiffness, float lengthRatio, int degree)
         {
             List<Spring> bucket = new List<Spring>();
 
-            for (int dim = 1; dim <= dimension; dim++)
+            for (int dim = 1; dim <= degree; dim++)
             {
                 if (graph.Edges.Count > dim)
                 {

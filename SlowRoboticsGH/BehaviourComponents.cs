@@ -108,7 +108,7 @@ namespace SlowRoboticsGH
     }
     public class SpringComponent : GH_Component
     {
-        public SpringComponent() : base("Springs", "Spring", "Spring Behaviour: Adds hookes law springs", "Nursery", "Behaviours") { }
+        public SpringComponent() : base("Springs", "Spring", "Graph<SRParticle,Spring> Behaviour: Adds hookes law springs", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{c9a35ba6-b679-446b-860e-d28244cd6360}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;

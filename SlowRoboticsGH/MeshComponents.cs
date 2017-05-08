@@ -150,4 +150,47 @@ namespace SlowRoboticsGH
             DA.SetDataList(0,pts);
         }
     }
+
+    public class MeshPlaneComponent : GH_Component
+    {
+        public MeshPlaneComponent() : base("Mesh Plane", "MeshPlane", "Creates a plane from mesh face normal at a given point (<100 units from mesh)", "Nursery", "Mesh") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{d6f19cae-5207-4076-be7f-8d5b24949706}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddMeshParameter("Mesh", "M", "Mesh to Populate", GH_ParamAccess.item);
+            pManager.AddPointParameter("Points", "P", "Plane origins", GH_ParamAccess.list);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddPlaneParameter("Planes", "P", "Planes on mesh", GH_ParamAccess.list);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+
+            Mesh mesh = null;
+            List<Point3d> pts = new List<Point3d>();
+
+            if (!DA.GetData(0, ref mesh)) { return; }
+            if (!DA.GetDataList(1, pts)) { return; }
+
+            
+            mesh.FaceNormals.ComputeFaceNormals();
+
+            List<Plane> faceNormals = new List<Plane>();
+
+            foreach (Point3d p in pts)
+            {
+                MeshPoint pt = mesh.ClosestMeshPoint(p, 100);
+                Vector3d f = mesh.FaceNormals[pt.FaceIndex];
+                faceNormals.Add(new Plane(p,f));
+            }
+
+            DA.SetDataList(0, faceNormals);
+        }
+    }
 }

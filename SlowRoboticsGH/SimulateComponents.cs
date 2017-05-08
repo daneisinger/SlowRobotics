@@ -27,7 +27,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new Plane3DParameter(),"Planes", "P", "Starting planes", GH_ParamAccess.item);
             pManager.AddParameter(new FieldParameter(),"Field", "F", "Field to simulate", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Simulation steps", "S", "Number of simulation steps", GH_ParamAccess.item,100);
-            pManager.AddNumberParameter("Strength", "St", "Strength Multiplier", GH_ParamAccess.item,1);
+            pManager.AddNumberParameter("Limit", "L", "Field weight limit", GH_ParamAccess.item,1);
             pManager.AddBooleanParameter("Normalize", "N", "Normalize field strength", GH_ParamAccess.item, false);
         }
 
@@ -41,13 +41,13 @@ namespace SlowRoboticsGH
             Plane3D plane = null;
             GH_Field f = null;
             int steps = 1;
-            double strength = 1;
+            double limit = 1;
             bool normalize = false;
 
             if (!DA.GetData(0, ref plane)) { return; }
             if (!DA.GetData(1, ref f)) { return; }
             if (!DA.GetData(2, ref steps)) { return; }
-            if (!DA.GetData(3, ref strength)) { return; }
+            if (!DA.GetData(3, ref limit)) { return; }
             if (!DA.GetData(4, ref normalize)) { return; }
 
             Plane3D init = new Plane3D(plane);
@@ -62,7 +62,14 @@ namespace SlowRoboticsGH
                 if (data.hasPlaneData()) dir.addSelf(data.planeData.wx);
                 if (data.hasVectorData()) dir.addSelf(data.vectorData);
 
-                if(normalize) dir.normalizeTo((float)strength);
+                if (normalize)
+                {
+                    dir.normalizeTo((float)limit);
+                }
+                else
+                {
+                    dir.limit((float)limit);
+                }
                 init.addSelf(dir);
                 init.interpolateToXX(dir, 1);
                 planes.Add(init.ToPlane());
@@ -107,7 +114,7 @@ namespace SlowRoboticsGH
     
     public class FixParticlesComponent : GH_Component
     {
-        public FixParticlesComponent() : base("Fix Particles", "FixParticles", "Fix particles by proximity to a list of points", "Nursery", "Simulation") { }
+        public FixParticlesComponent() : base("Fix Particles", "FixParticles", "Fix particles by proximity to a list of points", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{e90f5cb9-f76d-4ec9-bb73-c93b3210cc40}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
@@ -162,7 +169,7 @@ namespace SlowRoboticsGH
 
     public class SetBehaviours : GH_Component
     {
-        public SetBehaviours() : base("Set Behaviours", "SetBehaviours", "Set agent behaviours", "Nursery", "Agent") { }
+        public SetBehaviours() : base("Set Behaviours", "SetBehaviours", "Set agent behaviours", "Nursery", "Simulation") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{8aecd428-5f62-4003-939a-baf18729a08f}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
@@ -216,7 +223,7 @@ namespace SlowRoboticsGH
             DA.SetData(0, wrapper.Value);
         }
     }
-
+    /*
     public class AddBehaviours : GH_Component
     {
         public AddBehaviours() : base("Add Behaviours", "AddBehaviours", "Add behaviours to agents", "Nursery", "Agent") { }
@@ -272,4 +279,5 @@ namespace SlowRoboticsGH
             DA.SetData(0, wrapper.Value);
         }
     }
+    */
 }

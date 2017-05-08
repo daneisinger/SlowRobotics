@@ -12,13 +12,14 @@ using SlowRobotics.Field;
 using SlowRobotics.Field.Elements;
 using SlowRobotics.SRGraph;
 using SlowRobotics.Spatial;
+using SlowRobotics.Rhino.GraphTools;
 
 namespace SlowRoboticsGH
 {
     public class CreatePopulationComponent : GH_Component
     {
         public CreatePopulationComponent() : base("Create Population", "CreatePop", "Creates an agent list for simulation", "Nursery", "Simulation") { }
-        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{de35d78e-dc9a-4e2a-ae4c-708ee7ec823c}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
@@ -48,8 +49,8 @@ namespace SlowRoboticsGH
 
     public class CreateParticleComponent : GH_Component
     {
-        public CreateParticleComponent() : base("Create Particle", "CreateParticle", "Creates a particle (or linearparticle) from plane and properties - you can create particles with default properties using the particle parameter", "Nursery", "Simulation") { }
-        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public CreateParticleComponent() : base("Create Particle", "CreateParticle", "Creates a particle (or linearparticle) from plane and properties - you can create particles with default properties using the particle parameter", "Nursery", "Utilities") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{c878e7c2-c607-47fc-aa32-520e7f0bbdde}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
@@ -104,8 +105,8 @@ namespace SlowRoboticsGH
 
     public class CreateKDTreeComponent : GH_Component
     {
-        public CreateKDTreeComponent() : base("Create KDTree", "KDTree", "Creates a KDTree", "Nursery", "Simulation") { }
-        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public CreateKDTreeComponent() : base("Create KDTree", "KDTree", "Creates a KDTree", "Nursery", "Utilities") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{76fcc476-f4d6-4f09-a31b-f9d3365989d3}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
@@ -137,7 +138,7 @@ namespace SlowRoboticsGH
 
     public class MeshToGraph : GH_Component
     {
-        public MeshToGraph() : base("Convert Mesh to Graph", "MeshToGraph", "Converts mesh edges and vertices to a graph", "Nursery", "Agent") { }
+        public MeshToGraph() : base("Convert Mesh to Graph", "MeshToGraph", "Converts mesh edges and vertices to a graph", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{899106fc-bc8b-405c-bab3-21d3063b9ef9}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
@@ -161,7 +162,7 @@ namespace SlowRoboticsGH
             if (!DA.GetData(0, ref m)) { return; }
             if (!DA.GetData(1, ref stiffness)) { return; }
 
-            Graph<SRParticle, Spring> g = SlowRobotics.Rhino.IO.SRConvert.MeshToGraph(m, (float)stiffness);
+            Graph<SRParticle, Spring> g = SRConvert.MeshToGraph(m, (float)stiffness);
 
             DA.SetData(0, g);
         }
@@ -169,20 +170,20 @@ namespace SlowRoboticsGH
 
     public class InterconnectNodesComponent : GH_Component
     {
-        public InterconnectNodesComponent() : base("Interconnect Nodes", "Interconnect", "Interconnect all nodes in a link mesh", "Nursery", "Agent") { }
+        public InterconnectNodesComponent() : base("Interconnect Nodes", "Interconnect", "Interconnect all nodes in a link mesh", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{a1cac11b-f74a-4546-befd-88a304ff3eeb}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddParameter(new GraphParameter(), "Graph", "L", "Graph to contain Spings", GH_ParamAccess.item);
+            pManager.AddParameter(new GraphParameter(), "Graph", "G", "Graph to contain Spings", GH_ParamAccess.item);
             pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item, 0.15);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Graph", "L", "Graph", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Graph", "G", "Graph", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -193,31 +194,31 @@ namespace SlowRoboticsGH
             if (!DA.GetData(0, ref _graph)) { return; }
             if (!DA.GetData(1, ref stiffness)) { return; }
 
-            Graph<SlowRobotics.Core.SRParticle, Spring> graph = _graph.Value;
-            //lm.interconnectTertiaryNodes(lm.getNodes().ToList(), (float)stiffness); ----------------------TODO implement functions
+            Graph<SRParticle, Spring> graph = _graph.Value;
+            GraphUtils.interconnectNodes(graph, (float)stiffness);
 
-            DA.SetData(0, new GH_ObjectWrapper(graph));
+            DA.SetData(0, graph);
         }
     }
 
     public class ConnectByProximityComponent : GH_Component
     {
-        public ConnectByProximityComponent() : base("Connect by proximity", "ConnectProximity", "Connect proximate nodes", "Nursery", "Agent") { }
+        public ConnectByProximityComponent() : base("Connect by proximity", "ConnectProximity", "Create brace springs between proximate nodes in a graph", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{ff9181ca-01c3-4743-ac72-362777938324}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddParameter(new GraphParameter(), "LinkMesh", "L", "LinkMesh to contain links", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item, 0.15);
+            pManager.AddParameter(new GraphParameter(), "Graph", "G", "Graph to brace", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item, 0.08);
             pManager.AddNumberParameter("Minimum Distance", "Mn", "Minimum connection distance", GH_ParamAccess.item,0);
             pManager.AddNumberParameter("Maximum Distance", "Mx", "Maximum connection distance", GH_ParamAccess.item,1);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("LinkMesh", "L", "LinkMesh", GH_ParamAccess.list);
+            pManager.AddParameter(new GraphParameter(), "Graph", "G", "Graph", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -231,50 +232,55 @@ namespace SlowRoboticsGH
             if (!DA.GetData(1, ref stiffness)) { return; }
             if (!DA.GetData(2, ref minD)) { return; }
             if (!DA.GetData(3, ref maxD)) { return; }
-            Graph<SlowRobotics.Core.SRParticle, Spring> g = _graph.Value;
 
-            //lm.connectByProximity(lm.getNodes().ToList(), (float)minD, (float)maxD,(float)stiffness);-------------------TODO implement functions
+            Graph<SRParticle, Spring> g = _graph.Value;
 
-            DA.SetData(0, new GH_ObjectWrapper(g));
+            GraphUtils.createProximateSprings(g, (float)stiffness, (float)minD, (float)maxD, "brace");
+
+            DA.SetData(0, g);
         }
     }
 
-    public class ConnectNthNodesComponent : GH_Component
+    public class SpanGraphEdgesComponent : GH_Component
     {
-        public ConnectNthNodesComponent() : base("Connect Nth Nodes", "ConnectNth", "Connect nth nodes in a link mesh", "Nursery", "Agent") { }
+        public SpanGraphEdgesComponent() : base("Span Graph Edges", "SpanEdges", "Creates bracing springs by spanning edges in a linear graph", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{9310194c-fbb8-4a29-9ae4-c58733cd75b0}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddParameter(new GraphParameter(), "LinkMesh", "L", "LinkMesh to contain links", GH_ParamAccess.item);
+            pManager.AddParameter(new GraphParameter(), "Graph", "G", "Graph to span", GH_ParamAccess.item);
             pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item,0.15);
+            pManager.AddIntegerParameter("Degree", "D", "Creates bracing that connect d number of springs from a given node", GH_ParamAccess.item, 1);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("LinkMesh", "L", "LinkMesh", GH_ParamAccess.list);
+            pManager.AddParameter(new GraphParameter(), "Graph", "G", "Graph", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            double stiffness = 0.1;
+            
             GH_Graph _graph = null;
+            double stiffness = 0.1;
+            int degree = 1;
 
             if (!DA.GetData(0, ref _graph)) { return; }
             if (!DA.GetData(1, ref stiffness)) { return; }
+            if (!DA.GetData(1, ref degree)) { return; }
 
-            Graph<SlowRobotics.Core.SRParticle, Spring> g = _graph.Value;
-            //lm.braceNthLinks(lm.getLinks(), (float)stiffness);  ------------------------ TODO implement functions
+            Graph<SRParticle, Spring> g = _graph.Value;
+            GraphUtils.spanSprings(g, (float) stiffness, 1f, degree);
 
-            DA.SetData(0, new GH_ObjectWrapper(g));
+            DA.SetData(0, g);
         }
     }
 
     public class ConvertCurveToGraphComponent : GH_Component
     {
-        public ConvertCurveToGraphComponent() : base("Converts curve to Graph", "CurveToGraph", "Create Linked agents by dividing a curve", "Nursery", "Agent") { }
+        public ConvertCurveToGraphComponent() : base("Convert Curve To Graph", "CurveToGraph", "Create graph by dividing a curve", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{67691d26-05ad-4680-a28d-666f0b83e939}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
@@ -284,16 +290,16 @@ namespace SlowRoboticsGH
             pManager.AddCurveParameter("Curve", "C", "Curve to Divide", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Res", "R", "Number of division points", GH_ParamAccess.item);
             pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item,0.15);
+            pManager[1].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Agents", "A", "Wrapped list of agents", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Graph", "L", "Graph", GH_ParamAccess.item);
+            pManager.AddParameter(new GraphParameter(), "Graph", "G", "Graph", GH_ParamAccess.item);
+            pManager.AddParameter(new ParticleParameter(), "Particles", "P", "Particles", GH_ParamAccess.list);
         }
 
-        public List<IAgent> agents = new List<IAgent>();
-        public Graph<SRParticle,Spring> graph = null;
+        public Graph<SRParticle, Spring> graph = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -302,39 +308,22 @@ namespace SlowRoboticsGH
             int res = 0;
 
             if (!DA.GetData(0, ref curve)) { return; }
-            if (!DA.GetData(1, ref res)) { return; }
+            DA.GetData(1, ref res);
+            if (!DA.GetData(2, ref stiffness)) { return; }
 
-            if (!DA.GetData(5, ref stiffness)) { return; }
+            graph = new Graph<SRParticle, Spring>();
 
-                //reset agent list and behaviours
-                agents = new List<IAgent>();
-                
-                //first agent
-                Plane currentPlane;
-                curve.FrameAt(0, out currentPlane);
-                SRParticle p1 = new SRParticle(currentPlane.ToPlane3D());
-                AgentT<SRParticle> a = new AgentT<SRParticle>(p1);
-                agents.Add(a);
+            if (res == 0)
+            {
+                SRConvert.CurveToGraph(curve, (float) stiffness, ref graph);
+            }
+            else
+            {
+                SRConvert.CurveToGraph(curve, res, (float)stiffness, ref graph);
+            }
 
-                graph = new Graph<SRParticle, Spring>();
-                graph.parent = p1;
-                //all other agents
-                double[] pts = curve.DivideByCount(res, true);
-
-                for (int i = 1; i < pts.Length; i++)
-                {
-                    curve.FrameAt(pts[i], out currentPlane);
-                    SRParticle p2 = new SRParticle(currentPlane.ToPlane3D());
-                    AgentT<SRParticle> b = new AgentT<SRParticle>(p2);
-                    Spring s = new Spring(a.getData(), b.getData());
-                    s.s = (float)stiffness;
-                    graph.insert(s);
-                    agents.Add(b);
-                    a = b;
-                }
-
-            DA.SetData(0, new GH_ObjectWrapper(agents));
-            DA.SetData(1, new GH_ObjectWrapper(graph));
+            DA.SetData(0, graph);
+            DA.SetDataList(1, graph.Geometry);
         }
     }
 
@@ -586,6 +575,7 @@ namespace SlowRoboticsGH
             pManager.AddNumberParameter("Attenuation", "A", "Attenuation of field element", GH_ParamAccess.item,2);
             pManager.AddNumberParameter("Noise Scale", "N", "Scale of noise ", GH_ParamAccess.item,0.1);
             pManager.AddNumberParameter("Rotation Scale", "R", "Rotation effect of noise ", GH_ParamAccess.item,1);
+            pManager.AddBooleanParameter("XY", "XY", "Limit noise to world xy plane", GH_ParamAccess.item,true); 
 
         }
 
@@ -602,6 +592,7 @@ namespace SlowRoboticsGH
             double attens = 2;
             double scales = 0.1;
             double rScales = 1;
+            bool XY = true;
 
             if (!DA.GetData(0, ref locations)) { return; }
             if (!DA.GetData(1, ref weights)) { return; }
@@ -609,15 +600,16 @@ namespace SlowRoboticsGH
             if (!DA.GetData(3, ref attens)) { return; }
             if (!DA.GetData(4, ref scales)) { return; }
             if (!DA.GetData(5, ref rScales)) { return; }
+            if (!DA.GetData(6, ref XY)) { return; }
 
 
-
-               IFieldElement pts = new NoiseFieldElement( new Toxiclibs.core.Vec3D((float)locations.X, (float)locations.Y, (float)locations.Z),
+            IFieldElement pts = new NoiseFieldElement( new Toxiclibs.core.Vec3D((float)locations.X, (float)locations.Y, (float)locations.Z),
                    (float) weights,
                         (float)distances,
                         (float)attens,
                         (float)scales,
-                        (float)rScales);
+                        (float)rScales,
+                        XY);
 
 
             DA.SetData(0, pts);
