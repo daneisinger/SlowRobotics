@@ -151,7 +151,7 @@ namespace SlowRoboticsGH
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddParameter(new ParticleParameter(), "Particles", "P", "Particles in graph", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Springs", "S", "Springs in graph", GH_ParamAccess.list);
+            pManager.AddParameter(new SpringParameter(), "Springs", "S", "Springs in graph", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -161,7 +161,7 @@ namespace SlowRoboticsGH
             if (!DA.GetData(0, ref graph)) { return; }
 
             DA.SetDataList(0, graph.Value.Geometry);
-            DA.SetDataList(0, graph.Value.Edges);
+            DA.SetDataList(1, graph.Value.Edges);
         }
     }
 }
