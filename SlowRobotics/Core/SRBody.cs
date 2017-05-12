@@ -6,6 +6,9 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Core
 {
+    /// <summary>
+    /// Rigid body implementation
+    /// </summary>
     public class SRBody : SRParticle
     {
         public List<SRParticle> pts;
@@ -13,8 +16,13 @@ namespace SlowRobotics.Core
         public Vec3D AngularVelocity;
         public Vec3D Torque;
 
+        /// <summary>
+        /// Default constructor. Creates an SRBody from a centre of mass. 
+        /// Use insertPoint() to add particles to the body.
+        /// </summary>
+        /// <param name="_centreOfMass"></param>
         public SRBody(Plane3D _centreOfMass) : base(_centreOfMass)
-    {
+        {
             pts = new List<SRParticle>();
 
             AngularVelocity = new Vec3D();
@@ -22,6 +30,11 @@ namespace SlowRobotics.Core
             Torque = new Vec3D();
         }
 
+        /// <summary>
+        /// Recalculate centre of mass from particles in the body. 
+        /// This function currently treates mass of all particles as equal.
+        /// </summary>
+        /// <returns>Centre of mass for all particles</returns>
         public Plane3D calculateCoM()
         {
             Vec3D origin = MathUtils.averageVectors(pts.Select(pt => (Vec3D)pt).ToList());
@@ -30,21 +43,36 @@ namespace SlowRobotics.Core
             return new Plane3D(origin, xx, yy);
         }
 
+        /// <summary>
+        /// Sets the centre of mass of the body to a given plane.
+        /// </summary>
+        /// <param name="p"></param>
         public void setCoM(Plane3D p)
         {
             set(p);
         }
 
+        /// <summary>
+        /// Inserts a particle into the particle collection of the body
+        /// </summary>
+        /// <param name="_pt">Point to insert</param>
         public void insertPoint(SRParticle _pt)
         {
             pts.Add(_pt);
         }
 
+        /// <summary>
+        /// Inserts a collection of particles into the particle collection of the body
+        /// </summary>
+        /// <param name="_pts">Points to insert</param>
         public void insertPoints(IEnumerable<SRParticle> _pts)
         {
             pts.AddRange(_pts);
         }
 
+        /// <summary>
+        /// Calls the ApplyImpulses() function for each particle in the body
+        /// </summary>
         private void sumForces()
         {
             foreach (SRParticle p in pts)
@@ -53,7 +81,10 @@ namespace SlowRobotics.Core
             }
         }
 
-        //adds to accel and torque
+        /// <summary>
+        /// Integrates particle forces into body Accel and Torque
+        /// </summary>
+        /// <param name="impulses"></param>
         public void ApplyImpulses(IEnumerable<Impulse> impulses)
         {
             foreach (Impulse i in impulses)
@@ -72,6 +103,10 @@ namespace SlowRobotics.Core
             }
         }
 
+        /// <summary>
+        /// Transforms body centre of mass and all particles in the body.
+        /// </summary>
+        /// <param name="t"></param>
         public override void transform(Matrix4x4 t)
         {
             //transform plane
@@ -90,6 +125,10 @@ namespace SlowRobotics.Core
             }
         }
 
+        /// <summary>
+        /// Calls sumForces() and integrates acceleration and torque into body position and orientation by transforming the body.
+        /// </summary>
+        /// <param name="dt"></param>
         public override void step(float dt)
         {
             sumForces(); //sets torque and accel based on forces on particles
@@ -114,6 +153,11 @@ namespace SlowRobotics.Core
             age++;
         }
 
+        /// <summary>
+        /// Static method to create a body from a graph
+        /// </summary>
+        /// <param name="graph">Graph to create body from</param>
+        /// <returns></returns>
         public static SRBody CreateFromGraph(Graph<SRParticle, Spring> graph)
         {
             SRBody body = new SRBody(new Plane3D()); //create temporary centre of mass

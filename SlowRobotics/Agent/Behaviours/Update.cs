@@ -44,7 +44,7 @@ namespace SlowRobotics.Agent.Behaviours
             {
                 foreach (IAgent p in pop.getAgents())
                 {
-                    IAgentT<object> a = (IAgentT<object>)p;
+                    IAgent<object> a = (IAgent<object>)p;
                     if (a != null)
                     {
                         Vec3D v = a.getData() as Vec3D;

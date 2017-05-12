@@ -14,7 +14,7 @@ namespace SlowRobotics.Agent.Behaviours
         {
         }
 
-        public override void run(IAgentT<object> agent)
+        public override void run(IAgent<object> agent)
         {
 
             Vec3D pos = agent.getData() as Vec3D;
@@ -52,7 +52,7 @@ namespace SlowRobotics.Agent.Behaviours
         {
         }
 
-        public override void run(IAgentT<object> agent)
+        public override void run(IAgent<object> agent)
         {
             agent.neighbours = agent.neighbours.Where(n => ((SRParticle)n).parent != ((SRParticle)agent.getData()).parent).ToList();
         }

@@ -136,6 +136,55 @@ namespace SlowRoboticsGH
         }
     }
 
+    public class SpringParameter : GH_PersistentParam<GH_Spring>, IGH_PreviewObject
+    {
+        public SpringParameter() : base("Spring", "Spring", "This is a Spring", "Nursery", "Parameters") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        public override System.Guid ComponentGuid => new Guid("{69b8e253-7bf0-464f-af79-062550329983}");
+
+        bool _hidden;
+        public bool Hidden
+        {
+            get { return _hidden; }
+            set { _hidden = value; }
+        }
+
+        public bool IsPreviewCapable
+        {
+            get { return true; }
+        }
+
+        public BoundingBox ClippingBox
+        {
+            get
+            {
+                return Preview_ComputeClippingBox();
+            }
+        }
+
+        protected override GH_GetterResult Prompt_Singular(ref GH_Spring value)
+        {
+            value = new GH_Spring();
+            return GH_GetterResult.success;
+        }
+        protected override GH_GetterResult Prompt_Plural(ref List<GH_Spring> values)
+        {
+            values = new List<GH_Spring>();
+            return GH_GetterResult.success;
+        }
+
+        public void DrawViewportWires(IGH_PreviewArgs args)
+        {
+            Preview_DrawWires(args);
+        }
+
+        public void DrawViewportMeshes(IGH_PreviewArgs args)
+        {
+            Preview_DrawMeshes(args);
+        }
+    }
+
     public class Plane3DParameter : GH_PersistentParam<GH_Plane3D>
     {
         public Plane3DParameter() : base("Plane3D", "Plane3D", "This is a Plane3D", "Nursery", "Parameters") { }

@@ -9,6 +9,9 @@ using SlowRobotics.SRMath;
 
 namespace SlowRobotics.Core
 {
+    /// <summary>
+    /// Structure for handling impulses (force + location)
+    /// </summary>
     public struct Impulse
     {
         public Vec3D pos { get; }
@@ -22,17 +25,27 @@ namespace SlowRobotics.Core
         }
     }
 
+    /// <summary>
+    /// Extension of SRParticle to add linear dimension and impulses
+    /// </summary>
     public class SRLinearParticle : SRParticle, ILine
     {
-        public double length;
+        public double length = 1;
         private List<Impulse> impulses;
         public Vec3D Torque { get; set; }
 
+        /// <summary>
+        /// Default constructor with length 1
+        /// </summary>
+        /// <param name="_p"></param>
         public SRLinearParticle(Plane3D _p) : base(_p) {
             impulses = new List<Impulse>();
             Torque = new Vec3D();
         }
 
+        /// <summary>
+        /// Gets position of start of line
+        /// </summary>
         public Vec3D start
         {
             get
@@ -42,6 +55,9 @@ namespace SlowRobotics.Core
             set { }
         }
 
+        /// <summary>
+        /// Gets position of end of line
+        /// </summary>
         public Vec3D end
         {
             get
@@ -54,38 +70,56 @@ namespace SlowRobotics.Core
         /// <summary>
         /// returns point at normalized parameter
         /// </summary>
-        /// <param name="f"></param>
+        /// <param name="f">Parameter</param>
         /// <returns></returns>
         public Vec3D pointAt(float f)
         {
             return add(zz.scale(f * (float)length));
         }
 
+        /// <summary>
+        /// Aplies a force at the centre of the particle
+        /// </summary>
+        /// <param name="force"></param>
         public override void addForce(Vec3D force)
         {
             addForce(this, force);
         }
 
         /// <summary>
-        /// Adds a force at a parameter value between -1 and 1
+        /// Applies a force at a parameter value between -1 and 1
         /// </summary>
-        /// <param name="param"></param>
-        /// <param name="force"></param>
+        /// <param name="param">Parameter</param>
+        /// <param name="force">Force to apply</param>
         public void addForce (float param, Vec3D force)
         {
             addForce(this.add(this.zz.scale(-Math.Abs(param))), force);
         }
 
+        /// <summary>
+        /// Applies a force at a given location
+        /// </summary>
+        /// <param name="pos">Position</param>
+        /// <param name="force">Force</param>
         public void addForce(Vec3D pos, Vec3D force)
         {
             addForce(pos, force, false);
         }
 
+        /// <summary>
+        /// Applies a torque only (rotational) force at a given location
+        /// </summary>
+        /// <param name="pos">Position</param>
+        /// <param name="force">Force</param>
+        /// <param name="torqueOnly">Only apply a rotational force</param>
         public void addForce(Vec3D pos, Vec3D force, bool torqueOnly)
         {
             impulses.Add(new Impulse(pos, force, torqueOnly));
         }
 
+        /// <summary>
+        /// Resets all parameters of the LinearParticle
+        /// </summary>
         public override void reset()
         {
             impulses = new List<Impulse>();
@@ -94,7 +128,10 @@ namespace SlowRobotics.Core
             inertia = 0.99f;
         }
 
-        //adds to accel and torque
+        /// <summary>
+        /// Integrates impulses into particle acceleration and torque
+        /// </summary>
+        /// <param name="impulses"></param>
         public void ApplyImpulses(IEnumerable<Impulse> impulses)
         {
             foreach (Impulse i in impulses)
@@ -114,6 +151,10 @@ namespace SlowRobotics.Core
             }
         }
 
+        /// <summary>
+        /// Integrates accel and torque into particle position and orientation
+        /// </summary>
+        /// <param name="dt"></param>
         public override void integrate(float dt)
         {
             ApplyImpulses(impulses);
@@ -130,11 +171,20 @@ namespace SlowRobotics.Core
             
         }
 
+        /// <summary>
+        /// Returns a list of impulses currently applied to the particle
+        /// </summary>
+        /// <returns></returns>
         public override IEnumerable<Impulse> getImpulse()
         {
             foreach (Impulse i in impulses) yield return i;
         }
 
+        /// <summary>
+        /// Gets the closest point on the line
+        /// </summary>
+        /// <param name="p">Point to search from</param>
+        /// <returns></returns>
         public Vec3D closestPoint(ReadonlyVec3D p)
         {
             Vec3D v = end.sub(start);
@@ -152,6 +202,11 @@ namespace SlowRobotics.Core
             return start.add(v.scaleSelf(t));
         }
 
+        /// <summary>
+        /// gets the closest point between two lines
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         public Vec3D closestPoint(ILine other)
         {
             return MathUtils.closestPoint(this, other);

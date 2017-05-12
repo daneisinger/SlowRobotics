@@ -105,7 +105,7 @@ namespace SlowRoboticsGH
             if (!DA.GetDataList(0, list)){ return; }
             if (!DA.GetData(1, ref steps)) { return; } 
 
-            foreach(GH_AgentList l in list)Core.run(l.Value, 1 / (float)steps);
+            foreach(GH_AgentList l in list)Core.run(l.Value, steps);
 
 
             DA.SetDataList(0, list);

@@ -21,7 +21,7 @@ namespace SlowRobotics.Agent.Behaviours
             //lateUpdate = true;
         }
 
-        public override void run(IAgentT<object> a)
+        public override void run(IAgent<object> a)
         {
 
             Vec3D n = a.getData() as Vec3D;

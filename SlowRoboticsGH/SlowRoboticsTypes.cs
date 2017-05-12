@@ -102,6 +102,70 @@ namespace SlowRoboticsGH
         }
     }
 
+    public class GH_Spring : GH_Goo<Spring>, IGH_PreviewData
+    {
+        public GH_Spring() { this.Value = null; }
+        public GH_Spring(GH_Spring goo) { this.Value = goo.Value; }
+        public GH_Spring(Spring native) { this.Value = native; }
+
+        public override IGH_Goo Duplicate() => new GH_Spring(this);
+        public override bool IsValid => true;
+        public override string TypeName => "Spring";
+        public override string TypeDescription => "Spring";
+        public override string ToString() => this.Value.ToString();
+        public override object ScriptVariable() => Value;
+
+        public BoundingBox ClippingBox
+        {
+            get
+            {
+                return new BoundingBox();
+            }
+        }
+
+        public override bool CastFrom(object source)
+        {
+            if (source is Spring)
+            {
+                Value = source as Spring;
+                return true;
+            }
+            if (source is GH_Spring)
+            {
+                Value = ((GH_Spring)source).Value;
+                return true;
+            }
+            return false;
+        }
+
+        public override bool CastTo<Q>(ref Q target)
+        {
+            if (typeof(Q) == typeof(Line))
+            {
+                target = (Q)(object)Value.toLine();
+                return true;
+            }
+            if (typeof(Q) == typeof(GH_Line))
+            {
+                target = (Q)(object)new GH_Line(Value.toLine());
+                return true;
+            }
+
+            return base.CastTo<Q>(ref target);
+        }
+
+        public void DrawViewportWires(GH_PreviewWireArgs args)
+        {
+            ILine l = m_value;
+            args.Pipeline.DrawLine(l.toLine(), System.Drawing.Color.Red, 1);
+        }
+
+        public void DrawViewportMeshes(GH_PreviewMeshArgs args)
+        {
+            // DrawViewportMeshes(args);
+        }
+    }
+
     public class GH_String : GH_Goo<SRString>
     {
         public GH_String() { this.Value = null; }
@@ -114,8 +178,6 @@ namespace SlowRoboticsGH
         public override string TypeDescription => "Nursery String";
         public override string ToString() => this.Value.ToString();
         public override object ScriptVariable() => Value;
-
-        //todo - do casts
 
         public override bool CastFrom(object source)
         {
@@ -483,7 +545,7 @@ namespace SlowRoboticsGH
             if (source is IGH_Goo)
             {
                 object o = ((IGH_Goo)source).ScriptVariable();
-                Value = new AgentT<object>(o);
+                Value = new Agent<object>(o);
                 return true;
             }
             
@@ -491,10 +553,10 @@ namespace SlowRoboticsGH
             {
                 GH_ObjectWrapper wrapper = (GH_ObjectWrapper)source;
 
-                Value = new AgentT<object>(wrapper.Value);
+                Value = new Agent<object>(wrapper.Value);
                 return true;
             }
-            Value = new AgentT<object>(source);
+            Value = new Agent<object>(source);
             return true;
         }
 

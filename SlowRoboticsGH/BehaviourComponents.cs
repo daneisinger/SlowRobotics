@@ -219,7 +219,6 @@ namespace SlowRoboticsGH
             pManager.AddNumberParameter("Stiffness", "S", "Link Stiffness", GH_ParamAccess.item,0.15);
             pManager.AddIntegerParameter("Add Frequency", "F", "Add a link every n steps", GH_ParamAccess.item,1);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
-            pManager.AddGenericParameter("Structure", "S", "Spatial structure to add new points to", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Reset", "R", "Delete existing agents", GH_ParamAccess.item);
         }
 
@@ -238,7 +237,6 @@ namespace SlowRoboticsGH
             double stiffness = 0.1;
             int freq = 1;
             int priority = 5;
-            ISearchable pts = null;
             bool reset = false;
 
             if (!DA.GetDataList(0, behaviours)) { return; }
@@ -246,8 +244,7 @@ namespace SlowRoboticsGH
             if (!DA.GetData(2, ref stiffness)) { return; }
             if (!DA.GetData(3, ref freq)) { return; }
             if (!DA.GetData(4, ref priority)) { return; }
-            if (!DA.GetData(5, ref pts)) { return; }
-            if (!DA.GetData(6, ref reset)) { return; }
+            if (!DA.GetData(5, ref reset)) { return; }
 
             if (addLink != null)
             {
@@ -256,11 +253,10 @@ namespace SlowRoboticsGH
                 addLink.offset = offset.ToVec3D();
                 addLink.frequency = freq;
                 addLink.priority = priority;
-                addLink.pts = pts;
             }
             else
             {
-                addLink = new Add.Extend(priority, freq, offset.ToVec3D(), (float)stiffness,  behaviours.ConvertAll(b => { return b.Value; }),pts);
+                addLink = new Add.Extend(priority, freq, offset.ToVec3D(), (float)stiffness,  behaviours.ConvertAll(b => { return b.Value; }));
             }
             if (reset) addLink.pop = new AgentList();
             DA.SetData(0, addLink);
@@ -280,7 +276,6 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "New Behaviours", "B", "Behaviours for duplicated agent", GH_ParamAccess.list);
             pManager.AddNumberParameter("Max Length", "Mx", "Max length before split", GH_ParamAccess.item, 1);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item, 0);
-            pManager.AddGenericParameter("Structure", "S", "Spatial structure to add new points to", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Reset", "R", "Delete existing agents", GH_ParamAccess.item);
         }
 
@@ -297,25 +292,22 @@ namespace SlowRoboticsGH
             List<GH_Behaviour> behaviours = new List<GH_Behaviour>();
             double maxLength = 1; 
             int priority = 5;
-            ISearchable pts = null;
             bool reset = false;
 
             if (!DA.GetDataList(0, behaviours)) { return; }
             if (!DA.GetData(1, ref maxLength)) { return; }
             if (!DA.GetData(2, ref priority)) { return; }
-            if (!DA.GetData(3, ref pts)) { return; }
-            if (!DA.GetData(4, ref reset)) { return; }
+            if (!DA.GetData(3, ref reset)) { return; }
 
             if (addLink != null)
             {
                 addLink.behaviours = (behaviours.ConvertAll(b => { return b.Value; }));
                 addLink.maxLength = (float)maxLength;
                 addLink.priority = priority;
-                addLink.pts = pts;
             }
             else
             {
-                addLink = new Add.Split(priority, behaviours.ConvertAll(b => { return b.Value; }), (float) maxLength, pts);
+                addLink = new Add.Split(priority, behaviours.ConvertAll(b => { return b.Value; }), (float) maxLength);
             }
             if (reset) addLink.pop = new AgentList();
             DA.SetData(0, addLink);
@@ -884,7 +876,6 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddNumberParameter("Strength", "S", "Strength of effect", GH_ParamAccess.item,0.005);
-            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Attraction Distance", GH_ParamAccess.item,10);
             pManager.AddIntegerParameter("Axis", "A", "Plane axis to align", GH_ParamAccess.item,0);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
 
@@ -904,26 +895,23 @@ namespace SlowRoboticsGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             double strength = 0.004;
-            double maxDist = 10;
             int axis = 0;
             int priority = 5;
 
             if (!DA.GetData(0, ref strength)) { return; }
-            if (!DA.GetData(1, ref maxDist)) { return; }
-            if (!DA.GetData(2, ref axis)) { return; }
-            if (!DA.GetData(3, ref priority)) { return; }
+            if (!DA.GetData(1, ref axis)) { return; }
+            if (!DA.GetData(2, ref priority)) { return; }
 
             if (bestFit != null)
             {
                 bestFit.strength = (float)strength;
-                bestFit.maxDist = (float)maxDist;
                 bestFit.priority = priority;
                 bestFit.axis = axis;
 
             }
             else
             {
-                bestFit = new Align.AxisToBestFitPlane(priority,(float)strength,(float)maxDist,axis);
+                bestFit = new Align.AxisToBestFitPlane(priority,(float)strength,axis);
                 
             }
             DA.SetData(0,bestFit);
@@ -1365,7 +1353,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
         }
 
-        public Add.PointToWorld addBehaviour = null;
+        public Add.InsertPoint addBehaviour = null;
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -1385,7 +1373,7 @@ namespace SlowRoboticsGH
             }
             else
             {
-                addBehaviour = new Add.PointToWorld(priority,pts,frequency);
+                addBehaviour = new Add.InsertPoint(priority,pts,frequency);
             }
             DA.SetData(0, addBehaviour);
         }

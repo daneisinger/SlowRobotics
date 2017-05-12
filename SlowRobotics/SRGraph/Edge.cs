@@ -7,13 +7,32 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.SRGraph
 {
+    /*
+    public class Edge : IEdge
+    {
+        public int ai
+        {
+            get;
+        }
+        public int bi
+        { 
+            get;
+        }
+
+        public Edge(int _ai, int _bi)
+        {
+            ai = _ai;
+            bi = _bi;
+        }
+    }*/
+
     public class Edge<T> : IEdge<T>
     {
         public INode<T> a { get; set; }
         public INode<T> b { get; set; }
 
 
-        public Edge(INode<T> _start, INode<T> _end)
+        public Edge(INode<T> _start, INode<T> _end) 
         {
             a = _start;
             b = _end;

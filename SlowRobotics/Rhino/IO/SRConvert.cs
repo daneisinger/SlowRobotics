@@ -16,13 +16,13 @@ namespace SlowRobotics.Rhino.IO
 
         //TODO - clean up parenting thing, implemement fast proximity connections between nodes that aren't joined.
 
-        public static List<AgentT<SRParticle>> CurveToGraph(Curve c, int res, float stiffness, ref Graph<SRParticle, Spring> lm)
+        public static List<Agent<SRParticle>> CurveToGraph(Curve c, int res, float stiffness, ref Graph<SRParticle, Spring> lm)
         {
             double[] pts = c.DivideByCount(res, true);
             return CurveToGraph(c, pts, stiffness, ref lm);
         }
 
-        public static List<AgentT<SRParticle>> CurveToGraph(Curve c, float stiffness, ref Graph<SRParticle, Spring> lm)
+        public static List<Agent<SRParticle>> CurveToGraph(Curve c, float stiffness, ref Graph<SRParticle, Spring> lm)
         {
 
             Interval dom = c.Domain;
@@ -39,17 +39,17 @@ namespace SlowRobotics.Rhino.IO
             return CurveToGraph(c, pts.ToArray(), stiffness, ref lm);
         }
 
-        public static List<AgentT<SRParticle>> CurveToGraph(Curve c, double[] pts, float stiffness, ref Graph<SRParticle,Spring> lm)
+        public static List<Agent<SRParticle>> CurveToGraph(Curve c, double[] pts, float stiffness, ref Graph<SRParticle,Spring> lm)
         {
             Plane startPlane;
             c.FrameAt(0, out startPlane);
             SRParticle p1 = new SRParticle(startPlane.ToPlane3D());
-            AgentT<SRParticle> a = new AgentT<SRParticle>(p1);
+            Agent<SRParticle> a = new Agent<SRParticle>(p1);
             lm.parent = p1;
 
             p1.parent = lm.parent; //parent the particle
 
-            List<AgentT<SRParticle>> agents = new List<AgentT<SRParticle>>();
+            List<Agent<SRParticle>> agents = new List<Agent<SRParticle>>();
             agents.Add(a);
             
 
@@ -61,7 +61,7 @@ namespace SlowRobotics.Rhino.IO
                 c.FrameAt(pts[i], out currentPlane);
                 SRParticle p2 = new SRParticle(currentPlane.ToPlane3D());
                 p2.parent = lm.parent; // parent the particle
-                AgentT<SRParticle> b = new AgentT<SRParticle>(p2);
+                Agent<SRParticle> b = new Agent<SRParticle>(p2);
                 
 
                 agents.Add(b);
@@ -118,10 +118,10 @@ namespace SlowRobotics.Rhino.IO
             return output;
         }
 
-        public static AgentT<SRParticle> ToPlaneAgent(Plane p)
+        public static Agent<SRParticle> ToPlaneAgent(Plane p)
         {
             SRParticle p1 = new SRParticle(p.ToPlane3D());
-            return new AgentT<SRParticle>(p1);
+            return new Agent<SRParticle>(p1);
         }
 
     }

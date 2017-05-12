@@ -32,6 +32,16 @@ namespace SlowRobotics.Rhino.IO
             return new Line(l.start.ToPoint3d(), l.end.ToPoint3d());
         }
 
+        public static Line toLine(this Spring s)
+        {
+            return new Line(s.start.ToPoint3d(), s.end.ToPoint3d());
+        }
+
+        public static Line toLine(this ILine l)
+        {
+            return new Line(l.start.ToPoint3d(), l.end.ToPoint3d());
+        }
+
         public static Vec3D ToVec3D(this Point3f p)
         {
             return new Vec3D(p.X, p.Y, p.Z);

@@ -18,7 +18,7 @@ namespace SlowRobotics.Agent.Behaviours
         /// Default scaling
         /// </summary>
         /// <param name="a"></param>
-        public override void run(IAgentT<object> a)
+        public override void run(IAgent<object> a)
         {
             foreach (IScaledBehaviour b in behaviours) b.scale(1);
         }
@@ -35,9 +35,9 @@ namespace SlowRobotics.Agent.Behaviours
                 maxDist = _maxDist;
             }
 
-            public override void run(IAgentT<object> a)
+            public override void run(IAgent<object> a)
             {
-                IAgentT<Vec3D> typedAgent = (IAgentT<Vec3D>)a; //cast to generic
+                IAgent<Vec3D> typedAgent = (IAgent<Vec3D>)a; //cast to generic
                 float f = getFactor(typedAgent.getData(), pts);
                 foreach (IScaledBehaviour b in behaviours)
                 {
@@ -81,7 +81,7 @@ namespace SlowRobotics.Agent.Behaviours
                 box = _box;
             }
 
-            public override void run(IAgentT<object> a)
+            public override void run(IAgent<object> a)
             {
 
                 Vec3D v = a.getData() as Vec3D;

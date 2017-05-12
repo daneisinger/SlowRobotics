@@ -8,22 +8,24 @@ using System.Text;
 namespace SlowRobotics.Agent
 {
     /// <summary>
-    /// Behaviour interface - handles queue inertion and run methods for base object data
+    /// Behaviour interface - handles queue inertion and run methods for base object data.
+    /// See Behaviour and ScaledBehaviour implementations for extended method documentation.
     /// </summary>
     public interface IBehaviour : IComparable<IBehaviour>
     {
         int priority { get; set; }
         void onAdd();
         bool lateUpdate { get; set; }
-        void run(IAgentT<object> a);
-        void interact(IAgentT<object> a, object b);
+        void run(IAgent<object> a);
+        void interact(IAgent<object> a, object b);
     }
 
     /// <summary>
-    /// Generic behaviour interface - provides methods for running on specific object type
+    /// Generic behaviour interface - provides methods for running on specific object type.
+    /// See Behaviour and ScaledBehaviour implementations for extended method documentation.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public interface IBehaviourT<in T> : IBehaviour where T : class
+    /// <typeparam name="T">Object type for behaviour to run on</typeparam>
+    public interface IBehaviour<in T> : IBehaviour where T : class
     {
         void runOn(T a);
         void interactWith(T a, object b);

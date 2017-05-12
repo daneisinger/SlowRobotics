@@ -6,6 +6,9 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Core
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class SRParticle : Plane3D, IParticle
     {
         public IParticle parent { get; set; }

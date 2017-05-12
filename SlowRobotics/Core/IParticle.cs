@@ -6,18 +6,17 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Core
 {
+    /// <summary>
+    /// Particle interface
+    /// </summary>
     public interface IParticle
     {
         string tag { get; set; }
         float mass { get; set; }
         float radius { get; set; }
         bool f { get; set; }
-
         Plane3D get();
-
         Vec3D getExtents();
         void step(float dt);
-
-        
     }
 }

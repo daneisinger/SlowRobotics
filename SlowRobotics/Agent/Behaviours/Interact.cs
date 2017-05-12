@@ -20,12 +20,12 @@ namespace SlowRobotics.Agent.Behaviours
 
         public override void onAdd() { }
 
-        public override void interact(IAgentT<object> a, object b)
+        public override void interact(IAgent<object> a, object b)
         {
             throw new NotImplementedException();
         }
 
-        public override void run(IAgentT<object> a)
+        public override void run(IAgent<object> a)
         {
 
             if (a.hasNeighbours())

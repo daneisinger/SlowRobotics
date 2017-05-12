@@ -6,7 +6,18 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.SRGraph
 {
-    public interface IEdge<T> 
+    /*
+    public interface IEdge
+    {
+        int ai { get; }
+        int bi { get; }
+    }*/
+
+    /// <summary>
+    /// Generic edge interface
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public interface IEdge<T>
     {
         INode<T> a { get; set; }
         INode<T> b { get; set; }

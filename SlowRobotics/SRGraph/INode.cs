@@ -6,12 +6,17 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.SRGraph
 {
+
+
+    /// <summary>
+    /// Generic node interface
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public interface INode<T> : IComparable<INode<T>>
     {
         int Index { get; set; }
         int Cost { get; set; }
         string Tag { get; set; }
-
         bool IsOpenList(IEnumerable<INode<T>> openList);
         void SetOpenList(bool value);
         bool IsClosedList(IEnumerable<INode<T>> closedList);
