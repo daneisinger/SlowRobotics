@@ -136,6 +136,39 @@ namespace SlowRoboticsGH
         }
     }
 
+    public class CreatePointCollectionComponent : GH_Component
+    {
+        public CreatePointCollectionComponent() : base("Create PointCollection", "PointCollection", "Creates a PointCollection for brute force search", "Nursery", "Utilities") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{fbdd53df-5ada-48c4-8928-91fedd9c2e77}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddParameter(new Plane3DParameter(), "Plane", "P", "Location and orientation of initial points in collection", GH_ParamAccess.list);
+            pManager[0].Optional = true;
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Collection", "C", "The PointCollection", GH_ParamAccess.item);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            List<GH_Plane3D> planes = new List<GH_Plane3D>();
+            PointCollection collection = new PointCollection();
+            if (DA.GetDataList(0, planes))
+            {
+                foreach (GH_Plane3D p in planes)
+                {
+                    collection.Add(p.Value);
+                }
+            }
+            DA.SetData(0, collection);
+        }
+    }
+
     public class MeshToGraph : GH_Component
     {
         public MeshToGraph() : base("Convert Mesh to Graph", "MeshToGraph", "Converts mesh edges and vertices to a graph", "Nursery", "Utilities") { }

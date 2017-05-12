@@ -46,7 +46,7 @@ namespace SlowRoboticsGH
     public class DrawNeighboursComponent : GH_Component
     {
         public DrawNeighboursComponent() : base("Draw Neighbours", "DrawNeighbours", "Draws lines to points in the agent neighbour list", "Nursery", "Utilities") { }
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{2a3d7cd7-f1c0-4be7-ba97-a52975ab1c3f}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 

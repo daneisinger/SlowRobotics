@@ -27,7 +27,7 @@ namespace SlowRobotics.Agent.Behaviours
             Vec3D n = a.getData() as Vec3D;
             if (n != null)
             {
-                a.neighbours = pts.Search(n, radius);
+                a.neighbours = pts.Search(n, radius).ToList();
                 a.neighbours.Remove(n);
             }
 

@@ -39,9 +39,7 @@ namespace SlowRobotics.Rhino.GraphTools
 
             foreach (SRParticle p in graph.Geometry)
             {
-                List<Vec3D> neighbours = tree.Search(p, maxDist);
-
-                foreach (Vec3D v in neighbours)
+                foreach (Vec3D v in tree.Search(p, maxDist))
                 {
                     if (v.distanceTo(p) > minDist)
                     {

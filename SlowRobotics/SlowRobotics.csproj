@@ -134,8 +134,11 @@
     <Compile Include="Simulation\Noise\PerlinNoise.cs" />
     <Compile Include="Simulation\ReactionDiffusion\BZReaction.cs" />
     <Compile Include="Simulation\ReactionDiffusion\GreyScott3d.cs" />
+    <Compile Include="Spatial\BinnedCollection.cs" />
     <Compile Include="Spatial\ISearchable.cs" />
+    <Compile Include="Spatial\Plane3DKDTree.cs" />
     <Compile Include="Spatial\Plane3DOctree.cs" />
+    <Compile Include="Spatial\PointCollection.cs" />
     <Compile Include="SRGraph\Edge.cs" />
     <Compile Include="SRGraph\Graph.cs" />
     <Compile Include="SRGraph\IEdge.cs" />

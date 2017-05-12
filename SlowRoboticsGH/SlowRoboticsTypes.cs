@@ -470,13 +470,14 @@ namespace SlowRoboticsGH
                 Value = SRConvert.MeshToGraph((Mesh)source,0.08f);
                 return true;
             }
-            if (source is Curve)
+            if (source is PolylineCurve)
             {
                 Graph<SRParticle, Spring> graph = new Graph<SRParticle, Spring>();
-                SRConvert.CurveToGraph((Curve)source, 0.08f,ref graph);
+                SRConvert.CurveToGraph((PolylineCurve)source, 0.08f,ref graph);
                 Value = graph;
                 return true;
             }
+
             return false;
         }
 

@@ -19,7 +19,7 @@ namespace SlowRobotics.Spatial
             extents = d;
         }
 
-        public List<Vec3D> Search(Vec3D pt, float radius)
+        public IEnumerable<Vec3D> Search(Vec3D pt, float radius)
         {
             return tree.getPointsWithinSphere(pt, radius);
         }
@@ -39,84 +39,7 @@ namespace SlowRobotics.Spatial
         {
             tree.addAll(pts);
         }
-    }
 
-    public class Plane3DKDTree : ISearchable
-    {
-        private KDTree<Vec3D> tree;
 
-        public Plane3DKDTree()
-        {
-            tree = new KDTree<Vec3D>(3);
-        }
-
-        public List<Vec3D> Search(Vec3D pt, float radius)
-        {
-            NearestNeighbour<Vec3D> n = tree.NearestNeighbors(new double[] { pt.x, pt.y, pt.z }, 255, radius * radius);
-            try {
-                if (n != null) return n.ToList();
-            }
-            catch (NullReferenceException)
-            {
-                return new List<Vec3D>();
-            }
-            return new List<Vec3D>();
-        }
-
-        public void Add(Vec3D pt)
-        {
-            tree.AddPoint(new double[] { pt.x, pt.y, pt.z }, pt);
-        }
-
-        public void Update(IEnumerable<Vec3D> pts)
-        {
-            tree = new KDTree<Vec3D>(3);
-            foreach (Vec3D v in pts)
-            {
-                Add(v);
-            }
-        }
-
-        public void AddAll(List<Vec3D> pts)
-        {
-            foreach (Vec3D v in pts)
-            {
-                Add(v);
-            }
-        }
-    }
-
-    public class BruteForceSearch : ISearchable
-    {
-        public List<Vec3D> allPts;
-        public BruteForceSearch()
-        {
-            allPts = new List<Vec3D>();
-        }
-
-        public void Add(Vec3D pt)
-        {
-            allPts.Add(pt);
-        }
-
-        public List<Vec3D> Search(Vec3D pt, float radius)
-        {
-            List<Vec3D> returnPts = new List<Vec3D>();
-            float[] distances = new float[allPts.Count()];
-            int c = 0;
-            foreach(Vec3D p in allPts)
-            {
-                distances[c] = p.distanceTo(pt);
-            }
-            Array.Sort(distances);
-
-            //etc etc
-            return returnPts;
-        }
-
-        public void Update(IEnumerable<Vec3D> pts)
-        {
-            allPts = pts.ToList();
-        }
     }
 }

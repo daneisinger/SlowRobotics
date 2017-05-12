@@ -8,7 +8,7 @@ namespace SlowRobotics.Spatial
 {
     public interface ISearchable
     {
-        List<Vec3D> Search(Vec3D pt, float radius);
+        IEnumerable<Vec3D> Search(Vec3D pt, float radius);
         void Add(Vec3D pt);
         void Update(IEnumerable<Vec3D> pts);
     }
