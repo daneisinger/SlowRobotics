@@ -132,7 +132,7 @@ namespace SlowRoboticsGH
             GH_Agent agent = null;
             if (!DA.GetData(0, ref agent)) { return; }
             IAgent<object> a = (IAgent<object>)agent.Value;
-            DA.SetData(0, a.getData());
+            DA.SetData(0, new GH_ObjectWrapper(a.getData()));
         }
     }
 
