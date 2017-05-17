@@ -20,6 +20,12 @@ namespace SlowRobotics.Core
         public float s { get; set; }
         public string tag { get; set; }
 
+
+        /// <summary>
+        /// Default constructor from a line object
+        /// </summary>
+        /// <param name="l"></param>
+        public Spring(Line3D l) :this (new Node<SRParticle>(new SRParticle(l.start)), new Node<SRParticle>(new SRParticle(l.end))) { }
         /// <summary>
         /// Default constructor with stiffness 0.08 and rest length equal to distance between two particles
         /// </summary>

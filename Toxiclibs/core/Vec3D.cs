@@ -212,18 +212,35 @@ namespace Toxiclibs.core
         z = v[2];
     }
 
-    /**
-     * Creates a new vector with the coordinates of the given vector.
-     * 
-     * @param v
-     *            vector to be copied
-     */
-    public Vec3D(ReadonlyVec3D v)
+        /**
+         * Creates a new vector with the coordinates of the given vector.
+         * 
+         * @param v
+         *            vector to be copied
+         */
+        public Vec3D(ReadonlyVec3D v)
     {
         this.x = v.getX();
         this.y = v.getY();
         this.z = v.getZ();
     }
+
+        public static Vec3D operator +(Vec3D c1, Vec3D c2)
+        {
+            return c1.add(c2);
+        }
+        public static Vec3D operator -(Vec3D c1, Vec3D c2)
+        {
+            return c1.sub(c2);
+        }
+        public static Vec3D operator *(Vec3D c1, float c2)
+        {
+            return c1.scale(c2);
+        }
+        public static Vec3D operator /(Vec3D c1, float c2)
+        {
+            return c1.scale(1/c2);
+        }
 
         public Vec3D copy()
         {
@@ -319,11 +336,6 @@ namespace Toxiclibs.core
         }
         return (float)Math.Acos(theta);
     }
-
-        public static Vec3D operator - (Vec3D a, Vec3D b)
-        {
-            return a.sub(b);
-        }
 
     /**
      * Sets all vector components to 0.
@@ -468,15 +480,16 @@ namespace Toxiclibs.core
         return x * v.x + y * v.y + z * v.z;
     }
 
-    /**
-     * Returns true if the Object v is of type ReadonlyVec3D and all of the data
-     * members of v are equal to the corresponding data members in this vector.
-     * 
-     * @param v
-     *            the Object with which the comparison is made
-     * @return true or false
-     */
-     
+    /// <summary>
+    /// NOTE - maybe need to implement custom hashcode methods on a case by case basis when extending vec3d
+    /// </summary>
+    /// <returns></returns>
+    public override int GetHashCode()
+    {
+            string hcode = "" + x + " " + y + " " + z;
+            return hcode.GetHashCode();
+    }
+
     public override bool Equals(Object v)
     {
         try
@@ -494,15 +507,6 @@ namespace Toxiclibs.core
         }
     }
 
-    /**
-     * Returns true if the Object v is of type ReadonlyVec3D and all of the data
-     * members of v are equal to the corresponding data members in this vector.
-     * 
-     * @param v
-     *            the vector with which the comparison is made
-     * @return true or false
-     */
-     
     public bool Equals(ReadonlyVec3D v)
     {
         try

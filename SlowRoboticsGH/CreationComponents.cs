@@ -215,7 +215,7 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddMeshParameter("Mesh", "M", "Mesh To Convert", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item,0.08f);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -232,6 +232,38 @@ namespace SlowRoboticsGH
             if (!DA.GetData(1, ref stiffness)) { return; }
 
             Graph<SRParticle, Spring> g = SRConvert.MeshToGraph(m, (float)stiffness);
+
+            DA.SetData(0, g);
+        }
+    }
+
+    public class EdgesToGraph : GH_Component
+    {
+        public EdgesToGraph() : base("Convert Edges to Graph", "EdgesToGraph", "Converts a collection of lines into a graph", "Nursery", "Utilities") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override Guid ComponentGuid => new Guid("{afebfe39-e552-4d9e-8168-398c41b5a976}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddLineParameter("Edges", "E", "Edges To Convert", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item, 0.08f);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new GraphParameter(), "Graph", "G", "Graph", GH_ParamAccess.item);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            double stiffness = 0.1;
+            List<Line> m = new List<Line>();
+
+            if (!DA.GetDataList(0, m)) { return; }
+            if (!DA.GetData(1, ref stiffness)) { return; }
+
+            Graph<SRParticle, Spring> g = SRConvert.EdgesToGraph(m, (float)stiffness);
 
             DA.SetData(0, g);
         }
@@ -358,7 +390,7 @@ namespace SlowRoboticsGH
         {
             pManager.AddCurveParameter("Curve", "C", "Curve to Divide", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Res", "R", "Number of division points", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item,0.15);
+            pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item,0.08f);
             pManager[1].Optional = true;
         }
 

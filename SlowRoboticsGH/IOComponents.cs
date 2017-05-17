@@ -165,6 +165,37 @@ namespace SlowRoboticsGH
         }
     }
 
+    public class GraphTopologyComponent : GH_Component
+    {
+        public GraphTopologyComponent() : base("Graph Topology", "GraphTopology", "Gets topological representation of graph as a collection of indexes", "Nursery", "Utilities") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{56866a6b-11a5-43d6-9f97-cfb4b779a298}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddParameter(new GraphParameter(), "Graph", "G", "Graph to deconstruct", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddIntegerParameter("Node Indexes", "N", "Node Indexes", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("Start Indexes", "S", "Edge Start Indexes", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("End Indexes", "E", "Edge End Indexes", GH_ParamAccess.list);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            GH_Graph graph = null;
+
+            if (!DA.GetData(0, ref graph)) { return; }
+            
+            DA.SetDataList(0, graph.Value.Nodes.ConvertAll(n=> n.Index));
+            DA.SetDataList(1, graph.Value.Edges.ConvertAll(e=> e.a.Index));
+            DA.SetDataList(2, graph.Value.Edges.ConvertAll(e => e.b.Index));
+        }
+    }
+
     public class DeconstructParticleComponent : GH_Component
     {
         public DeconstructParticleComponent() : base("Deconstruct Particle", "DeParticle", "Deconstructs a particle into location, acceleration, velocity and other properties", "Nursery", "Utilities") { }

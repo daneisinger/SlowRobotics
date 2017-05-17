@@ -11,6 +11,7 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Rhino.IO
 {
+
     public static class SRConvert
     {
 
@@ -108,20 +109,17 @@ namespace SlowRobotics.Rhino.IO
             return lm;
         }
 
-        public static List<Line> ToLines(Graph<SRParticle, Spring> g)
+        public static Graph<SRParticle, Spring> EdgesToGraph(List<Line> edges, float stiffness)
         {
-            List<Line> output = new List<Line>();
-            g.Edges.ForEach(
-                l => output.Add(new Line(new Point3d(l.a.Geometry.x, l.a.Geometry.y, l.a.Geometry.z),
-                new Point3d(l.b.Geometry.x, l.b.Geometry.y, l.b.Geometry.z)))
-            );
-            return output;
-        }
-
-        public static Agent<SRParticle> ToPlaneAgent(Plane p)
-        {
-            SRParticle p1 = new SRParticle(p.ToPlane3D());
-            return new Agent<SRParticle>(p1);
+            Graph<SRParticle, Spring> graph = new Graph<SRParticle, Spring>();
+            //loop though all lines and insert into graph
+            foreach (Line l in edges)
+            {
+                Spring s = new Spring(l.toLine3D());
+                s.s = stiffness;
+                graph.insert(s);
+            }
+            return graph;
         }
 
     }
