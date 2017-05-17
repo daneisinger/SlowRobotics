@@ -87,6 +87,55 @@ namespace SlowRoboticsGH
         }
     }
 
+    public class BodyParameter : GH_PersistentParam<GH_Body>, IGH_PreviewObject
+    {
+        public BodyParameter() : base("Body", "Body", "This is a Body", "Nursery", "Parameters") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        public override System.Guid ComponentGuid => new Guid("{ebda6c99-eb20-4dac-9d01-1bb4b9717eee}");
+
+        bool _hidden;
+        public bool Hidden
+        {
+            get { return _hidden; }
+            set { _hidden = value; }
+        }
+
+        public bool IsPreviewCapable
+        {
+            get { return true; }
+        }
+
+        public BoundingBox ClippingBox
+        {
+            get
+            {
+                return Preview_ComputeClippingBox();
+            }
+        }
+
+        protected override GH_GetterResult Prompt_Singular(ref GH_Body value)
+        {
+            value = new GH_Body();
+            return GH_GetterResult.success;
+        }
+        protected override GH_GetterResult Prompt_Plural(ref List<GH_Body> values)
+        {
+            values = new List<GH_Body>();
+            return GH_GetterResult.success;
+        }
+
+        public void DrawViewportWires(IGH_PreviewArgs args)
+        {
+            Preview_DrawWires(args);
+        }
+
+        public void DrawViewportMeshes(IGH_PreviewArgs args)
+        {
+            Preview_DrawMeshes(args);
+        }
+    }
+
     public class GraphParameter : GH_PersistentParam<GH_Graph>, IGH_PreviewObject
     {
         public GraphParameter() : base("Graph", "Graph", "This is a Graph", "Nursery", "Parameters") { }

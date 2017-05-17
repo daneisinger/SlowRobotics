@@ -419,6 +419,116 @@ namespace SlowRoboticsGH
         }
     }
 
+    public class GH_Body : GH_Goo<SRBody>, IGH_PreviewData
+    {
+        public GH_Body() { this.Value = null; }
+        public GH_Body(GH_Body goo) { this.Value = goo.Value; }
+        public GH_Body(SRBody native) { this.Value = native; }
+
+        public override IGH_Goo Duplicate() => new GH_Body(this);
+        public override bool IsValid => true;
+        public override string TypeName => "Node";
+        public override string TypeDescription => "Node";
+
+        public BoundingBox ClippingBox
+        {
+            get
+            {
+                SRBody particle = m_value;
+                Vec3D d = particle.getExtents();
+                Vec3D p = particle.get();
+                return new BoundingBox(p.x, p.y, p.z, p.x + d.x, p.y + d.y, p.z + d.z);
+            }
+        }
+
+        public override string ToString() => this.Value.ToString();
+        public override object ScriptVariable() => Value;
+
+        public override bool CastFrom(object source)
+        {
+            if (source is SRBody)
+            {
+                Value = (SRBody)source;
+                return true;
+            }
+            if (source is GH_Graph)
+            {
+                Value = SRBody.CreateFromGraph(((GH_Graph)source).Value,true);
+                return true;
+            }
+            if (source is Graph<SRParticle,Spring>)
+            {
+                Value = SRBody.CreateFromGraph((Graph<SRParticle, Spring>)source, true);
+                return true;
+            }
+
+            else if (source is Plane3D)
+            {
+                Value = new SRBody((Plane3D)source);
+                return true;
+            }
+            else if (source is GH_Plane3D)
+            {
+                Value = new SRBody(((GH_Plane3D)source).Value);
+                return true;
+            }
+
+            else if (source is GH_Plane)
+            {
+                SRBody p = new SRBody(((GH_Plane)source).Value.ToPlane3D());
+                Value = p;
+                return true;
+            }
+
+            if (source is Plane)
+            {
+                Value = new SRBody(((Plane)source).ToPlane3D());
+                return true;
+            }
+            if (source is GH_Point)
+            {
+                Value = new SRBody(new Plane3D(((GH_Point)source).Value.ToVec3D()));
+                return true;
+            }
+            return false;
+        }
+
+        //test castTo override
+        public override bool CastTo<Q>(ref Q target)
+        {
+            if (typeof(Q) == typeof(Plane))
+            {
+                target = (Q)(object)Value.get().ToPlane();
+                return true;
+            }
+            if (typeof(Q) == typeof(GH_Plane))
+            {
+                target = (Q)(object)new GH_Plane(Value.get().ToPlane());
+                return true;
+            }
+            return base.CastTo<Q>(ref target);
+        }
+
+        public void DrawViewportWires(GH_PreviewWireArgs args)
+        {
+            SRBody body = m_value;
+            foreach (SRParticle p in body.pts)
+            {
+                Vec3D d = p.xx.add(p.yy).add(p.zz);
+                Point3d pt = p.ToPoint3d();
+                Point3d px = p.xx.ToPoint3d();
+                Point3d py = p.yy.ToPoint3d();
+                args.Pipeline.DrawLine(pt, pt + px, System.Drawing.Color.Red, 1);
+                args.Pipeline.DrawLine(pt, pt + py, System.Drawing.Color.Blue, 1);
+            }
+        }
+
+        public void DrawViewportMeshes(GH_PreviewMeshArgs args)
+        {
+            // DrawViewportMeshes(args);
+        }
+    }
+
     public class GH_Graph : GH_Goo<Graph<SRParticle, Spring>>, IGH_PreviewData { 
 
         public GH_Graph() { this.Value = null; }
@@ -470,10 +580,10 @@ namespace SlowRoboticsGH
                 Value = SRConvert.MeshToGraph((Mesh)source,0.08f);
                 return true;
             }
-            if (source is PolylineCurve)
+            if (source is GH_GeometricGoo<Curve>)
             {
                 Graph<SRParticle, Spring> graph = new Graph<SRParticle, Spring>();
-                SRConvert.CurveToGraph((PolylineCurve)source, 0.08f,ref graph);
+                SRConvert.CurveToGraph(((GH_GeometricGoo<Curve>)source).Value,0.08f,ref graph);
                 Value = graph;
                 return true;
             }

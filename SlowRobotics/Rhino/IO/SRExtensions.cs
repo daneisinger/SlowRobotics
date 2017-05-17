@@ -68,5 +68,10 @@ namespace SlowRobotics.Rhino.IO
         {
             return new Point3d(p.x, p.y, p.z);
         }
+
+        public static Vector3d ToVector3d(this Vec3D p)
+        {
+            return new Vector3d(p.x, p.y, p.z);
+        }
     }
 }

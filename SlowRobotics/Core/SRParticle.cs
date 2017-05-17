@@ -13,8 +13,8 @@ namespace SlowRobotics.Core
     {
         public IParticle parent { get; set; }
 
-        protected Vec3D accel = new Vec3D();
-        protected Vec3D vel = new Vec3D();
+        public Vec3D accel { get; set; } = new Vec3D();
+        public Vec3D vel { get; } = new Vec3D();
         //public float spd = 1;
         //public float accLimit = 1;
 

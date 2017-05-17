@@ -879,7 +879,7 @@ namespace SlowRoboticsGH
             pManager.AddIntegerParameter("Axis", "A", "Plane axis to align", GH_ParamAccess.item,0);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
 
-            Param_Integer param = pManager[2] as Param_Integer;
+            Param_Integer param = pManager[1] as Param_Integer;
             param.AddNamedValue("X Axis", 0);
             param.AddNamedValue("Y Axis", 1);
             param.AddNamedValue("Z Axis", 2);

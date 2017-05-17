@@ -164,4 +164,69 @@ namespace SlowRoboticsGH
             DA.SetDataList(1, graph.Value.Edges);
         }
     }
+
+    public class DeconstructParticleComponent : GH_Component
+    {
+        public DeconstructParticleComponent() : base("Deconstruct Particle", "DeParticle", "Deconstructs a particle into location, acceleration, velocity and other properties", "Nursery", "Utilities") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{6d2c9bb0-68a0-4a18-a6e6-603b24562a16}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddParameter(new ParticleParameter(), "Particle", "P", "Particle to deconstruct", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddPlaneParameter("Location", "L", "Particle location", GH_ParamAccess.item);
+            pManager.AddVectorParameter("Velocity", "V", "Particle velocity", GH_ParamAccess.item);
+            pManager.AddVectorParameter("Acceleration", "A", "Particle acceleration", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Mass", "M", "Particle mass", GH_ParamAccess.item);
+            pManager.AddTextParameter("Tag", "T", "Particle tag", GH_ParamAccess.item);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            GH_Particle particle = null;
+
+            if (!DA.GetData(0, ref particle)) { return; }
+
+            DA.SetData(0, particle.Value.get().ToPlane());
+            DA.SetData(1, particle.Value.vel.ToVector3d());
+            DA.SetData(2, particle.Value.accel.ToVector3d());
+            DA.SetData(3, particle.Value.mass);
+            DA.SetData(4, particle.Value.tag);
+        }
+    }
+
+    public class DeconstructBodyComponent : GH_Component
+    {
+        public DeconstructBodyComponent() : base("Deconstruct Body", "DeBody", "Deconstructs a body into centre of mass and body particles", "Nursery", "Utilities") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{23c4a27f-7fd0-41d6-a1bc-b466a6aa61f9}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddParameter(new BodyParameter(), "Body", "B", "Body to deconstruct", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddPlaneParameter("Centre of Mass", "C", "Centre of mass of the body", GH_ParamAccess.item);
+            pManager.AddParameter(new ParticleParameter(), "Particles", "P", "Particles contained in body", GH_ParamAccess.list);
+
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            GH_Body body = null;
+
+            if (!DA.GetData(0, ref body)) { return; }
+
+            DA.SetData(0, body.Value.get().ToPlane());
+            DA.SetDataList(1, body.Value.pts);
+        }
+    }
 }

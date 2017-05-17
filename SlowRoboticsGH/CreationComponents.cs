@@ -47,6 +47,42 @@ namespace SlowRoboticsGH
         }
     }
 
+    public class CreateBodyComponent : GH_Component
+    {
+        public CreateBodyComponent() : base("Create Body", "CreateBody", "Creates a body from a collection of particles and properties - you can create bodies with default properties using the Body parameter", "Nursery", "Utilities") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{05d0cfe0-545b-4ebd-9088-00b2bab42b5a}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddParameter(new ParticleParameter(), "Particles", "P", "Particles in body", GH_ParamAccess.list);
+            pManager.AddTextParameter("Tag", "T", "Additional data attached to the particle", GH_ParamAccess.item, "");
+            pManager.AddBooleanParameter("Rigid", "R", "Toggle between rigid and soft body", GH_ParamAccess.item, true);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new BodyParameter(), "Body", "B", "Body", GH_ParamAccess.item);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            List<GH_Particle> particles = new List<GH_Particle>();
+            string tag = "";
+            bool rigid = true;
+
+            if (!DA.GetDataList(0, particles)) { return; }
+            if (!DA.GetData(1, ref tag)) { return; }
+            if (!DA.GetData(2, ref rigid)) { return; }
+
+            SRBody b = new SRBody(particles.ConvertAll(p=>p.Value), rigid);
+            b.tag = tag;
+
+            DA.SetData(0, new GH_Body(b));
+        }
+    }
+
     public class CreateParticleComponent : GH_Component
     {
         public CreateParticleComponent() : base("Create Particle", "CreateParticle", "Creates a particle (or linearparticle) from plane and properties - you can create particles with default properties using the particle parameter", "Nursery", "Utilities") { }

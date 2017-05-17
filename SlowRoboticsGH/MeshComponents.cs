@@ -151,9 +151,9 @@ namespace SlowRoboticsGH
         }
     }
 
-    public class MeshPlaneComponent : GH_Component
+    public class MeshNormalComponent : GH_Component
     {
-        public MeshPlaneComponent() : base("Mesh Plane", "MeshPlane", "Creates a plane from mesh face normal at a given point (<100 units from mesh)", "Nursery", "Mesh") { }
+        public MeshNormalComponent() : base("Mesh Normal", "MeshNormal", "Creates a plane from mesh face normal at a given point", "Nursery", "Mesh") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{d6f19cae-5207-4076-be7f-8d5b24949706}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
@@ -162,6 +162,7 @@ namespace SlowRoboticsGH
         {
             pManager.AddMeshParameter("Mesh", "M", "Mesh to Populate", GH_ParamAccess.item);
             pManager.AddPointParameter("Points", "P", "Plane origins", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Max Distance", "Mx", "Maximum distance for mesh closest point", GH_ParamAccess.item, 100);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -174,18 +175,19 @@ namespace SlowRoboticsGH
 
             Mesh mesh = null;
             List<Point3d> pts = new List<Point3d>();
+            double d = 100;
 
             if (!DA.GetData(0, ref mesh)) { return; }
             if (!DA.GetDataList(1, pts)) { return; }
+            if (!DA.GetData(2, ref d)) { return; }
 
-            
             mesh.FaceNormals.ComputeFaceNormals();
 
             List<Plane> faceNormals = new List<Plane>();
 
             foreach (Point3d p in pts)
             {
-                MeshPoint pt = mesh.ClosestMeshPoint(p, 100);
+                MeshPoint pt = mesh.ClosestMeshPoint(p, d);
                 Vector3d f = mesh.FaceNormals[pt.FaceIndex];
                 faceNormals.Add(new Plane(p,f));
             }

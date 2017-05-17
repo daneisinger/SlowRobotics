@@ -11,35 +11,44 @@ namespace SlowRobotics.Core
     /// </summary>
     public class SRBody : SRParticle
     {
-        public List<SRParticle> pts;
+        public List<IParticle> pts;
         public Vec3D LinearVelocity;
         public Vec3D AngularVelocity;
         public Vec3D Torque;
+        public bool rigid;
 
         /// <summary>
         /// Default constructor. Creates an SRBody from a centre of mass. 
         /// Use insertPoint() to add particles to the body.
         /// </summary>
         /// <param name="_centreOfMass"></param>
-        public SRBody(Plane3D _centreOfMass) : base(_centreOfMass)
+        public SRBody(Plane3D _centreOfMass) : this(_centreOfMass,true)
         {
-            pts = new List<SRParticle>();
+        }
 
+        public SRBody(IEnumerable<IParticle> _pts, bool _rigid) : this(calculateCoM(_pts), _rigid)
+        {
+            insertPoints(_pts);
+        }
+
+        public SRBody(Plane3D _centreOfMass, bool _rigid) : base(_centreOfMass)
+        {
+            pts = new List<IParticle>();
             AngularVelocity = new Vec3D();
             LinearVelocity = new Vec3D();
             Torque = new Vec3D();
+            rigid = _rigid;
         }
-
         /// <summary>
         /// Recalculate centre of mass from particles in the body. 
         /// This function currently treates mass of all particles as equal.
         /// </summary>
         /// <returns>Centre of mass for all particles</returns>
-        public Plane3D calculateCoM()
+        public static Plane3D calculateCoM(IEnumerable<IParticle> _pts)
         {
-            Vec3D origin = MathUtils.averageVectors(pts.Select(pt => (Vec3D)pt).ToList());
-            Vec3D xx = MathUtils.averageVectors(pts.Select(pt => pt.xx).ToList());
-            Vec3D yy = MathUtils.averageVectors(pts.Select(pt => pt.yy).ToList());
+            Vec3D origin = MathUtils.averageVectors(_pts.Select(pt => (Vec3D)pt).ToList());
+            Vec3D xx = MathUtils.averageVectors(_pts.Select(pt => pt.get().xx).ToList());
+            Vec3D yy = MathUtils.averageVectors(_pts.Select(pt => pt.get().yy).ToList());
             return new Plane3D(origin, xx, yy);
         }
 
@@ -56,7 +65,7 @@ namespace SlowRobotics.Core
         /// Inserts a particle into the particle collection of the body
         /// </summary>
         /// <param name="_pt">Point to insert</param>
-        public void insertPoint(SRParticle _pt)
+        public void insertPoint(IParticle _pt)
         {
             pts.Add(_pt);
         }
@@ -65,7 +74,7 @@ namespace SlowRobotics.Core
         /// Inserts a collection of particles into the particle collection of the body
         /// </summary>
         /// <param name="_pts">Points to insert</param>
-        public void insertPoints(IEnumerable<SRParticle> _pts)
+        public void insertPoints(IEnumerable<IParticle> _pts)
         {
             pts.AddRange(_pts);
         }
@@ -75,7 +84,7 @@ namespace SlowRobotics.Core
         /// </summary>
         private void sumForces()
         {
-            foreach (SRParticle p in pts)
+            foreach (IParticle p in pts)
             {
                 ApplyImpulses(p.getImpulse());
             }
@@ -90,8 +99,7 @@ namespace SlowRobotics.Core
             foreach (Impulse i in impulses)
             {
 
-                if (!i.torqueOnly)
-                    accel.addSelf(i.dir); //integrate force
+                if (!i.torqueOnly)accel.addSelf(i.dir); //integrate force
 
                 Vec3D ab = i.pos.sub(this);
                 float d = ab.magnitude();
@@ -117,11 +125,11 @@ namespace SlowRobotics.Core
             //transform body
             foreach (SRParticle p in pts)
             {
-                p.transform(t);
-                Vec3D localP = p.sub(this);
-                t.applyToSelf(localP);
-                p.set(localP.addSelf(this));
-                p.reset();
+                p.transform(t); //reorient particleplane
+                Vec3D localP = p.sub(this); //get relative position of particle
+                t.applyToSelf(localP); //transform relative position
+                p.set(localP.addSelf(this)); //update particle position
+                
             }
         }
 
@@ -131,21 +139,35 @@ namespace SlowRobotics.Core
         /// <param name="dt"></param>
         public override void step(float dt)
         {
-            sumForces(); //sets torque and accel based on forces on particles
+            //get accel and torque from all forces acting on particles in the body
+            sumForces();
 
-            //add linear velocity as impulse
+            //sum all forces on the body and apply this as a direct impulse to the location of the body
+            //TODO implement body mass
             Vec3D impulse = accel.scale(dt);
             addSelf(impulse);
-            foreach (SRParticle p in pts) p.addSelf(impulse);
 
+            //loop through all particles and apply forces for rigid or soft bodies
+            foreach (SRParticle p in pts)
+            {
+                if (rigid)
+                {
+                    p.addSelf(impulse);
+                    p.reset(); //reset forces on particle
+                }
+                else
+                {
+                    p.step(dt);
+                }
+            }
+
+
+            //add angular velocity as impulse and transform
             Matrix4x4 t = new Matrix4x4();
-
-            //add angular velocity as impulse
             Quaternion rot = Quaternion.createFromAxisAngle(Torque, Torque.magnitude() * 1f * dt);
             rot.normalize();
             t = rot.toMatrix4x4();
-
-            transform(t); //transform this plane
+            transform(t); 
 
             Torque = new Vec3D();
             accel = new Vec3D();
@@ -158,15 +180,15 @@ namespace SlowRobotics.Core
         /// </summary>
         /// <param name="graph">Graph to create body from</param>
         /// <returns></returns>
-        public static SRBody CreateFromGraph(Graph<SRParticle, Spring> graph)
+        public static SRBody CreateFromGraph(Graph<SRParticle, Spring> graph, bool rigid)
         {
-            SRBody body = new SRBody(new Plane3D()); //create temporary centre of mass
+            SRBody body = new SRBody(new Plane3D(), rigid); //create temporary centre of mass
             int num = graph.Geometry.Count;
             if (num == 0) return body;
 
             foreach (SRParticle p in graph.Geometry)
             {
-                p.f = true; //don't move particles
+                if(rigid)p.f = true; //don't move particles
                 body.insertPoint(p); //add to body
             }
             body.set(MathUtils.averageVectors(graph.Geometry.ConvertAll(x => (Vec3D)x)));
