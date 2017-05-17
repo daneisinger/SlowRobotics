@@ -505,13 +505,14 @@ namespace SlowRoboticsGH
     public class FilterClosestNeighbourComponent : GH_Component
     {
 
-        public FilterClosestNeighbourComponent() : base("Filter Closest", "FilterClosest", "IAgent Behaviour: Filter out all but closest neighbour", "Nursery", "Behaviours") { }
+        public FilterClosestNeighbourComponent() : base("Filter Closest", "FilterClosest", "IAgent Behaviour: Filter out all but closest neighbours", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{fb1100ba-1d65-4bd6-99f2-f3f0b14422b3}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
+            pManager.AddIntegerParameter("Number", "N", "Number of neighbours to keep", GH_ParamAccess.item, 1);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
@@ -524,18 +525,19 @@ namespace SlowRoboticsGH
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-
+            int num = 1;
             int priority = 5;
-
-            if (!DA.GetData(0, ref priority)) { return; }
+            if (!DA.GetData(0, ref num)) { return; }
+            if (!DA.GetData(1, ref priority)) { return; }
 
             if (filter != null)
             {
                 filter.priority = priority;
+                filter.num = num;
             }
             else
             {
-                filter = new FilterClosest(priority);
+                filter = new FilterClosest(priority, num);
             }
             DA.SetData(0, filter);
         }

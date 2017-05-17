@@ -8,6 +8,16 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
+    /// <summary>
+    /// The interaction behaviour stores a collection of additional behaviours that define
+    /// how an agent should interact with objects in its neighbour collection. The behaviour 
+    /// iterates over the neighbour collection of an agent and calls
+    /// the interactWith function of each behaviour, passing the current neighbour as an argument.
+    /// After this loop is completed, a second loop iterates over all behaviours and calls the  run method. 
+    /// This is useful if you want to use the interactWith loop to check for some condition (closest point,
+    /// first neighbour with a property, minimum angles etc) before then operating on that specific neighbour 
+    /// and modifying the agent or agent data in the main run method.
+    /// </summary>
     public class Interact : Behaviour
     {
         private PriorityQueue<IBehaviour> behaviours;

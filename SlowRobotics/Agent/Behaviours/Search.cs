@@ -8,6 +8,10 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
+    /// <summary>
+    /// Search behaviour that calls the search() function of a given Isearchable 
+    /// structure and populates the agent neighbour collection.
+    /// </summary>
     public class Search : ScaledBehaviour<Vec3D>
     {
         

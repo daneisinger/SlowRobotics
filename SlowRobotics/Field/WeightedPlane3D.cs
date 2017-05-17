@@ -7,6 +7,9 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Field
 {
+    /// <summary>
+    /// Extension of plane3d class to allow for non-normalized axis vectors
+    /// </summary>
     public class WeightedPlane3D : Plane3D
     {
         public Vec3D wx {get;set;}

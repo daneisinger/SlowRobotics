@@ -7,6 +7,9 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
+    /// <summary>
+    /// Applies a given force to the particle.
+    /// </summary>
     public class Newton : ScaledBehaviour<SRParticle>
     {
         public Vec3D force { get; set; }

@@ -5,6 +5,11 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
+    /// <summary>
+    /// Parent scale behaviour. The scale behaviour takes a collection of ScaledBehaviours
+    /// and calls the scale() function on each before calling the runOn function. This is useful 
+    /// for implementing custom constraints and falloff effects.
+    /// </summary>
     public class Scale : ScaledBehaviour<Vec3D>
     {
         public List<IScaledBehaviour> behaviours { get; set; }
@@ -23,6 +28,9 @@ namespace SlowRobotics.Agent.Behaviours
             foreach (IScaledBehaviour b in behaviours) b.scale(1);
         }
 
+        /// <summary>
+        /// Scales a behaviour by distance to the closest point in a given point collection
+        /// </summary>
         public class ByClosestPoint : Scale
         {
 
@@ -53,6 +61,9 @@ namespace SlowRobotics.Agent.Behaviours
             }
         }
 
+        /// <summary>
+        /// Scales a behaviour by averaged distance to all points in a collection
+        /// </summary>
         public class ByClosestPoints : ByClosestPoint
         {
             public int numClosest { get; set; }
@@ -70,6 +81,9 @@ namespace SlowRobotics.Agent.Behaviours
             }
         }
 
+        /// <summary>
+        /// Scales a behaviour by distance to a bounding box. Points within the box are unaffected.
+        /// </summary>
         public class ByDistToBoundingBox : Scale
         {
             public float maxDist { get; set; }

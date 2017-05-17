@@ -9,6 +9,7 @@ using System.Text;
 
 namespace SlowRoboticsGH
 {
+    /*
     public class CreateVoxelGridComponent : GH_Component
     {
         public CreateVoxelGridComponent() : base("Create Voxel Grid", "CreateVoxels", "Create Voxel grid from dimensions and bounds", "Nursery", "Voxels") { }
@@ -69,9 +70,7 @@ namespace SlowRoboticsGH
                     grid = new FloatGrid(w, h, d, min, max);
                     break;
             }
-
             DA.SetData(0, grid);
-
         }
-    }
+    }*/
 }

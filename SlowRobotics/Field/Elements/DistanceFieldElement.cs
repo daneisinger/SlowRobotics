@@ -8,6 +8,9 @@ using SlowRobotics.SRMath;
 
 namespace SlowRobotics.Field.Elements
 {
+    /// <summary>
+    /// Creates a vector field from a point
+    /// </summary>
     public class DistanceFieldElement : IFieldElement
     {
 
@@ -16,6 +19,13 @@ namespace SlowRobotics.Field.Elements
         public float maxDist { get; set; }
         public float attenuation { get; set; }
 
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        /// <param name="_location">Field point location</param>
+        /// <param name="_weight">Field Weight</param>
+        /// <param name="_maxDist">Maximum distance for field</param>
+        /// <param name="_attenuation">Field attenuation</param>
         public DistanceFieldElement(Vec3D _location, float _weight, float _maxDist, float _attenuation)
         {
             location = _location;
@@ -24,12 +34,22 @@ namespace SlowRobotics.Field.Elements
             attenuation = _attenuation;
         }
 
+        /// <summary>
+        /// Gets the field weight at a given point
+        /// </summary>
+        /// <param name="loc"></param>
+        /// <returns></returns>
         public virtual float getWeight(Vec3D loc)
         {
             float d = MathUtils.constrain(location.distanceTo(loc), 1, maxDist);
             return ((d < maxDist) ? (weight * (1 / (float)Math.Pow(d, attenuation))) : 0);
         }
 
+        /// <summary>
+        /// Integrates the distance field tensor at a given point into FieldData
+        /// </summary>
+        /// <param name="d">FieldData to integrate</param>
+        /// <param name="loc">Sample point</param>
         public virtual void integrate(ref FieldData d, Vec3D loc)
         {
             float w = getWeight(loc);

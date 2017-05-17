@@ -8,11 +8,25 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Field.Elements
 {
+    /// <summary>
+    /// Creates a vector field from perlin noise
+    /// </summary>
     public class NoiseFieldElement : DistanceFieldElement
     {
         public float ns { get; set; }
         public float rs { get; set; }
         public bool XY { get; set; }
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        /// <param name="_location">Location of noise field for calculating falloff effects</param>
+        /// <param name="_weight">Field Weight</param>
+        /// <param name="_maxDist">Maximum distance for field</param>
+        /// <param name="_attenuation">Field attenuation</param>
+        /// <param name="_noiseScale">Scale of perlin noise sample space</param>
+        /// <param name="_rotationScale">Scale of perlin noise values</param>
+        /// <param name="_XY">Generate 2d noise</param>
         public NoiseFieldElement(Vec3D _location, float _weight, float _maxDist, float _attenuation, float _noiseScale, float _rotationScale, bool _XY) :base(_location,_weight,_maxDist,_attenuation)
         {
             ns = _noiseScale;
@@ -20,6 +34,11 @@ namespace SlowRobotics.Field.Elements
             XY = _XY;
         }
 
+        /// <summary>
+        /// Integrates the noise field tensor at a sample point into FieldData
+        /// </summary>
+        /// <param name="d">FieldData to integrate</param>
+        /// <param name="loc">Sample Point</param>
         public override void integrate(ref FieldData d, Vec3D loc)
         {
             float w = getWeight(loc);

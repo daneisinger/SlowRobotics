@@ -10,18 +10,30 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Field
 {
-    public class GenericField : IField
+    /// <summary>
+    /// Basic Field implementation handles adding and removing from a collection of field elements
+    /// and evaluating the field at a given sample point to return a FieldData object.
+    /// </summary>
+    public class Field : IField
     {
         public List<IFieldElement> field { get; set; }
         public Vec3D min { get; set; }
         public AABB bounds { get; set; }
 
-        public GenericField()
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public Field()
         {
             field = new List<IFieldElement>();
         }
 
-        public GenericField(List<Plane3D> fieldPts) :this()
+        /// <summary>
+        /// Convenience constructor creates a collection of PlaneFieldElements and assigns them to the 
+        /// field.
+        /// </summary>
+        /// <param name="fieldPts">Location of field planes</param>
+        public Field(List<Plane3D> fieldPts) :this()
         {
 
             List<PlaneFieldElement> fieldElements = fieldPts.Select(p => new PlaneFieldElement(p)).ToList();
@@ -29,22 +41,38 @@ namespace SlowRobotics.Field
             updateBounds();
         }
 
-        public GenericField(List<IFieldElement> fieldElements):this()
+        /// <summary>
+        /// Creates a field from a collection of field elements
+        /// </summary>
+        /// <param name="fieldElements">Field elements</param>
+        public Field(List<IFieldElement> fieldElements):this()
         {
             field = fieldElements.ToList();
             updateBounds();
         }
 
+        /// <summary>
+        /// Adds a FieldElement to the field
+        /// </summary>
+        /// <param name="e"></param>
         public void insertElement(IFieldElement e)
         {
             field.Add(e);
         }
 
+        /// <summary>
+        /// Gets the bounding box of all field elements
+        /// </summary>
         public void updateBounds()
         {
             bounds = AABB.getBoundingBox(field.Select(p => p.location).ToList());
         }
 
+        /// <summary>
+        /// Evaluates the field at a sample point
+        /// </summary>
+        /// <param name="loc">Sample point</param>
+        /// <returns></returns>
         public FieldData evaluate(Vec3D loc)
         {
             FieldData d = new FieldData();

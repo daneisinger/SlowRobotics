@@ -11,6 +11,9 @@ namespace SlowRobotics.Agent.Behaviours
 {
     public class Arrest
     {
+        /// <summary>
+        /// Adds inertia to a particle 
+        /// </summary>
         public class Friction : ScaledBehaviour<SRParticle>
         {
             public float frictionCof { get; set; }
@@ -48,6 +51,9 @@ namespace SlowRobotics.Agent.Behaviours
             }
         }
 
+        /// <summary>
+        /// Locks particles that satisfy conditions for inertia, speed and age
+        /// </summary>
         public class Freeze : ScaledBehaviour<SRParticle>
         {
 
@@ -71,6 +77,9 @@ namespace SlowRobotics.Agent.Behaviours
             }
         }
 
+        /// <summary>
+        /// Constrains particle z to >= minZ
+        /// </summary>
         public class Z : Behaviour<SRParticle>
         {
             public float minZ

@@ -741,7 +741,7 @@ namespace SlowRoboticsGH
 
             if (!DA.GetDataList(0, geometry)) { return; }
 
-            GenericField field = new GenericField();
+            Field field = new Field();
 
             for(int i = 0;i<geometry.Count;i++)
             {

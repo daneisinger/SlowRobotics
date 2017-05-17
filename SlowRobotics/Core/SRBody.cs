@@ -26,11 +26,24 @@ namespace SlowRobotics.Core
         {
         }
 
+        /// <summary>
+        /// Constructs a body from a collection of points and assigns centre of mass
+        /// to the average position of all points. Setting the rigid flag to false allows
+        /// particles to move relative to the body.
+        /// </summary>
+        /// <param name="_pts"></param>
+        /// <param name="_rigid"></param>
         public SRBody(IEnumerable<IParticle> _pts, bool _rigid) : this(calculateCoM(_pts), _rigid)
         {
             insertPoints(_pts);
         }
 
+        /// <summary>
+        /// Creates an SRBody from a centre of mass. Setting the rigid flag to false allows
+        /// particles to move relative to the body.
+        /// </summary>
+        /// <param name="_centreOfMass"></param>
+        /// <param name="_rigid"></param>
         public SRBody(Plane3D _centreOfMass, bool _rigid) : base(_centreOfMass)
         {
             pts = new List<IParticle>();

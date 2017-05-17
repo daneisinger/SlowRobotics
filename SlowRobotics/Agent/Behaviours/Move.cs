@@ -11,7 +11,9 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
-
+    /// <summary>
+    /// Parent move class defines base properties for movement behaviours 
+    /// </summary>
     public class Move : ScaledBehaviour<SRParticle>
     {
         
@@ -30,7 +32,9 @@ namespace SlowRobotics.Agent.Behaviours
             falloff = new InverseFalloffStrategy();
         }
 
-
+        /// <summary>
+        /// Moves a particle in one of its axes
+        /// </summary>
         public class InAxis : Move
         {
             public int axis { get; set; }
@@ -64,6 +68,9 @@ namespace SlowRobotics.Agent.Behaviours
 
         }
 
+        /// <summary>
+        /// Moves a particle using the tensor of a field at the particles location
+        /// </summary>
         public class InField : Move
         {
             public IField field { get; set; }
@@ -79,6 +86,10 @@ namespace SlowRobotics.Agent.Behaviours
             }
         }
 
+        /// <summary>
+        /// Interaction behaviour that moves the particle away from all neighbours. Optionally
+        /// projects neighbours to the particle plane for 2d repulsion
+        /// </summary>
         public class Apart : Move
         {
             public bool inXY { get; set; }
@@ -121,6 +132,10 @@ namespace SlowRobotics.Agent.Behaviours
             }
         }
 
+        /// <summary>
+        /// Interaction behaviour that moves the particle toward all neighbours. Optionally
+        /// projects neighbours to the particle plane for 2d attraction
+        /// </summary>
         public class Together  : Apart
         {
 
@@ -139,7 +154,10 @@ namespace SlowRobotics.Agent.Behaviours
                 }
             }
         }
-       
+
+        /// <summary>
+        /// Interaction behaviour that moves the particle towards the closest point on a line
+        /// </summary>
         public class PointToLine : Apart
         {
             public PointToLine(int _priority, float _strength, float _minDist, float _maxDist) : base(_priority, _strength, _minDist, _maxDist, false){ }
@@ -160,6 +178,10 @@ namespace SlowRobotics.Agent.Behaviours
             }
         }
 
+        /// <summary>
+        /// Interaction behaviour that attempts to cast the particle to a line (e.g. SRLinearParticle) and then
+        /// moves towards closest points between neighbouring lines
+        /// </summary>
         public class LineToLine : Apart
         {
             public LineToLine(int _priority, float _strength, float _minDist, float _maxDist) : base(_priority, _strength, _minDist, _maxDist, false) { }
@@ -181,6 +203,9 @@ namespace SlowRobotics.Agent.Behaviours
             }
         }
 
+        /// <summary>
+        /// Interaction behaviour that moves a particle towards closest points on all graph edges
+        /// </summary>
         public class ToGraphEdges : Apart
         {
 
@@ -233,6 +258,10 @@ namespace SlowRobotics.Agent.Behaviours
             }
         }
 
+        /// <summary>
+        /// Interaction behaviour that moves to towards only the closest point in the neighbour list.
+        /// This is an alternative to using the FilterClosest behaviour to modify the entire neighbour list.
+        /// </summary>
         public class ToClosestPoint : Apart
         {
             Vec3D closestPt;
@@ -274,6 +303,9 @@ namespace SlowRobotics.Agent.Behaviours
             }
         }
 
+        /// <summary>
+        /// Interaction behaviour that moves a particle in its z axis towards the plane of neighbouring particles
+        /// </summary>
         public class TogetherInZ : Move
         {
 
@@ -301,6 +333,9 @@ namespace SlowRobotics.Agent.Behaviours
         }
     }
 
+    /// <summary>
+    /// Brownian (random) motion. Optional 2d motion.
+    /// </summary>
     public class Brownian : ScaledBehaviour<SRParticle>
     {
 

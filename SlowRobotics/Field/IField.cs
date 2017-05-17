@@ -7,14 +7,14 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Field
 {
+    /// <summary>
+    /// Field interface
+    /// </summary>
     public interface IField
     {
         List<IFieldElement> field { get; set; }
-
         AABB bounds { get; set; }
-
         FieldData evaluate(Vec3D pt);
-
         void updateBounds();
     }
 }

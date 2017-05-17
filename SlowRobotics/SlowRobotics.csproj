@@ -127,7 +127,6 @@
     <Compile Include="Rhino\IO\SRExtensions.cs" />
     <Compile Include="Rhino\MeshTools\Mesher.cs" />
     <Compile Include="Rhino\MeshTools\MFace.cs" />
-    <Compile Include="Rhino\Visualisation\Draw.cs" />
     <Compile Include="Rhino\VoxelTools\ColourGridMesher.cs" />
     <Compile Include="Rhino\VoxelTools\Voxeliser.cs" />
     <Compile Include="Rhino\VoxelTools\FloatGridMesher.cs" />

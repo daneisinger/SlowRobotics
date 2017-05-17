@@ -9,6 +9,9 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
+    /// <summary>
+    /// Behaviour that updates the position of a particle by integrating acceleration and velocty.
+    /// </summary>
     public class IntegrateBehaviour : ScaledBehaviour<IParticle>
     {
         public float damping { get; set; }
@@ -24,7 +27,9 @@ namespace SlowRobotics.Agent.Behaviours
             p.step(damping * scaleFactor);
         }
     }
-
+    /// <summary>
+    /// Behaviour that updates all points in an ISearchable structure
+    /// </summary>
     public class RebuildTree : Behaviour<ISearchable>
     {
 

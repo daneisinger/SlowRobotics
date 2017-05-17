@@ -8,6 +8,10 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Agent.Behaviours
 {
+    /// <summary>
+    /// Verlet spring behaviour that iterates over all springs (edges) in a graph
+    /// and applies forces to the spring particles to try to maintain a given spring length.
+    /// </summary>
     public class SpringBehaviour : ScaledBehaviour<Graph<SRParticle,Spring>>
     {
         public float damping { get; set; }
