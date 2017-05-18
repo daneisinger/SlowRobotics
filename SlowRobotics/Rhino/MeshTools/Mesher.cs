@@ -7,13 +7,30 @@ using System.Text;
 
 namespace SlowRobotics.Rhino.MeshTools
 {
+    /// <summary>
+    /// Utilities for fast mesh creation
+    /// </summary>
     public static class Mesher
     {
+
+        /// <summary>
+        /// NOT IMPLEMENTED
+        /// </summary>
+        /// <param name="mesh"></param>
+        /// <returns></returns>
         public static Mesh weldVertices(Mesh mesh)
         {
             return mesh;
         }
 
+        /// <summary>
+        /// Creates a mesh pipe by lofting between polygon profiles oriented to points on a curve.
+        /// </summary>
+        /// <param name="curve">Curve to pipe</param>
+        /// <param name="numSections">Number of polygon profiles to create</param>
+        /// <param name="radius">Radius of polygon profile</param>
+        /// <param name="numSides">Number of sides of polygon profile</param>
+        /// <returns></returns>
         public static Mesh pipeCurve(Curve curve, int numSections, float radius, int numSides)
         {
             //generate sections
@@ -37,6 +54,13 @@ namespace SlowRobotics.Rhino.MeshTools
             return buildClosedMeshFromPolylineSections(sections, true , true);
         }
 
+        /// <summary>
+        /// Creates a mesh by lofting between a list of sections
+        /// </summary>
+        /// <param name="sections">List of polyline sections to loft between</param>
+        /// <param name="capStart">Fills the first polyline</param>
+        /// <param name="capEnd">Fills the last polyline</param>
+        /// <returns></returns>
         public static Mesh buildClosedMeshFromPolylineSections(List<Polyline> sections, bool capStart, bool capEnd)
         {
             Mesh chunk = new Mesh();
@@ -90,6 +114,11 @@ namespace SlowRobotics.Rhino.MeshTools
             return chunk;
         }
 
+        /// <summary>
+        /// Convenience method that builds a mesh from a collection of MFace objects.
+        /// </summary>
+        /// <param name="faces">Faces in mesh</param>
+        /// <returns></returns>
         public static Mesh buildMesh(IEnumerable<MFace> faces)
         {
             int i = 0;

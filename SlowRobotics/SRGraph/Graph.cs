@@ -5,6 +5,11 @@ using System.Text;
 
 namespace SlowRobotics.SRGraph
 {
+    /// <summary>
+    /// Generic graph implementation with Edge objects and node lookup table.
+    /// </summary>
+    /// <typeparam name="T">Geometry type</typeparam>
+    /// <typeparam name="E">Edge type</typeparam>
     public class Graph<T,E> : IGraph<T,E> where E :IEdge<T>
     {
         private HashSet<E> _edges;
@@ -12,12 +17,18 @@ namespace SlowRobotics.SRGraph
 
         public T parent { get; set; } //convenience property for SR
 
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public Graph()
         {
             _edges = new HashSet<E>();
             _nodeMap = new Dictionary<T, INode<T>>();
         }
 
+        /// <summary>
+        /// Gets number of nodes in the graph
+        /// </summary>
         public int Count
         {
             get
@@ -26,6 +37,9 @@ namespace SlowRobotics.SRGraph
             }
         }
 
+        /// <summary>
+        /// Gets nodes in the graph as list
+        /// </summary>
         public List<INode<T>> Nodes
         {
             get
@@ -34,6 +48,9 @@ namespace SlowRobotics.SRGraph
             }
         }
 
+        /// <summary>
+        /// Gets edges in the graph as list
+        /// </summary>
         public List<E> Edges
         {
             get
@@ -42,6 +59,9 @@ namespace SlowRobotics.SRGraph
             }
         }
 
+        /// <summary>
+        /// Gets geometry in the graph as list
+        /// </summary>
         public List<T> Geometry
         {
             get
@@ -50,7 +70,11 @@ namespace SlowRobotics.SRGraph
             }
         }
 
-        
+        /// <summary>
+        /// Returns all edges that are defined by a given list of nodes
+        /// </summary>
+        /// <param name="nodes">Nodes defining edges</param>
+        /// <returns></returns>
         public List<IEdge<T>> getContainedEdges(IEnumerable<INode<T>> nodes)
         {
             HashSet<IEdge<T>> edges = new HashSet<IEdge<T>>();
@@ -64,12 +88,23 @@ namespace SlowRobotics.SRGraph
             return edges.ToList();
         }
 
-
+        /// <summary>
+        /// Gets the node for a given geometry. Returns false if cannot find the node.
+        /// </summary>
+        /// <param name="geometry">Geometry to test</param>
+        /// <param name="node">Node at geometry</param>
+        /// <returns></returns>
         public bool getNodeAt(T geometry, out INode<T> node)
         {
             return (_nodeMap.TryGetValue(geometry, out node));
         }
 
+        /// <summary>
+        /// Gets the node at a given index. Returns false if cannot find the node.
+        /// </summary>
+        /// <param name="index">Node index</param>
+        /// <param name="node">Note at index</param>
+        /// <returns></returns>
         public bool getNodeAt(int index, out INode<T> node)
         {
             if (index > _nodeMap.Count())
@@ -81,6 +116,11 @@ namespace SlowRobotics.SRGraph
             return true;
         }
 
+        /// <summary>
+        /// Removes the node with a given geometry
+        /// </summary>
+        /// <param name="geometry"></param>
+        /// <returns></returns>
         public bool removeNodeAt(T geometry)
         {
             INode<T> node;
@@ -91,7 +131,12 @@ namespace SlowRobotics.SRGraph
             return false;
         }
 
-
+        /// <summary>
+        /// Replaces all geometry references in the graph
+        /// </summary>
+        /// <param name="swapThis">Geometry to replace</param>
+        /// <param name="forThat">Replacement</param>
+        /// <returns></returns>
         public bool replaceGeometry(T swapThis, T forThat)
         {
             INode<T> a;
@@ -103,12 +148,22 @@ namespace SlowRobotics.SRGraph
             return true;
         }
 
+        /// <summary>
+        /// Merges all nodes and edges of another graph into this one
+        /// </summary>
+        /// <param name="other">Graph to merge with</param>
         public void merge(Graph<T,E> other)
         {
             foreach (E e in other.Edges) insert(e);
             foreach (INode<T> n in other.Nodes) insert(n);
         }
 
+        /// <summary>
+        /// Removes a node and merges all of its edges with replacement
+        /// </summary>
+        /// <param name="mergeThis">Node to merge</param>
+        /// <param name="intoThat">Replacement</param>
+        /// <returns></returns>
         public bool mergeInto(T mergeThis, T intoThat)
         {
             INode<T> a;
@@ -127,6 +182,11 @@ namespace SlowRobotics.SRGraph
             return true;
         }
 
+        /// <summary>
+        /// Remove a node from the graph
+        /// </summary>
+        /// <param name="node">Node to remove</param>
+        /// <returns></returns>
         private bool removeNode(INode<T> node)
         {
             foreach (E edge in node.Edges.ToList())
@@ -136,18 +196,31 @@ namespace SlowRobotics.SRGraph
             return _nodeMap.Remove(node.Geometry);
         }
 
+        /// <summary>
+        /// Removes all edges from the graph
+        /// </summary>
         public void removeAllEdges()
         {
             foreach (E edge in _edges) edge.cleanup();
             _edges = new HashSet<E>();
         }
 
+        /// <summary>
+        /// Removes an edge from the graph
+        /// </summary>
+        /// <param name="edge">Edge to remove </param>
+        /// <returns></returns>
         public bool removeEdge(E edge)
         {
             edge.cleanup(); //remove reference from connected nodes
             return _edges.Remove(edge);
         }
 
+        /// <summary>
+        /// Gets all edges connecting to a given geometry
+        /// </summary>
+        /// <param name="geometry">Geometry to get edges for</param>
+        /// <returns></returns>
         public IEnumerable<E> getEdgesFor(T geometry)
         {
             INode<T> node;
@@ -157,6 +230,11 @@ namespace SlowRobotics.SRGraph
             }
         }
 
+        /// <summary>
+        /// Inserts some geometry into the graph and creates a node if it doesnt exist. Returns the node at the geometry.
+        /// </summary>
+        /// <param name="geometry">Geometry to insert</param>
+        /// <returns></returns>
         public INode<T> insert(T geometry)
         {
             INode<T> node = (_nodeMap.ContainsKey(geometry))? _nodeMap[geometry]:new Node<T>(geometry);
@@ -164,6 +242,11 @@ namespace SlowRobotics.SRGraph
             return node;
         }
 
+        /// <summary>
+        /// Insert a node into the graph
+        /// </summary>
+        /// <param name="node">Node to insert</param>
+        /// <returns></returns>
         private bool insert(INode<T> node)
         {
             lock (_nodeMap)
@@ -175,6 +258,10 @@ namespace SlowRobotics.SRGraph
 
         }
 
+        /// <summary>
+        /// Insert an edge into the graph and updates any node references
+        /// </summary>
+        /// <param name="edge">Edge to insert</param>
         public void insert(E edge)
         {
             

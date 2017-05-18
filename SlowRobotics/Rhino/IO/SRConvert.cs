@@ -12,18 +12,35 @@ using Toxiclibs.core;
 namespace SlowRobotics.Rhino.IO
 {
 
+    /// <summary>
+    /// Utility methods for converting rhino geometry to Nursery types.
+    /// </summary>
     public static class SRConvert
     {
 
-        //TODO - clean up parenting thing, implemement fast proximity connections between nodes that aren't joined.
-
-        public static List<Agent<SRParticle>> CurveToGraph(Curve c, int res, float stiffness, ref Graph<SRParticle, Spring> lm)
+        
+        /// <summary>
+        /// Convert a curve to a graph by dividing the curve into a list of points
+        /// </summary>
+        /// <param name="c">Curve to convert</param>
+        /// <param name="res">Number of division points</param>
+        /// <param name="stiffness">Stiffness of new springs</param>
+        /// <param name="g">Graph to contain new springs</param>
+        /// <returns></returns>
+        public static List<Agent<SRParticle>> CurveToGraph(Curve c, int res, float stiffness, ref Graph<SRParticle, Spring> g)
         {
             double[] pts = c.DivideByCount(res, true);
-            return CurveToGraph(c, pts, stiffness, ref lm);
+            return CurveToGraph(c, pts, stiffness, ref g);
         }
 
-        public static List<Agent<SRParticle>> CurveToGraph(Curve c, float stiffness, ref Graph<SRParticle, Spring> lm)
+        /// <summary>
+        /// Convert a curve to a graph by creating springs between curve discontinuities
+        /// </summary>
+        /// <param name="c">Curve to convert</param>
+        /// <param name="stiffness">Stiffness of new springs</param>
+        /// <param name="g">Graph to contain new springs</param>
+        /// <returns></returns>
+        public static List<Agent<SRParticle>> CurveToGraph(Curve c, float stiffness, ref Graph<SRParticle, Spring> g)
         {
 
             Interval dom = c.Domain;
@@ -37,18 +54,26 @@ namespace SlowRobotics.Rhino.IO
                 pts.Add(t);
             }
 
-            return CurveToGraph(c, pts.ToArray(), stiffness, ref lm);
+            return CurveToGraph(c, pts.ToArray(), stiffness, ref g);
         }
 
-        public static List<Agent<SRParticle>> CurveToGraph(Curve c, double[] pts, float stiffness, ref Graph<SRParticle,Spring> lm)
+        /// <summary>
+        /// Convert curve to a graph by creating springs between points at a list of curve parameters
+        /// </summary>
+        /// <param name="c">Curve to convert</param>
+        /// <param name="pts">Parameters on curve to create springs between</param>
+        /// <param name="stiffness">Stiffness of new springs</param>
+        /// <param name="g">Graph to contain new springs</param>
+        /// <returns></returns>
+        public static List<Agent<SRParticle>> CurveToGraph(Curve c, double[] pts, float stiffness, ref Graph<SRParticle,Spring> g)
         {
             Plane startPlane;
             c.FrameAt(0, out startPlane);
             SRParticle p1 = new SRParticle(startPlane.ToPlane3D());
             Agent<SRParticle> a = new Agent<SRParticle>(p1);
-            lm.parent = p1;
+            g.parent = p1;
 
-            p1.parent = lm.parent; //parent the particle
+            p1.parent = g.parent; //parent the particle
 
             List<Agent<SRParticle>> agents = new List<Agent<SRParticle>>();
             agents.Add(a);
@@ -61,7 +86,7 @@ namespace SlowRobotics.Rhino.IO
                 Plane currentPlane;
                 c.FrameAt(pts[i], out currentPlane);
                 SRParticle p2 = new SRParticle(currentPlane.ToPlane3D());
-                p2.parent = lm.parent; // parent the particle
+                p2.parent = g.parent; // parent the particle
                 Agent<SRParticle> b = new Agent<SRParticle>(p2);
                 
 
@@ -74,13 +99,19 @@ namespace SlowRobotics.Rhino.IO
                 s.b.parent = parent;
 
                 s.s = stiffness;
-                lm.insert(s);
+                g.insert(s);
                 a = b;
             }
 
             return agents;
         }
        
+        /// <summary>
+        /// Convert a mesh to a graph by creating nodes at vertices and springs along edges
+        /// </summary>
+        /// <param name="m">Mesh to convert</param>
+        /// <param name="stiffness">Spring stiffness</param>
+        /// <returns></returns>
         public static Graph<SRParticle, Spring> MeshToGraph(Mesh m, float stiffness)
         {
 
@@ -109,6 +140,12 @@ namespace SlowRobotics.Rhino.IO
             return lm;
         }
 
+        /// <summary>
+        /// Converts a list of connected lines to graph edges.
+        /// </summary>
+        /// <param name="edges">Lines to convert to edges</param>
+        /// <param name="stiffness">Stiffness of springs</param>
+        /// <returns></returns>
         public static Graph<SRParticle, Spring> EdgesToGraph(List<Line> edges, float stiffness)
         {
             Graph<SRParticle, Spring> graph = new Graph<SRParticle, Spring>();

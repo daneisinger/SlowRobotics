@@ -9,6 +9,9 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Rhino.IO
 {
+    /// <summary>
+    /// Extension methods for converting between Nursery and Rhino types
+    /// </summary>
     public static class SRExtensions
     {
 

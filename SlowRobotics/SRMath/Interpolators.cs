@@ -7,6 +7,9 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.SRMath
 {
+    /// <summary>
+    /// Linear interpolation 
+    /// </summary>
     public class LinearInterpolation : InterpolateStrategy
     {
 
@@ -26,6 +29,9 @@ namespace SlowRobotics.SRMath
 
     }
 
+    /// <summary>
+    /// Exponential interpolation
+    /// </summary>
     public class ExponentialInterpolation : InterpolateStrategy
     {
 

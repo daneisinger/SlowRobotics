@@ -6,7 +6,11 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.SRGraph
 {
-
+    /// <summary>
+    /// Generic object oriented graph interface
+    /// </summary>
+    /// <typeparam name="T">Geometry Type</typeparam>
+    /// <typeparam name="E">Edge type</typeparam>
     public interface IGraph<T, E>  where E :IEdge<T>
     {
         List<E> Edges { get; }

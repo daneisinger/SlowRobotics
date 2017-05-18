@@ -1,0 +1,634 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SlowRoboticsGH.RebuildComponent" Collapsed="true">
+    <Position X="4" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAIABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.IntegrateComponent" Collapsed="true">
+    <Position X="12.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAQAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.SpringComponent" Collapsed="true">
+    <Position X="7.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABBAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.CohereInZAxisComponent" Collapsed="true">
+    <Position X="2.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAABAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.SpringTrailComponent" Collapsed="true">
+    <Position X="4" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAIAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.SplitSpringByMinLength" Collapsed="true">
+    <Position X="2.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAIAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.FrictionComponent" Collapsed="true">
+    <Position X="2.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAARAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.FreezeComponent" Collapsed="true">
+    <Position X="0.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABIAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.ArrestGroundBehaviour" Collapsed="true">
+    <Position X="11" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAABAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.InteractComponent" Collapsed="true">
+    <Position X="14.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAACAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.FilterClosestNeighbourComponent" Collapsed="true">
+    <Position X="12.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAEAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.FilterParentComponent" Collapsed="true">
+    <Position X="14.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAEAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.NewtonComponent" Collapsed="true">
+    <Position X="12.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAQBAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.TraverseFieldComponent" Collapsed="true">
+    <Position X="7.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAKABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.AlignFieldComponent" Collapsed="true">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAKABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.MoveInAxisComponent" Collapsed="true">
+    <Position X="11" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAACAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.AlignAxisToVelocityComponent" Collapsed="true">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.AlignPlanesComponent" Collapsed="true">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEgAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.AlignAxisToBestFitComponent" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABCAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.BrownianComponent" Collapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAQAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.LineToLineComponent" Collapsed="true">
+    <Position X="2.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAQAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.PointToLineComponent" Collapsed="true">
+    <Position X="2.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAQAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.AttractComponent" Collapsed="true">
+    <Position X="12.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAQAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.RepelComponent" Collapsed="true">
+    <Position X="5.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAQAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.SearchComponent" Collapsed="true">
+    <Position X="11" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABACAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.ScaleBehaviourByDistanceToBoxComponent" Collapsed="true">
+    <Position X="9.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.LeaveTraceComponent" Collapsed="true">
+    <Position X="0.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABgAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>BehaviourComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.CreatePopulationComponent" Collapsed="true">
+    <Position X="9.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>CreationComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.CreateBodyComponent" Collapsed="true">
+    <Position X="9.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>CreationComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.CreateParticleComponent" Collapsed="true">
+    <Position X="2.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>CreationComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.CreateKDTreeComponent" Collapsed="true">
+    <Position X="14.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>CreationComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.CreatePointCollectionComponent" Collapsed="true">
+    <Position X="5.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>CreationComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.MeshToGraph" Collapsed="true">
+    <Position X="9.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>CreationComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.EdgesToGraph" Collapsed="true">
+    <Position X="4" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>CreationComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.InterconnectNodesComponent" Collapsed="true">
+    <Position X="16.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>CreationComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.ConnectByProximityComponent" Collapsed="true">
+    <Position X="4" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>CreationComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.SpanGraphEdgesComponent" Collapsed="true">
+    <Position X="0.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>CreationComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.ConvertCurveToGraphComponent" Collapsed="true">
+    <Position X="5.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEACBAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>CreationComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.CreatePlaneFieldElementComponent" Collapsed="true">
+    <Position X="4" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>CreationComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.CreateDistanceFieldElementComponent" Collapsed="true">
+    <Position X="11" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>CreationComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.CreateMeshFieldElementComponent" Collapsed="true">
+    <Position X="16.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>CreationComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.CreateBitmapFieldElementComponent" Collapsed="true">
+    <Position X="7.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>CreationComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.CreatePolarFieldElementComponent" Collapsed="true">
+    <Position X="7.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>CreationComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.CreateNoiseFieldElement" Collapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>CreationComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.CreateFieldComponent" Collapsed="true">
+    <Position X="12.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>CreationComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.SR_GH_IO" Collapsed="true">
+    <Position X="7.5" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>IOComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.DrawNeighboursComponent" Collapsed="true">
+    <Position X="2.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>IOComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.DeconstructAgentListComponent" Collapsed="true">
+    <Position X="12.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>IOComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.DeconstructAgentComponent" Collapsed="true">
+    <Position X="11" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>IOComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.DeconstructGraphComponent" Collapsed="true">
+    <Position X="16.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>IOComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.GraphTopologyComponent" Collapsed="true">
+    <Position X="11" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>IOComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.DeconstructParticleComponent" Collapsed="true">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>IOComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.DeconstructBodyComponent" Collapsed="true">
+    <Position X="14.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>IOComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.MeshPipeComponent" Collapsed="true">
+    <Position X="5.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>MeshComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.MeshPolylineSectionsComponent" Collapsed="true">
+    <Position X="7.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>MeshComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.FillMeshComponent" Collapsed="true">
+    <Position X="11" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>MeshComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.MeshNormalComponent" Collapsed="true">
+    <Position X="4" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>MeshComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.SimulateFieldComponent" Collapsed="true">
+    <Position X="16.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>SimulateComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.SimulateComponent" Collapsed="true">
+    <Position X="14.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>SimulateComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.FixParticlesComponent" Collapsed="true">
+    <Position X="16.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAACAAAAAAAAAEAAAA=</HashCode>
+      <FileName>SimulateComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.SetBehaviours" Collapsed="true">
+    <Position X="12.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAABAAAAEAABAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>SimulateComponents.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.SlowRoboticsGHInfo" Collapsed="true">
+    <Position X="2.25" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAgAAAACAAAEAQAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>SlowRoboticsGHInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.FieldElementParameter" Collapsed="true">
+    <Position X="7.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAABAAAAICAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>SlowRoboticsParameters.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.FalloffParameter" Collapsed="true">
+    <Position X="5.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAABAAAAICAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>SlowRoboticsParameters.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.FieldParameter" Collapsed="true">
+    <Position X="9.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAABAAAAICAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>SlowRoboticsParameters.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.BehaviourParameter" Collapsed="true">
+    <Position X="14.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAABAAAAICAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>SlowRoboticsParameters.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.BodyParameter" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="16.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAABAAAAAAAAAAAABAAABICAAAACAAAAAAAAAEECCA=</HashCode>
+      <FileName>SlowRoboticsParameters.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SlowRoboticsGH.GraphParameter" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAABAAAAAAAAAAAABAAABICAAAACAAAAAAAAAEECCA=</HashCode>
+      <FileName>SlowRoboticsParameters.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SlowRoboticsGH.SpringParameter" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="5.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAABAAAAAAAAAAAABAAABICAAAACAAAAAAAAAEECCA=</HashCode>
+      <FileName>SlowRoboticsParameters.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SlowRoboticsGH.Plane3DParameter" Collapsed="true">
+    <Position X="0.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAABAAAAICAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>SlowRoboticsParameters.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.NStringParameter" Collapsed="true">
+    <Position X="14.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAABAAAAICAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>SlowRoboticsParameters.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.ParticleParameter" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="16.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAABAAAAAAAAAAAABAAABICAAAACAAAAAAAAAEECCA=</HashCode>
+      <FileName>SlowRoboticsParameters.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SlowRoboticsGH.AgentParameter" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAABAAAAICAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>SlowRoboticsParameters.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.AgentListParameter" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAABAAAAICAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>SlowRoboticsParameters.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.VoxelGridParameter" Collapsed="true">
+    <Position X="9.25" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAABAAAAICAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>SlowRoboticsParameters.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.GH_Behaviour" Collapsed="true">
+    <Position X="12.75" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAEAAgAAAAAAAAAIBAAAAAAAAAIAAE=</HashCode>
+      <FileName>SlowRoboticsTypes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.GH_FieldElement" Collapsed="true">
+    <Position X="14.5" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAEAAgAAAAAAAAAIBAAAAAAAAAIAAE=</HashCode>
+      <FileName>SlowRoboticsTypes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.GH_Field" Collapsed="true">
+    <Position X="12.75" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAEAAgAAAAAAAAAIBAAAAAAAAAIAAE=</HashCode>
+      <FileName>SlowRoboticsTypes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.GH_Spring" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="4" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAQAAAAAAAAEAAgAABAAAAAAKBAAAAAAAAAICAE=</HashCode>
+      <FileName>SlowRoboticsTypes.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SlowRoboticsGH.GH_String" Collapsed="true">
+    <Position X="5.75" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAEAAgAAAAAAAAAIBAAAAAAAAAIAAE=</HashCode>
+      <FileName>SlowRoboticsTypes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.GH_Falloff" Collapsed="true">
+    <Position X="11" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAEAAgAAAAAAAAAIBAAAAAAAAAIAAE=</HashCode>
+      <FileName>SlowRoboticsTypes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.GH_Plane3D" Collapsed="true">
+    <Position X="2.25" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAQAAAAAAAAEAAgAAAAAAAAAIBAAAAAAAAAIAAE=</HashCode>
+      <FileName>SlowRoboticsTypes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.GH_Particle" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAQAAAAAAAAEAAgAABAAAAAAKBAAAAAAAAAICAE=</HashCode>
+      <FileName>SlowRoboticsTypes.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SlowRoboticsGH.GH_Body" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAQAAAAAAAAEAAgAABAAAAAAKBAAAAAAAAAICAE=</HashCode>
+      <FileName>SlowRoboticsTypes.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SlowRoboticsGH.GH_Graph" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="16.25" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAEAAgAABAAAAAAKBAAAAAAAAAICAE=</HashCode>
+      <FileName>SlowRoboticsTypes.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SlowRoboticsGH.GH_Agent" Collapsed="true">
+    <Position X="4" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAEAAgAAAAAAAAAIBAAAAAAAAAIAAE=</HashCode>
+      <FileName>SlowRoboticsTypes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.GH_AgentList" Collapsed="true">
+    <Position X="11" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAEAAgAAAAAAAAAKBAAAAAAAAAIAAE=</HashCode>
+      <FileName>SlowRoboticsTypes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.GH_VoxelGrid" Collapsed="true">
+    <Position X="7.5" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAEAAgAAAAAAAAAIBAAAAAAAAAIAAE=</HashCode>
+      <FileName>SlowRoboticsTypes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SlowRoboticsGH.Properties.Resources" Collapsed="true">
+    <Position X="5.75" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABEIAAAQAAAAAAAAEAAAAAAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

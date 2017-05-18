@@ -7,6 +7,9 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Spatial
 {
+    /// <summary>
+    /// Brute force nearest neighbour search
+    /// </summary>
     public class PointCollection : ISearchable
     {
         public List<Vec3D> allPts;

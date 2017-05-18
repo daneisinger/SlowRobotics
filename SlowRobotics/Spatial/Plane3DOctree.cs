@@ -7,6 +7,9 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Spatial
 {
+    /// <summary>
+    /// PointOctree wrapper that implements ISearchable
+    /// </summary>
     public class Plane3DOctree : ISearchable
     {
         private PointOctree tree;

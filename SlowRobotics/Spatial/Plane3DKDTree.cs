@@ -8,6 +8,9 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Spatial
 {
+    /// <summary>
+    /// Wrapper for KDTree class that implementes ISearchable interface
+    /// </summary>
     public class Plane3DKDTree : ISearchable
     {
         private KDTree<Vec3D> tree;

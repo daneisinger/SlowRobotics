@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace SlowRobotics.Utils
 {
+    /// <summary>
+    /// Implementation of random class for multithreaded core
+    /// </summary>
     public static class ThreadedRandom
     {
         static int seed = Environment.TickCount;

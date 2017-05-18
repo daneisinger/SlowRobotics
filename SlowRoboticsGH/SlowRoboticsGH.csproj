@@ -88,6 +88,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
     <None Include="Resources\createNode.png" />
     <Content Include="Resources\meshPipe.png" />
   </ItemGroup>

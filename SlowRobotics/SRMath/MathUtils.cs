@@ -7,9 +7,19 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.SRMath
 {
+    /// <summary>
+    /// Convenience class for common math functions
+    /// </summary>
     public static class MathUtils
     {
 
+        /// <summary>
+        /// Constrain a value to a bounds
+        /// </summary>
+        /// <param name="v">Value to constrain</param>
+        /// <param name="min">Bound minimum</param>
+        /// <param name="max">Bound maximum</param>
+        /// <returns></returns>
         public static float constrain(float v, float min, float max)
         {
             if (v < min)
@@ -23,11 +33,27 @@ namespace SlowRobotics.SRMath
             else return v;
         }
 
+        /// <summary>
+        /// Map a value to a domain
+        /// </summary>
+        /// <param name="v">Value to map</param>
+        /// <param name="min">Reference domain minimum</param>
+        /// <param name="max">Reference domain maximum</param>
+        /// <param name="min2">Target domain minimum</param>
+        /// <param name="max2">Taget domain maximum</param>
+        /// <returns></returns>
         public static float map(float v, float min, float max, float min2, float max2)
         {
             return min2 + ((v / (max - min)) * (max2 - min2));
         }
 
+        /// <summary>
+        /// Returns the value at a parameter within a domain
+        /// </summary>
+        /// <param name="min">Minimum value</param>
+        /// <param name="max">Maximum value</param>
+        /// <param name="f">parameter</param>
+        /// <returns></returns>
         public static float lerp(float min, float max, float f)
         {
             return min + (max - min) * f;
@@ -38,6 +64,12 @@ namespace SlowRobotics.SRMath
             return lerp((float)min, (float)max, f);
         }
 
+        /// <summary>
+        /// Returns squared distance between two points
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
         public static float approxDistance(Vec3D source, Vec3D target)
         {
             float dx = target.x - source.x;
@@ -47,12 +79,24 @@ namespace SlowRobotics.SRMath
             return (dx * dx) + (dy * dy) + (dz * dz);
         }
 
+        /// <summary>
+        /// Returns closest n points in a collection
+        /// </summary>
+        /// <param name="a">Point to search from</param>
+        /// <param name="_pts">Points to search</param>
+        /// <param name="numClosest">Number of points to return</param>
+        /// <returns></returns>
         public static List<Vec3D> getClosestN(Vec3D a, List<Vec3D> _pts, int numClosest)
         {
             return _pts.Where(point => point != a).
                       OrderBy(point => approxDistance(a, point)).Take(numClosest).ToList();
         }
 
+        /// <summary>
+        /// Gets average position from a list of points
+        /// </summary>
+        /// <param name="_pts">Points to average</param>
+        /// <returns></returns>
         public static Vec3D averageVectors(List<Vec3D> _pts)
         {
             return new Vec3D(
@@ -61,7 +105,12 @@ namespace SlowRobotics.SRMath
             _pts.Average(x => x.z));
         }
 
-
+        /// <summary>
+        /// Gets plane of best fit for a collection of points
+        /// </summary>
+        /// <param name="planeVerts">Collection of points</param>
+        /// <param name="centroid">Plane origin</param>
+        /// <returns></returns>
         public static Vec3D getPlaneNormal(List<Vec3D> planeVerts, out Vec3D centroid)
         {
             centroid = averageVectors(planeVerts);
@@ -86,6 +135,12 @@ namespace SlowRobotics.SRMath
 
         }
 
+        /// <summary>
+        /// Returns the point on line 1 that is closest to line 2
+        /// </summary>
+        /// <param name="l1">First line</param>
+        /// <param name="l2">Second line</param>
+        /// <returns></returns>
         public static Vec3D closestPoint(ILine l1, ILine l2)
         {
             // Algorithm is ported from the C algorithm of Paul Bourke

@@ -7,11 +7,17 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.SRMath
 {
+    /// <summary>
+    /// Falloff interface
+    /// </summary>
     public interface FalloffStrategy
     {
         Vec3D getForce(Vec3D ab, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator);
     }
 
+    /// <summary>
+    /// Implements a non-falloff for easy integration with behaviours
+    /// </summary>
     public class NoFalloffStrategy : FalloffStrategy
     {
         public Vec3D getForce(Vec3D ab, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
@@ -21,6 +27,10 @@ namespace SlowRobotics.SRMath
         }
 
     }
+
+    /// <summary>
+    /// Linear falloff 
+    /// </summary>
     public class LinearFalloffStrategy : FalloffStrategy
     {
         public Vec3D getForce(Vec3D ab, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)
@@ -31,6 +41,9 @@ namespace SlowRobotics.SRMath
         }
     }
 
+    /// <summary>
+    /// Inverse falloff
+    /// </summary>
     public class InverseFalloffStrategy : FalloffStrategy
     { 
         public Vec3D getForce(Vec3D ab, float minDist, float maxDist, float maxForce, InterpolateStrategy interpolator)

@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 
 namespace SlowRobotics.Rhino.GraphTools
 {
+
+    /// <summary>
+    /// Work in progress dijkstra implementation. Likely to be superseded by new graph search tools
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class Dijkstra<T>
     {
 

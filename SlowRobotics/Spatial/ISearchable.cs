@@ -6,6 +6,9 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Spatial
 {
+    /// <summary>
+    /// Search interface 
+    /// </summary>
     public interface ISearchable
     {
         IEnumerable<Vec3D> Search(Vec3D pt, float radius);

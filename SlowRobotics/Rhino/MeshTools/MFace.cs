@@ -7,6 +7,9 @@ using System.Text;
 
 namespace SlowRobotics.Rhino.MeshTools
 {
+    /// <summary>
+    /// Convenience class that represents a mesh face as a collection of points.
+    /// </summary>
     public struct MFace
     {
         public Point3f v1, v2, v3, v4;

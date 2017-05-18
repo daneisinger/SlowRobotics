@@ -10,9 +10,16 @@ using Toxiclibs.core;
 
 namespace SlowRobotics.Rhino.GraphTools
 {
+    /// <summary>
+    /// Contains a number of static utility methods for modifying and adding to graphs
+    /// </summary>
     public static class GraphUtils
     {
-
+        /// <summary>
+        /// Interconnects all nodes in a graph. New springs are given "brace" tag.
+        /// </summary>
+        /// <param name="graph">Graph to interconnect</param>
+        /// <param name="stiffness">Stiffness of new springs</param>
         public static void interconnectNodes(Graph<SRParticle,Spring> graph, float stiffness)
         {
             foreach(SRParticle p in graph.Geometry)
@@ -30,6 +37,14 @@ namespace SlowRobotics.Rhino.GraphTools
             }
         }
 
+        /// <summary>
+        /// Connects nodes in a graph by proximity.
+        /// </summary>
+        /// <param name="graph">Graph to add to</param>
+        /// <param name="stiffness">Stiffness of new springs</param>
+        /// <param name="minDist">Minimum distance for connections</param>
+        /// <param name="maxDist">Maximum distance for connections</param>
+        /// <param name="tag">Tag for new springs</param>
         public static void createProximateSprings(Graph<SRParticle, Spring> graph, float stiffness, float minDist, float maxDist, string tag)
         {
             List<Vec3D> pts = graph.Geometry.ConvertAll(x => (Vec3D)x);
@@ -52,6 +67,13 @@ namespace SlowRobotics.Rhino.GraphTools
             }
         }
 
+        /// <summary>
+        /// Iterates over node collection and creates a spring for every n nodes. Works well for linear graph topologies.
+        /// New springs are assigned the brace tag.
+        /// </summary>
+        /// <param name="graph">Graph to add to</param>
+        /// <param name="n">number of nodes between connection nodes</param>
+        /// <param name="stiffness">Stiffness of new springs</param>
         public static void connectNthNodes(Graph<SRParticle,Spring> graph, int n, float stiffness)
         {
             for (int i = 0; i < graph.Nodes.Count - n - 1; i += n)
@@ -62,10 +84,19 @@ namespace SlowRobotics.Rhino.GraphTools
                 graph.getNodeAt(i + n, out b);
                 Spring s = new Spring(a, b);
                 s.s = stiffness;
+                s.tag = "brace";
                 graph.insert(s);
             }
         }
-
+        /// <summary>
+        /// Iterates over edge collection and creates springs that span neighbours by iterating outwards from each
+        /// edge by a specified degree. Degree 1 will create spans between neighbouring edges. Degree 2 creates spans between edges 
+        /// that are 1 edge apart etc.
+        /// </summary>
+        /// <param name="graph">Graph to add to</param>
+        /// <param name="stiffness">Stiffness of new springs</param>
+        /// <param name="lengthRatio">Scale factor for rest length of new springs</param>
+        /// <param name="degree">Span degree</param>
         public static void spanSprings(Graph<SRParticle, Spring> graph, float stiffness, float lengthRatio, int degree)
         {
             List<Spring> bucket = new List<Spring>();
@@ -90,6 +121,12 @@ namespace SlowRobotics.Rhino.GraphTools
             foreach (Spring s in bucket) graph.insert(s);
         }
 
+        /// <summary>
+        /// Iterates over nodes in a graph and uses a star pathfinding to create springs to nearby nodes.
+        /// </summary>
+        /// <param name="graph">Graph to add to</param>
+        /// <param name="n">Tries to create a spring to node n nodes away from current node</param>
+        /// <param name="stiffness">Stiffness of new springs</param>
         public  static void connectNthNodesWithLength(Graph<SRParticle, Spring> graph, int n, float stiffness)
         {
             List<Spring> toAdd = new List<Spring>();
@@ -134,6 +171,11 @@ namespace SlowRobotics.Rhino.GraphTools
             foreach (Spring s in toAdd) graph.insert(s);
         }
 
+        /// <summary>
+        /// Merges nodes in a graph within a given tolerance.
+        /// </summary>
+        /// <param name="graph">Graph to modify </param>
+        /// <param name="tolerance">Merge tolerance</param>
         public static void mergeNodes (Graph<SRParticle,Spring> graph, float tolerance)
         {
             Dictionary<string, SRParticle> bins = new Dictionary<string, SRParticle>(); //bins to keep track of duplicates within a threshold

@@ -14,6 +14,7 @@ namespace SlowRobotics.Rhino.VoxelTools
 
     //TODO - set this up with inheretance, too much overlap
 
+
     public class ColourGridMesher
     {
         //buffers
