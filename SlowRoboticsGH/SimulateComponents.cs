@@ -17,7 +17,7 @@ namespace SlowRoboticsGH
 {
     public class SimulateFieldComponent : GH_Component
     {
-        public SimulateFieldComponent() : base("Simulate Field", "SimField", "Traces lines through a field", "Nursery", "Field") { }
+        public SimulateFieldComponent() : base("Simulate Field", "SimField", "Traces lines through a field", "Nursery", "Simulation") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{995ccc70-edc1-44a3-b380-e1f33bb3c2cb}");
         protected override System.Drawing.Bitmap Icon => Properties.Resources.shape;
@@ -117,7 +117,7 @@ namespace SlowRoboticsGH
         public FixParticlesComponent() : base("Fix Particles", "FixParticles", "Fix particles by proximity to a list of points", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{e90f5cb9-f76d-4ec9-bb73-c93b3210cc40}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.shape;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -172,7 +172,7 @@ namespace SlowRoboticsGH
         public SetBehaviours() : base("Set Behaviours", "SetBehaviours", "Set agent behaviours", "Nursery", "Simulation") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{8aecd428-5f62-4003-939a-baf18729a08f}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.shape;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {

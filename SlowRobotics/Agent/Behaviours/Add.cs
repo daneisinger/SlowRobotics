@@ -60,7 +60,6 @@ namespace SlowRobotics.Agent.Behaviours
             public Vec3D offset { get; set; }
             public List<IBehaviour> behaviours { get; set; }
             public int frequency { get; set; }
-            public int ctr;
             public float stiffness { get; set; }
 
             /// <summary>
@@ -71,12 +70,11 @@ namespace SlowRobotics.Agent.Behaviours
             /// <param name="_offset">Vector defining how much to displace the duplicate of the parent particle</param>
             /// <param name="_stiffness">Stiffness of extension spring</param>
             /// <param name="_behaviours">Collection of behaviours to add to the duplicated particle</param>
-            public Extend(int _priority, int _frequency, Vec3D _offset, float _stiffness,List<IBehaviour> _behaviours) : base(_priority)
+            public Extend(int _priority, int _frequency, Vec3D _offset, float _stiffness, List<IBehaviour> _behaviours) : base(_priority)
             {
                 pop = new AgentList();
                 offset = _offset;
                 frequency = _frequency;
-                ctr = 0;
                 behaviours = _behaviours;
                 stiffness = _stiffness;
                 lateUpdate = true;
@@ -84,10 +82,10 @@ namespace SlowRobotics.Agent.Behaviours
 
             public override void runOn(Graph<SRParticle,Spring> graph)
             {
-                if (ctr++ % frequency == 0)
+                SRParticle p = graph.parent;
+                if (p.age % frequency == 0)
                 {
                     //get head particle
-                    SRParticle p = graph.parent;
                     SRParticle clone = new SRParticle(p.add(offset));
                     //point nodes to new particle
                     graph.replaceGeometry(p, clone);
@@ -98,12 +96,12 @@ namespace SlowRobotics.Agent.Behaviours
                         //make new connection if possible
                         Spring newConnection = new Spring(lastNode, new Node<SRParticle>(p));
                         graph.insert(newConnection);
+                        //make new agent
+                        Agent<SRParticle> a = new Agent<SRParticle>(clone);
+                        a.addBehaviours(behaviours);
+                        //add to world -------------------------------------------TODO - use graph to store things instead
+                        pop.add(a);
                     }
-                    //make new agent
-                    Agent<SRParticle> a = new Agent<SRParticle>(clone);
-                    a.addBehaviours(behaviours);
-                    //add to world -------------------------------------------TODO - use graph to store things instead
-                    pop.add(a);
                 }
             }
         }

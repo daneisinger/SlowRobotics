@@ -139,6 +139,11 @@ namespace SlowRobotics.SRGraph
             return false;
         }
 
+        public void clear()
+        {
+            removeAllEdges();
+            removeAllNodes();
+        }
         /// <summary>
         /// Replaces all geometry references in the graph
         /// </summary>
@@ -212,6 +217,10 @@ namespace SlowRobotics.SRGraph
             _edges = new HashSet<E>();
         }
 
+        public void removeAllNodes()
+        {
+            _nodeMap.Clear();
+        }
         /// <summary>
         /// Removes an edge from the graph
         /// </summary>

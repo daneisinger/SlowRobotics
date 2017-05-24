@@ -605,7 +605,7 @@ namespace SlowRoboticsGH
                     args.Pipeline.DrawLine(l, System.Drawing.Color.Green, 1);
                 }
             }
-
+            /*
             foreach (SRParticle p in graph.Geometry)
             {
                 Vec3D d = p.xx.add(p.yy).add(p.zz);
@@ -614,7 +614,7 @@ namespace SlowRoboticsGH
                 Point3d py = p.yy.ToPoint3d();
                 args.Pipeline.DrawLine(pt, pt + px, System.Drawing.Color.Red, 1);
                 args.Pipeline.DrawLine(pt, pt + py, System.Drawing.Color.Blue, 1);
-            }
+            }*/
 
         }
 
@@ -775,17 +775,16 @@ namespace SlowRoboticsGH
                 return true;
             }
         }
-        /*
+        
         public override bool CastTo<Q>(ref Q target)
         {
-        //issue with GH_ types
             if (typeof(Q) == Value.data.GetType())
             {
-                target = (Q)(object)Value;
+                target = (Q)(object)Value.data;
                 return true;
             }
             return base.CastTo<Q>(ref target);
-        }*/
+        }
     }
 
     public class GH_VoxelGrid : GH_Goo<IVoxelGrid> 

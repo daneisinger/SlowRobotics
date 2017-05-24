@@ -20,7 +20,7 @@ namespace SlowRoboticsGH
         public MeshPipeComponent() : base("Mesh Pipe", "MeshPipe", "Create a mesh by piping a curve", "Nursery", "Mesh") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{06a11782-d367-4cdd-98c6-b24c22bef473}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -56,7 +56,7 @@ namespace SlowRoboticsGH
         public MeshPolylineSectionsComponent() : base("Mesh Loft", "MeshLoft", "Create a mesh by lofting polyline sections", "Nursery", "Mesh") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{99aafd2f-df87-4795-9596-448274e5a107}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -95,7 +95,7 @@ namespace SlowRoboticsGH
         public FillMeshComponent() : base("Fill Mesh", "FillMesh", "Fill a mesh with maximum n planes that align with the nearest normal on the mesh. Will try n*10 times to fill. Creates planes on surface of mesh if not closed", "Nursery", "Mesh") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{f7c2509a-4b87-49a6-b29d-0bc251a95b28}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -156,7 +156,7 @@ namespace SlowRoboticsGH
         public MeshNormalComponent() : base("Mesh Normal", "MeshNormal", "Creates a plane from mesh face normal at a given point", "Nursery", "Mesh") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{d6f19cae-5207-4076-be7f-8d5b24949706}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {

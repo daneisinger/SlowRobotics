@@ -95,6 +95,8 @@
     <None Include="Resources\createNode.png" />
     <None Include="Resources\MayanIcon.bmp" />
     <None Include="Resources\mayan.png" />
+    <None Include="Resources\dog.png" />
+    <None Include="Resources\face.png" />
     <Content Include="Resources\meshPipe.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
