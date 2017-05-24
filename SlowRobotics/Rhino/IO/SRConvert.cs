@@ -3,6 +3,7 @@ using Rhino.Geometry;
 using SlowRobotics.Agent;
 using SlowRobotics.Core;
 using SlowRobotics.SRGraph;
+using SlowRobotics.SRMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -140,6 +141,24 @@ namespace SlowRobotics.Rhino.IO
             return lm;
         }
 
+        private class SRParticleComparer : IEqualityComparer<SRParticle>
+        {
+            public SRParticleComparer()
+            {
+            }
+
+            public bool Equals(SRParticle x, SRParticle y)
+            {
+                return (x.x == y.x && x.y == y.y && x.z == y.z);
+            }
+
+            public int GetHashCode(SRParticle x)
+            {
+                string s = " " + x.x + " " + x.y+" "+ x.z;
+                return s.GetHashCode();
+            }
+        }
+
         /// <summary>
         /// Converts a list of connected lines to graph edges.
         /// </summary>
@@ -148,8 +167,9 @@ namespace SlowRobotics.Rhino.IO
         /// <returns></returns>
         public static Graph<SRParticle, Spring> EdgesToGraph(List<Line> edges, float stiffness)
         {
-            Graph<SRParticle, Spring> graph = new Graph<SRParticle, Spring>();
-            //loop though all lines and insert into graph
+            //construct a graph using custom comparer for location checks
+            Graph<SRParticle, Spring> graph = new Graph<SRParticle, Spring>(new SRParticleComparer());
+            //insert all unique points
             foreach (Line l in edges)
             {
                 Spring s = new Spring(l.toLine3D());

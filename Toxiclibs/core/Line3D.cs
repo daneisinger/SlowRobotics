@@ -125,20 +125,20 @@ namespace Toxiclibs.core
 
         public Line3D(float x1, float y1, float z1, float x2, float y2, float z2)
         {
-            this.start = new Vec3D(x1, y1, z1);
-            this.end = new Vec3D(x2, y2, z2);
+            start = new Vec3D(x1, y1, z1);
+            end = new Vec3D(x2, y2, z2);
         }
 
         public Line3D(ReadonlyVec3D a, ReadonlyVec3D b)
         {
-            this.start = a.copy();
-            this.end = b.copy();
+            start = a.copy();
+            end = b.copy();
         }
 
         public Line3D(Vec3D a, Vec3D b)
         {
-            this.start = a;
-            this.end = b;
+            start = a;
+            end = b;
         }
 
         /**
@@ -155,42 +155,6 @@ namespace Toxiclibs.core
          * </p>
          */
 
-        /*
-    public LineIntersection closestLineTo(Line3D l)
-    {
-        Vec3D p43 = l.a.sub(l.b);
-        if (p43.isZeroVector())
-        {
-            return new LineIntersection(IntersectionType.NON_INTERSECTING);
-        }
-        Vec3D p21 = b.sub(a);
-        if (p21.isZeroVector())
-        {
-            return new LineIntersection(IntersectionType.NON_INTERSECTING);
-        }
-        Vec3D p13 = a.sub(l.a);
-
-        double d1343 = p13.x * p43.x + p13.y * p43.y + p13.z * p43.z;
-        double d4321 = p43.x * p21.x + p43.y * p21.y + p43.z * p21.z;
-        double d1321 = p13.x * p21.x + p13.y * p21.y + p13.z * p21.z;
-        double d4343 = p43.x * p43.x + p43.y * p43.y + p43.z * p43.z;
-        double d2121 = p21.x * p21.x + p21.y * p21.y + p21.z * p21.z;
-
-        double denom = d2121 * d4343 - d4321 * d4321;
-        if (Math.Abs(denom) < Math.E)
-        {
-            return new LineIntersection(IntersectionType.NON_INTERSECTING);
-        }
-        double numer = d1343 * d4321 - d1321 * d4343;
-        float mua = (float)(numer / denom);
-        float mub = (float)((d1343 + d4321 * mua) / d4343);
-
-        Vec3D pa = a.add(p21.scaleSelf(mua));
-        Vec3D pb = l.a.add(p43.scaleSelf(mub));
-        return new LineIntersection(IntersectionType.INTERSECTING, new Line3D(pa, pb), mua,
-                mub);
-    }
-    */
         public Vec3D closestPoint(ILine l2)
         {
             // Algorithm is ported from the C algorithm of Paul Bourke

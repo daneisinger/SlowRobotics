@@ -146,6 +146,9 @@ namespace SlowRobotics.Core
             }
         }
 
+        //TODO - override interpolate and set functions for rigid body so that these 
+        //transforms are applied to all particles in the body
+
         /// <summary>
         /// Calls sumForces() and integrates acceleration and torque into body position and orientation by transforming the body.
         /// </summary>

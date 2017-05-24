@@ -1,5 +1,6 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Geometry;
+using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 using SlowRobotics.Agent;
@@ -41,6 +42,38 @@ namespace SlowRoboticsGH
 
             return addTo;
         }
+    }
+
+    public class UnwrapComponent : GH_Component
+    {
+        public UnwrapComponent() : base("Unwrap", "Unwrap", "Unwraps a wrapped object into object and dictionary of properties", "Nursery", "Utilities") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{486f4df6-0d6e-4bcf-a13f-6a9c07fd882c}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.mayan;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddParameter(new SRWrapperParameter(),"Wrapper", "W", "Wrapper to unwrap", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Object", "O", "Wrapped object", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Properties", "P", "Wrapper properties", GH_ParamAccess.list);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            GH_SRWrapper s = null;
+
+
+            if (!DA.GetData(0, ref s)) { return; };
+               
+
+            DA.SetData(0, s.Value.data);
+            DA.SetDataList(1, s.Value.properties.Values);
+        }
+
     }
 
     public class DrawNeighboursComponent : GH_Component

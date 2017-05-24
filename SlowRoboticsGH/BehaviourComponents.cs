@@ -508,7 +508,7 @@ namespace SlowRoboticsGH
         public FilterClosestNeighbourComponent() : base("Filter Closest", "FilterClosest", "IAgent Behaviour: Filter out all but closest neighbours", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{fb1100ba-1d65-4bd6-99f2-f3f0b14422b3}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.mayan;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -549,7 +549,7 @@ namespace SlowRoboticsGH
         public FilterParentComponent() : base("Filter Parents", "FilterParent", "IAgent Behaviour: Filter out neighbours with same parent", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{42fa9ca5-e6b5-4633-b343-73325baf86ae}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.mayan;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -587,7 +587,7 @@ namespace SlowRoboticsGH
         public NewtonComponent() : base("Newton", "Newton", "SRParticle Behaviour: Move particle with a force", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{8974b28e-b8d7-4783-9b9f-3d4adc85e36a}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.mayan;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -629,7 +629,7 @@ namespace SlowRoboticsGH
         public TraverseFieldComponent() : base("Traverse field", "TraverseField", "SRParticle Behaviour: Move a particle through a field", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
         public override Guid ComponentGuid => new Guid("{f21c5bee-d4b2-47f6-875c-1ce463657a02}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.sun;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -675,7 +675,7 @@ namespace SlowRoboticsGH
         public AlignFieldComponent() : base("Align to field", "AlignField", "Plane3D Behaviour: Align a plane with a field", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
         public override Guid ComponentGuid => new Guid("{66de0eb8-09c2-4fc7-bd61-724e7d70442e}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.sun;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -725,7 +725,7 @@ namespace SlowRoboticsGH
         public MoveInAxisComponent() : base("Move in axis", "MoveAxis", "SRParticle Behaviour: Move a particle with one of its axes", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{e8e65855-a4ec-46b2-b9e3-ee4fb426353f}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.sun;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {

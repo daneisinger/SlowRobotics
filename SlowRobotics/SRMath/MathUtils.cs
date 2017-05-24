@@ -105,6 +105,61 @@ namespace SlowRobotics.SRMath
             _pts.Average(x => x.z));
         }
 
+        public static IEnumerable<Vec3D> removeDuplicates(IEnumerable<Vec3D> pts)
+        {
+            Dictionary<string, Vec3D> set = new Dictionary<string, Vec3D>();
+            foreach (Vec3D p in pts)
+            {
+                string s = "" + p.x + " " + p.y + " " + p.z;
+                try
+                {
+                    set.Add(s, p);
+                }
+                catch (ArgumentException){ }
+            }
+            return set.Values;
+        }
+
+        public static IEnumerable<Line3D> removeDuplicateEndPoints(IEnumerable<Line3D> lines)
+        {
+            Dictionary<string, Vec3D> set = new Dictionary<string, Vec3D>();
+
+            foreach (Line3D p in lines)
+            {
+                string sD1 = "" + p.start.x + " " + p.start.y + " " + p.start.z;
+                string sD2 = "" + p.end.x + " " + p.end.y + " " + p.end.z;
+                try
+                {
+                    set.Add(sD1, p.start);
+                    set.Add(sD2, p.end);
+                }
+                catch (ArgumentException){ }
+                //re-reference lines
+                p.start = set[sD1];
+                p.end = set[sD2];
+            }
+            return lines;
+        }
+
+        public static IEnumerable<Line3D> removeDuplicateLines(IEnumerable<Line3D> lines)
+        {
+            Dictionary<string, Line3D> set = new Dictionary<string, Line3D>();
+            foreach (Line3D p in lines)
+            {
+                string sD1 = "" + p.start.x + " " + p.start.y + " " + p.start.z + " " + p.end.x + " " + p.end.y + " " + p.end.z;
+                string sD2 = "" + p.end.x + " " + p.end.y + " " + p.end.z + " " + p.start.x + " " + p.start.y + " " + p.start.z;
+                if (!set.ContainsKey(sD1) && !set.ContainsKey(sD2))
+                {
+                    try
+                    {
+                        set.Add(sD1, p);
+                    }
+                    catch (ArgumentException) { }
+                }
+            }
+            return set.Values;
+        }
+
         /// <summary>
         /// Gets plane of best fit for a collection of points
         /// </summary>

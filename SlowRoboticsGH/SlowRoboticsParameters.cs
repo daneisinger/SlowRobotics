@@ -15,7 +15,7 @@ namespace SlowRoboticsGH
     {
         public FieldElementParameter() : base("Field Element", "FieldElement", "This is a Field Element", "Nursery", "Parameters") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.param;
         public override System.Guid ComponentGuid => new Guid("{457d48c9-7010-4631-bd12-f2b27e683c55}");
 
         protected override GH_GetterResult Prompt_Singular(ref GH_FieldElement value)
@@ -34,7 +34,7 @@ namespace SlowRoboticsGH
     {
         public FalloffParameter() : base("Falloff", "Falloff", "Falloff Strategy", "Nursery", "Parameters") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.param;
         public override System.Guid ComponentGuid => new Guid("{964ba95a-0cae-4ace-a21e-3bbe948d9bbf}");
 
         protected override GH_GetterResult Prompt_Singular(ref GH_Falloff value)
@@ -53,7 +53,7 @@ namespace SlowRoboticsGH
     {
         public FieldParameter() : base("Field", "Field", "This is a Field", "Nursery", "Parameters") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.param;
         public override System.Guid ComponentGuid => new Guid("{450de04c-260e-416e-bc30-1d428bb1d104}");
 
         protected override GH_GetterResult Prompt_Singular(ref GH_Field value)
@@ -72,7 +72,7 @@ namespace SlowRoboticsGH
     {
         public BehaviourParameter() : base("Behaviour", "Behaviour", "This is an Agent Behaviour", "Nursery", "Parameters") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.param;
         public override System.Guid ComponentGuid => new Guid("{5633a9d5-2b09-49f0-8488-dba3c169a6af}");
 
         protected override GH_GetterResult Prompt_Singular(ref GH_Behaviour value)
@@ -91,7 +91,7 @@ namespace SlowRoboticsGH
     {
         public BodyParameter() : base("Body", "Body", "This is a Body", "Nursery", "Parameters") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.param;
         public override System.Guid ComponentGuid => new Guid("{ebda6c99-eb20-4dac-9d01-1bb4b9717eee}");
 
         bool _hidden;
@@ -140,7 +140,7 @@ namespace SlowRoboticsGH
     {
         public GraphParameter() : base("Graph", "Graph", "This is a Graph", "Nursery", "Parameters") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.param;
         public override System.Guid ComponentGuid => new Guid("{de92ea40-4472-4351-a1ec-eb948d096d8e}");
 
         bool _hidden;
@@ -189,7 +189,7 @@ namespace SlowRoboticsGH
     {
         public SpringParameter() : base("Spring", "Spring", "This is a Spring", "Nursery", "Parameters") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.param;
         public override System.Guid ComponentGuid => new Guid("{69b8e253-7bf0-464f-af79-062550329983}");
 
         bool _hidden;
@@ -238,7 +238,7 @@ namespace SlowRoboticsGH
     {
         public Plane3DParameter() : base("Plane3D", "Plane3D", "This is a Plane3D", "Nursery", "Parameters") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.param;
         public override System.Guid ComponentGuid => new Guid("{0ec193e4-45a7-4029-adc6-8995aa45cc2a}");
 
         protected override GH_GetterResult Prompt_Singular(ref GH_Plane3D value)
@@ -260,7 +260,7 @@ namespace SlowRoboticsGH
     {
         public NStringParameter() : base("Nursery String", "NString", "This is a String", "Nursery", "Parameters") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.param;
         public override System.Guid ComponentGuid => new Guid("{522f865a-4cbf-4b15-83f3-e23d44345d7a}");
 
         protected override GH_GetterResult Prompt_Singular(ref GH_String value)
@@ -296,7 +296,7 @@ namespace SlowRoboticsGH
     {
         public ParticleParameter() : base("Particle", "Particle", "This is a Particle", "Nursery", "Parameters") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.param;
         public override System.Guid ComponentGuid => new Guid("{742c9e9f-e8a6-4fd8-a89f-ae3b590d0d4a}");
 
         public BoundingBox ClippingBox
@@ -351,7 +351,7 @@ namespace SlowRoboticsGH
     {
         public AgentParameter() : base("Agent", "Agent", "This is an Agent", "Nursery", "Parameters") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.param;
         public override System.Guid ComponentGuid => new Guid("{646ef930-37c0-492f-8a0e-41f400cb222a}");
 
         protected override GH_GetterResult Prompt_Singular(ref GH_Agent value)
@@ -373,7 +373,7 @@ namespace SlowRoboticsGH
     {
         public AgentListParameter() : base("Agent List", "AgentList", "This is a List of Agents", "Nursery", "Parameters") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.param;
         public override System.Guid ComponentGuid => new Guid("{bf67f1ae-e5c0-4731-a606-b7f03e6d66fe}");
 
         protected override GH_GetterResult Prompt_Singular(ref GH_AgentList value)
@@ -390,6 +390,30 @@ namespace SlowRoboticsGH
             return GH_GetterResult.success;
         }
     }
+
+    public class SRWrapperParameter : GH_PersistentParam<GH_SRWrapper>
+    {
+        public SRWrapperParameter() : base("Wrapper", "Wrapper", "Wraps an object and assigns a dictionary of properties", "Nursery", "Parameters") { }
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.param;
+        public override System.Guid ComponentGuid => new Guid("{121e180b-d90e-4be2-ba2c-5d668166a0c7}");
+
+        protected override GH_GetterResult Prompt_Singular(ref GH_SRWrapper value)
+        {
+
+            value = new GH_SRWrapper();
+            return GH_GetterResult.success;
+
+        }
+
+        protected override GH_GetterResult Prompt_Plural(ref List<GH_SRWrapper> values)
+        {
+            values = new List<GH_SRWrapper>();
+            return GH_GetterResult.success;
+        }
+    }
+
+
     public class VoxelGridParameter : GH_PersistentParam<GH_VoxelGrid>
     {
         public VoxelGridParameter() : base("Voxel Grid", "VoxelGrid", "This is a Voxel Grid", "Nursery", "Parameters") { }

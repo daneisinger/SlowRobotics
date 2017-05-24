@@ -13,9 +13,101 @@ using SlowRobotics.Field.Elements;
 using SlowRobotics.SRGraph;
 using SlowRobotics.Spatial;
 using SlowRobotics.Rhino.GraphTools;
+using SlowRobotics.Utils;
+using Grasshopper.Kernel.Parameters;
 
 namespace SlowRoboticsGH
 {
+    public class CreateWrapperComponent : GH_Component, IGH_VariableParameterComponent
+    {
+        public CreateWrapperComponent() : base("Create Wrapper", "Wrap", "Wraps an object and assigns a properties dictionary - used for creating basic 'classes' without needing to compile a dll", "Nursery", "Utilities") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{b2d03049-b5fe-4d37-9461-536ef75c7b50}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createNode;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Object", "O", "Object to wrap", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new SRWrapperParameter(), "Wrapper", "W", "Wrapped object and dictionary", GH_ParamAccess.item);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            GH_ObjectWrapper w = null;
+            Dictionary<string, object> dic = new Dictionary<string, object>();
+
+            // if (!DA.GetData(0, ref w)) { return; }
+            for (int i = 0; i < Params.Input.Count; i++)
+            {
+                if (i == 0)
+                {
+                    if (!DA.GetData(i, ref w)) { return; };
+                }
+                else {
+                    //temp object
+                    object t = null;
+                    if (DA.GetData(i, ref t))
+                    {
+                        dic.Add(Params.Input[i].Name, t);
+                    }
+                }
+            }
+
+            SRWrapper s = new SRWrapper(w.Value, dic);
+
+            DA.SetData(0, new GH_SRWrapper(s));
+        }
+
+        bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+        {
+            //add parameters to input
+            if (side == GH_ParameterSide.Input)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+        {
+            //leave two inputs
+            if (side == GH_ParameterSide.Input)
+            {
+                if (Params.Input.Count > 1)
+                    return true;
+            }
+            return false;
+        }
+        IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+        {
+
+            Param_GenericObject param = new Param_GenericObject();
+            param.Name = GH_ComponentParamServer.InventUniqueNickname("ABCDEFGHIJKLMNOPQRSTUVWXYZ", Params.Input);
+            param.NickName = param.Name;
+            param.Description = "Param" + (Params.Output.Count + 1);
+            param.SetPersistentData(0.0);
+            param.Access = GH_ParamAccess.item;
+            return param;
+        }
+
+        bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
+        {
+            //Params.UnregisterInputParameter(Params.Input[index + 1]);
+            return true;
+        }
+
+
+        void IGH_VariableParameterComponent.VariableParameterMaintenance()
+        {
+            ExpireSolution(true);
+        }
+
+    }
+
     public class CreatePopulationComponent : GH_Component
     {
         public CreatePopulationComponent() : base("Create Population", "CreatePop", "Creates an agent list for simulation", "Nursery", "Simulation") { }

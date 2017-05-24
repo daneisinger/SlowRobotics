@@ -10,7 +10,7 @@ namespace Toxiclibs.core
     //src here: https://bitbucket.org/postspectacular/toxiclibs/src/
     public interface ReadonlyVec3D
     {
-
+        int GetHashCode();
         /**
          * Adds vector {a,b,c} and returns result as new vector.
          * 

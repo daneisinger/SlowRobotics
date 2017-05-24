@@ -744,6 +744,50 @@ namespace SlowRoboticsGH
 
     }
 
+    public class GH_SRWrapper : GH_Goo<SRWrapper>
+    {
+        public GH_SRWrapper() { this.Value = null; }
+        public GH_SRWrapper(GH_SRWrapper goo) { this.Value = goo.Value; }
+        public GH_SRWrapper(SRWrapper native) { this.Value = native; }
+
+
+        public override IGH_Goo Duplicate() => new GH_SRWrapper(this);
+        public override bool IsValid => true;
+        public override string TypeName => "Wrapper";
+        public override string TypeDescription => "Wrapper";
+        public override string ToString() => this.Value.ToString();
+        public override object ScriptVariable() => Value;
+        public override bool CastFrom(object source)
+        {
+            if (source is SRWrapper)
+            {
+                Value = source as SRWrapper;
+                return true;
+            }
+            if (source is GH_SRWrapper)
+            {
+                Value = ((GH_SRWrapper)source).Value;
+                return true;
+            }
+            else
+            {
+                Value = new SRWrapper(source, new Dictionary<string, object>());
+                return true;
+            }
+        }
+        /*
+        public override bool CastTo<Q>(ref Q target)
+        {
+        //issue with GH_ types
+            if (typeof(Q) == Value.data.GetType())
+            {
+                target = (Q)(object)Value;
+                return true;
+            }
+            return base.CastTo<Q>(ref target);
+        }*/
+    }
+
     public class GH_VoxelGrid : GH_Goo<IVoxelGrid> 
     {
         public GH_VoxelGrid() { this.Value = null; }

@@ -88,8 +88,13 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <None Include="Resources\param.png" />
+    <None Include="Resources\shape.png" />
+    <None Include="Resources\sun.png" />
     <None Include="ClassDiagram1.cd" />
     <None Include="Resources\createNode.png" />
+    <None Include="Resources\MayanIcon.bmp" />
+    <None Include="Resources\mayan.png" />
     <Content Include="Resources\meshPipe.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

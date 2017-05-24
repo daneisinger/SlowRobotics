@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Toxiclibs.core;
 
 namespace SlowRobotics.SRGraph
 {
+
     /// <summary>
     /// Generic graph implementation with Edge objects and node lookup table.
     /// </summary>
     /// <typeparam name="T">Geometry type</typeparam>
     /// <typeparam name="E">Edge type</typeparam>
-    public class Graph<T,E> : IGraph<T,E> where E :IEdge<T>
+    public class Graph<T,E> : IGraph<T,E> where E : IEdge<T>
     {
         private HashSet<E> _edges;
         private Dictionary<T, INode<T>> _nodeMap;
@@ -24,6 +26,12 @@ namespace SlowRobotics.SRGraph
         {
             _edges = new HashSet<E>();
             _nodeMap = new Dictionary<T, INode<T>>();
+        }
+
+        public Graph(IEqualityComparer<T> comparer)
+        {
+            _edges = new HashSet<E>();
+            _nodeMap = new Dictionary<T, INode<T>>(comparer);
         }
 
         /// <summary>
@@ -141,7 +149,6 @@ namespace SlowRobotics.SRGraph
         {
             INode<T> a;
             if (!getNodeAt(swapThis, out a)) return false;
-
             a.Geometry = forThat;
             _nodeMap.Remove(swapThis);
             _nodeMap.Add(forThat, a);

@@ -479,23 +479,13 @@ namespace Toxiclibs.core
     {
         return x * v.x + y * v.y + z * v.z;
     }
-
-    /// <summary>
-    /// NOTE - maybe need to implement custom hashcode methods on a case by case basis when extending vec3d
-    /// </summary>
-    /// <returns></returns>
-    public override int GetHashCode()
-    {
-            string hcode = "" + x + " " + y + " " + z;
-            return hcode.GetHashCode();
-    }
-
-    public override bool Equals(Object v)
+/*
+    public override bool Equals(object v)
     {
         try
         {
             ReadonlyVec3D vv = (ReadonlyVec3D)v;
-            return (x == vv.getX() && y == vv.getY() && z == vv.getZ());
+            return Equals(vv);
         }
         catch (NullReferenceException e)
         {
@@ -505,7 +495,7 @@ namespace Toxiclibs.core
         {
             return false;
         }
-    }
+    }*/
 
     public bool Equals(ReadonlyVec3D v)
     {
@@ -1758,5 +1748,6 @@ namespace Toxiclibs.core
         {
             return z;
         }
+
     }
     }

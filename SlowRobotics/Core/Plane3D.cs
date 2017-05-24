@@ -65,6 +65,18 @@ namespace SlowRobotics.Core
             zz = _p.zz.copy().normalize();
             yy = _p.yy.copy().normalize();
         }
+        
+        public bool Equals(Plane3D vv)
+        {
+            try
+            {
+                return (base.Equals(vv) && zz.x == vv.zz.x && zz.y == vv.zz.y && zz.z == vv.zz.z);
+            }
+            catch (NullReferenceException e)
+            {
+                return false;
+            }
+        }
 
         /// <summary>
         /// Linearly interpolates this plane to a target plane by a given interpolation factor
