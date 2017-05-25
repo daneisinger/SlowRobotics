@@ -179,6 +179,7 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddParameter(new GraphParameter(), "Graph", "G", "Graph to deconstruct", GH_ParamAccess.item);
+            pManager.AddTextParameter("Tag", "T", "Get springs with tag", GH_ParamAccess.item, "");
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -190,11 +191,12 @@ namespace SlowRoboticsGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             GH_Graph graph = null;
-
+            string tag = "";
             if (!DA.GetData(0, ref graph)) { return; }
+            if (!DA.GetData(1, ref tag)) { return; }
 
             DA.SetDataList(0, graph.Value.Geometry);
-            DA.SetDataList(1, graph.Value.Edges);
+            DA.SetDataList(1, graph.Value.Edges.Where(s => s.tag== tag));
         }
     }
 
