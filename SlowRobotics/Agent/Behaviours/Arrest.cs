@@ -12,6 +12,28 @@ namespace SlowRobotics.Agent.Behaviours
     public class Arrest
     {
         /// <summary>
+        /// Adds inertia to a particle after it reaches a certain age
+        /// </summary>
+        public class Slow : ScaledBehaviour<SRParticle>
+        {
+            public int minAge { get; set; }
+            //TODO implement falloff
+            public Slow(int _p, int _minAge) : base(_p)
+            {
+                minAge = _minAge;
+            }
+
+            public override void runOn(SRParticle p)
+            {
+                float particleAge = p.age;
+                if (particleAge > minAge)
+                {
+                    p.setInertia((float)minAge / p.age);
+                }
+            }
+        }
+
+        /// <summary>
         /// Adds inertia to a particle 
         /// </summary>
         public class Friction : ScaledBehaviour<SRParticle>

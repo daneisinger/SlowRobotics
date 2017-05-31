@@ -49,7 +49,7 @@ namespace SlowRoboticsGH
         public UnwrapComponent() : base("Unwrap", "Unwrap", "Unwraps a wrapped object into object and dictionary of properties", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{486f4df6-0d6e-4bcf-a13f-6a9c07fd882c}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.Unwrap;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -81,7 +81,7 @@ namespace SlowRoboticsGH
         public DrawNeighboursComponent() : base("Draw Neighbours", "DrawNeighbours", "Draws lines to points in the agent neighbour list", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{2a3d7cd7-f1c0-4be7-ba97-a52975ab1c3f}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.DrawNeighbours;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -123,7 +123,7 @@ namespace SlowRoboticsGH
         public DeconstructAgentListComponent() : base("Deconstruct AgentList", "DeAgentList", "Deconstructs an agentlist into individual agent", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{79986af8-1d40-4c8d-87e7-24e6cecd6f3e}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.DeconstructAgentList;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -148,7 +148,7 @@ namespace SlowRoboticsGH
         public DeconstructAgentComponent() : base("Deconstruct Agent", "DeAgent", "Deconstructs an agent into wrapped object data", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{a21720f3-b133-4e98-8466-60246ba461e6}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.DeconstructAgent;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -174,7 +174,7 @@ namespace SlowRoboticsGH
         public DeconstructGraphComponent() : base("Deconstruct Graph", "DeGraph", "Deconstructs a graph into particles and springs", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{1c8b373d-aa3d-4571-b9f7-9f9d3aa9f88f}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.DeconstructGraph;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -205,7 +205,7 @@ namespace SlowRoboticsGH
         public GraphTopologyComponent() : base("Graph Topology", "GraphTopology", "Gets topological representation of graph as a collection of indexes", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{56866a6b-11a5-43d6-9f97-cfb4b779a298}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.GraphTopology;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -236,7 +236,7 @@ namespace SlowRoboticsGH
         public DeconstructParticleComponent() : base("Deconstruct Particle", "DeParticle", "Deconstructs a particle into location, acceleration, velocity and other properties", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{6d2c9bb0-68a0-4a18-a6e6-603b24562a16}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.DeconstructParticles;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -271,7 +271,7 @@ namespace SlowRoboticsGH
         public DeconstructBodyComponent() : base("Deconstruct Body", "DeBody", "Deconstructs a body into centre of mass and body particles", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{23c4a27f-7fd0-41d6-a1bc-b466a6aa61f9}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.DeconstructBody;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {

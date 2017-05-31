@@ -636,7 +636,14 @@ namespace SlowRoboticsGH
         public override bool IsValid => true;
         public override string TypeName => "Agent";
         public override string TypeDescription => "Agent";
-        public override string ToString() => this.Value.ToString();
+        public override string ToString() {
+
+            string descriptor = "Agent - Type: ";
+            IAgent<object> ao = (IAgent<object>)Value;
+            descriptor += (ao == null) ? "No Data" : ao.getData().GetType().ToString();
+            return descriptor;
+
+        }
         public override object ScriptVariable() => Value;
 
         public override bool CastFrom(object source)
@@ -683,7 +690,12 @@ namespace SlowRoboticsGH
         public override bool IsValid => true;
         public override string TypeName => "AgentList";
         public override string TypeDescription => "AgentList";
-        public override string ToString() => this.Value.ToString();
+        public override string ToString()
+        {
+            string descriptor = "AgentList - Population: ";
+            descriptor += Value.Count;
+            return descriptor;
+        }
         public override object ScriptVariable() => Value;
 
         public BoundingBox ClippingBox
@@ -787,6 +799,10 @@ namespace SlowRoboticsGH
         }
     }
 
+    /*
+
+    //Voxels not ready for Nursery Release
+
     public class GH_VoxelGrid : GH_Goo<IVoxelGrid> 
     {
         public GH_VoxelGrid() { this.Value = null; }
@@ -814,6 +830,5 @@ namespace SlowRoboticsGH
             }
             return false;
         }
-    }
-
+    }*/
 }

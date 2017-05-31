@@ -10,23 +10,19 @@ namespace SlowRoboticsGH
         {
             get
             {
-                return "SlowRoboticsGH";
+                return "Nursery";
             }
         }
-        public override Bitmap Icon
-        {
-            get
-            {
+
                 //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        public override System.Drawing.Bitmap Icon => Properties.Resources.agent;
+
         public override string Description
         {
             get
             {
                 //Return a short string describing the purpose of this GHA library.
-                return "";
+                return "Nursery is an agent based modelling and behavioural design framework for grasshopper";
             }
         }
         public override Guid Id
@@ -42,7 +38,7 @@ namespace SlowRoboticsGH
             get
             {
                 //Return a string identifying you or your company.
-                return "";
+                return "Gwyllim Jahn";
             }
         }
         public override string AuthorContact
@@ -50,7 +46,7 @@ namespace SlowRoboticsGH
             get
             {
                 //Return a string representing your preferred contact details.
-                return "";
+                return "gwyllim.jahn@rmit.edu.au";
             }
         }
     }

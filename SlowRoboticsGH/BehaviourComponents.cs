@@ -22,7 +22,7 @@ namespace SlowRoboticsGH
         public RebuildComponent() : base("Rebuild Tree", "Rebuild", "ISearchable Behaviour: Rebuilds spatial structure with new objects", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{71a0c2d9-bcde-4d03-b079-245205106639}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.rebuildTree;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -67,7 +67,7 @@ namespace SlowRoboticsGH
         public IntegrateComponent() : base("Integrate", "Integrate", "SRParticle Behaviour: Integrates particle accelleration and velocity", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{e2df1927-29ad-4fe0-bd86-b651aff77b92}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.integrate;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -111,7 +111,7 @@ namespace SlowRoboticsGH
         public SpringComponent() : base("Springs", "Spring", "Graph<SRParticle,Spring> Behaviour: Adds hookes law springs", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{c9a35ba6-b679-446b-860e-d28244cd6360}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.spring1;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -160,7 +160,7 @@ namespace SlowRoboticsGH
         public CohereInZAxisComponent() : base("Attract in Z", "AttractZ", "SRParticle Interaction Behaviour: Cohere with neighbours by moving in ZAxis", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{a2d895cf-bf77-4ec1-955d-dbb5151c4884}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.attractInZ;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -210,7 +210,7 @@ namespace SlowRoboticsGH
         public SpringTrailComponent() : base("Leave Spring Trail", "SpringTrail", "Graph Behaviour: Duplicate and reconnect first node in a graph", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
         public override Guid ComponentGuid => new Guid("{2962c6c8-c190-4a81-835f-b3b489349199}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.leaveSpringTrail;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -274,7 +274,7 @@ namespace SlowRoboticsGH
         public SplitSpringByMinLength() : base("Split Springs", "SpringSplit", "Graph Behaviour: Split springs over a given length", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
         public override Guid ComponentGuid => new Guid("{00b9cafa-8464-4304-b1d3-e2180d194848}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.splitSprings;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -325,7 +325,7 @@ namespace SlowRoboticsGH
         public FrictionComponent() : base("Friction", "Friction", "SRParticle Interaction Behaviour: Add inertia from nearby particles", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{e75e117d-6662-49d2-a06e-e38a09f9a4a6}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.friction;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -368,18 +368,60 @@ namespace SlowRoboticsGH
         }
     }
 
+    public class SlowComponent : GH_Component
+    {
+        public SlowComponent() : base("Slow", "Slow", "SRParticle Behaviour: Add inertia to particles over a certain age", "Nursery", "Behaviours") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{00aa22df-0027-47d2-ac1c-73a750920b34}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.friction;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddIntegerParameter("Minimum Age", "A", "Minimum age value before slowing", GH_ParamAccess.item,100);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item, 0);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new BehaviourParameter(), "Behaviour", "B", "Behaviour", GH_ParamAccess.item);
+        }
+
+        public Arrest.Slow slow = null;
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            int minAge = 100;
+            int priority = 5;
+
+            if (!DA.GetData(0, ref minAge)) { return; }
+            if (!DA.GetData(1, ref priority)) { return; }
+
+            if (slow != null)
+            {
+                slow.minAge = minAge;
+                slow.priority = priority;
+            }
+            else
+            {
+                slow = new Arrest.Slow(priority, minAge);
+
+            }
+            DA.SetData(0, slow);
+        }
+    }
+
     public class FreezeComponent : GH_Component
     {
         public FreezeComponent() : base("Freeze", "Freeze", "SRParticle Behaviour: Freeze particles with low inertia and velocity", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{1cf1d232-9f49-40d3-97e5-02dd4dc769cf}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.freeze;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("Minimum Inertia", "I", "Minimum Inertia value before locking", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Speed Multiplier", "S", "Effect of speed on inertia", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Minimum Age", "A", "Minimum age value before locking", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Minimum Inertia", "I", "Minimum Inertia value before locking", GH_ParamAccess.item,0.1);
+            pManager.AddNumberParameter("Speed Multiplier", "S", "Effect of speed on inertia", GH_ParamAccess.item,1);
+            pManager.AddIntegerParameter("Minimum Age", "A", "Minimum age value before locking", GH_ParamAccess.item,10);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
@@ -425,7 +467,7 @@ namespace SlowRoboticsGH
         public ArrestGroundBehaviour() : base("Freeze ground", "Ground", "SRParticle Behaviour: Freeze particles below Z value", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{94d9995e-bb05-4172-9e9d-a4d40d3cbfbb}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.freezeGround;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -470,7 +512,7 @@ namespace SlowRoboticsGH
         public InteractComponent() : base("Interact", "Interact", "IAgent Behaviour: Interact with neighbouring points", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{9327e8c7-a048-49af-aaaa-3c29bd5201c5}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.interact;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -513,7 +555,7 @@ namespace SlowRoboticsGH
         public FilterClosestNeighbourComponent() : base("Filter Closest", "FilterClosest", "IAgent Behaviour: Filter out all but closest neighbours", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{fb1100ba-1d65-4bd6-99f2-f3f0b14422b3}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.filterClosest;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -554,7 +596,7 @@ namespace SlowRoboticsGH
         public FilterParentComponent() : base("Filter Parents", "FilterParent", "IAgent Behaviour: Filter out neighbours with same parent", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{42fa9ca5-e6b5-4633-b343-73325baf86ae}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.filterParents;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -592,7 +634,7 @@ namespace SlowRoboticsGH
         public NewtonComponent() : base("Newton", "Newton", "SRParticle Behaviour: Move particle with a force", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{8974b28e-b8d7-4783-9b9f-3d4adc85e36a}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.newton;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -634,7 +676,7 @@ namespace SlowRoboticsGH
         public TraverseFieldComponent() : base("Traverse field", "TraverseField", "SRParticle Behaviour: Move a particle through a field", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
         public override Guid ComponentGuid => new Guid("{f21c5bee-d4b2-47f6-875c-1ce463657a02}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.traverseField;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -680,7 +722,7 @@ namespace SlowRoboticsGH
         public AlignFieldComponent() : base("Align to field", "AlignField", "Plane3D Behaviour: Align a plane with a field", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
         public override Guid ComponentGuid => new Guid("{66de0eb8-09c2-4fc7-bd61-724e7d70442e}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.alignToField;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -730,7 +772,7 @@ namespace SlowRoboticsGH
         public MoveInAxisComponent() : base("Move in axis", "MoveAxis", "SRParticle Behaviour: Move a particle with one of its axes", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{e8e65855-a4ec-46b2-b9e3-ee4fb426353f}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.moveInAxis;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -778,7 +820,7 @@ namespace SlowRoboticsGH
         public AlignAxisToVelocityComponent() : base("Align to velocity", "AlignVelocity", "SRParticle Behaviour: Align particle with velocity", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{f8540ae4-0554-427f-9c2f-4017d060285e}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.alignToVel;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -831,7 +873,7 @@ namespace SlowRoboticsGH
         public AlignPlanesComponent() : base("Align to planes", "AlignPlanes", "Plane3D interaction Behaviour: Align Plane with neighbours", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{d6ff6e8b-5e96-44f8-a7c8-71069f9d7bf5}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.alignToPlanes;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -878,7 +920,7 @@ namespace SlowRoboticsGH
         public AlignAxisToBestFitComponent() : base("Align to best fit plane", "AlignBestFit", "Plane3D interaction Behaviour: Align Axis to best fit plane of nearest neighbours", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{3e0578d3-7cd5-4764-9c4d-04aa7bf0013a}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.alignToBestFit;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -932,7 +974,7 @@ namespace SlowRoboticsGH
         public BrownianComponent() : base("Brownian Motion", "Brownian", "Adds a random force to particles", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{1fdbdc42-9cef-43e9-bd33-bef99b9028fe}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.brownian;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -979,7 +1021,7 @@ namespace SlowRoboticsGH
         public LineToLineComponent() : base("Line To Line", "LineLine", "SRLinearParticle interaction Behaviour: Attract lines to lines", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{07895539-0e74-40a0-b6f1-794a89e94f26}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.lineToLine;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -1029,7 +1071,7 @@ namespace SlowRoboticsGH
         public PointToLineComponent() : base("Point To Line", "PointLine", "SRParticle interaction Behaviour: Attract particles to lines", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{099cc560-1b5b-4b94-9443-9326029e270b}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.pointToLine;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -1079,7 +1121,7 @@ namespace SlowRoboticsGH
         public AttractComponent() : base("Attract", "Attract", "SRParticle interaction Behaviour: Attract particles", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{d3e8a92e-16f3-4de0-98aa-73ce5d948723}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.attract;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -1161,11 +1203,11 @@ namespace SlowRoboticsGH
         public RepelComponent() : base("Repel", "Repel", "SRParticle interaction Behaviour: Repel particles", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{38563a34-1be4-4c68-bd94-cb4b2e15a4f2}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.repel;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("Strength", "S", "Seperation Strength", GH_ParamAccess.item,0.1);
+            pManager.AddNumberParameter("Strength", "S", "Repel Strength", GH_ParamAccess.item,0.1);
             pManager.AddNumberParameter("Min Distance", "Mn", "Minimum Separation Distance", GH_ParamAccess.item,0);
             pManager.AddNumberParameter("Max Distance", "Mx", "Maximum Separation Distance", GH_ParamAccess.item,10);
             pManager.AddBooleanParameter("In XY", "XY", "Separate only in Plane XY", GH_ParamAccess.item,false);
@@ -1242,7 +1284,7 @@ namespace SlowRoboticsGH
         public SearchComponent() : base("Search", "Search", "IAgent Behaviour: Search points", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{0979e24f-914b-46cc-986a-6638ffedba71}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.search;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -1289,7 +1331,7 @@ namespace SlowRoboticsGH
         public ScaleBehaviourByDistanceToBoxComponent() : base("Scale box", "ScaleBox", "IAgent Behaviour: Scales a list of behaviours by distance to a box", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.quinary;
         public override Guid ComponentGuid => new Guid("{6e557a31-193a-4f9a-8d94-9de59f74c03d}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.scalebox;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -1345,7 +1387,7 @@ namespace SlowRoboticsGH
         public LeaveTraceComponent() : base("Leave trace", "Leave Trace", "Vec3D Behaviour: Creates a static copy of the point", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
         public override Guid ComponentGuid => new Guid("{03a7d3c3-5494-4654-bb3c-e685b9c3a7a9}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.dog;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.leaveTrace;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {

@@ -23,7 +23,7 @@ namespace SlowRoboticsGH
         public CreateWrapperComponent() : base("Create Wrapper", "Wrap", "Wraps an object and assigns a properties dictionary - used for creating basic 'classes' without needing to compile a dll", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{b2d03049-b5fe-4d37-9461-536ef75c7b50}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateWrapper;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -113,7 +113,7 @@ namespace SlowRoboticsGH
         public CreatePopulationComponent() : base("Create Population", "CreatePop", "Creates an agent list for simulation", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{de35d78e-dc9a-4e2a-ae4c-708ee7ec823c}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.CreatePopulation;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -144,7 +144,7 @@ namespace SlowRoboticsGH
         public CreateBodyComponent() : base("Create Body", "CreateBody", "Creates a body from a collection of particles and properties - you can create bodies with default properties using the Body parameter", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{05d0cfe0-545b-4ebd-9088-00b2bab42b5a}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateBody;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -180,7 +180,7 @@ namespace SlowRoboticsGH
         public CreateParticleComponent() : base("Create Particle", "CreateParticle", "Creates a particle (or linearparticle) from plane and properties - you can create particles with default properties using the particle parameter", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{c878e7c2-c607-47fc-aa32-520e7f0bbdde}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateParticles;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -236,7 +236,7 @@ namespace SlowRoboticsGH
         public CreateKDTreeComponent() : base("Create KDTree", "KDTree", "Creates a KDTree", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{76fcc476-f4d6-4f09-a31b-f9d3365989d3}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateKDTree;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -269,7 +269,7 @@ namespace SlowRoboticsGH
         public CreatePointCollectionComponent() : base("Create PointCollection", "PointCollection", "Creates a PointCollection for brute force search", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{fbdd53df-5ada-48c4-8928-91fedd9c2e77}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.CreatePointCollection;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -302,7 +302,7 @@ namespace SlowRoboticsGH
         public MeshToGraph() : base("Convert Mesh to Graph", "MeshToGraph", "Converts mesh edges and vertices to a graph", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{899106fc-bc8b-405c-bab3-21d3063b9ef9}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.ConvertMeshToGraph;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -312,7 +312,7 @@ namespace SlowRoboticsGH
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddParameter(new GraphParameter(),"Graph", "L", "Graph", GH_ParamAccess.item);
+            pManager.AddParameter(new GraphParameter(),"Graph", "G", "Graph", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -334,7 +334,7 @@ namespace SlowRoboticsGH
         public EdgesToGraph() : base("Convert Edges to Graph", "EdgesToGraph", "Converts a collection of lines into a graph", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{afebfe39-e552-4d9e-8168-398c41b5a976}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.ConvertEdgeToGraph;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -366,7 +366,7 @@ namespace SlowRoboticsGH
         public InterconnectNodesComponent() : base("Interconnect Nodes", "Interconnect", "Interconnect all nodes in a link mesh", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{a1cac11b-f74a-4546-befd-88a304ff3eeb}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.InterconnectNodes;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -399,7 +399,7 @@ namespace SlowRoboticsGH
         public ConnectByProximityComponent() : base("Connect by proximity", "ConnectProximity", "Create brace springs between proximate nodes in a graph", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{ff9181ca-01c3-4743-ac72-362777938324}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.ConvertByProximity;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -439,7 +439,7 @@ namespace SlowRoboticsGH
         public SpanGraphEdgesComponent() : base("Span Graph Edges", "SpanEdges", "Creates bracing springs by spanning edges in a linear graph", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{9310194c-fbb8-4a29-9ae4-c58733cd75b0}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.SpanGraphEdges;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -476,7 +476,7 @@ namespace SlowRoboticsGH
         public ConvertCurveToGraphComponent() : base("Convert Curve To Graph", "CurveToGraph", "Create graph by dividing a curve", "Nursery", "Utilities") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         public override Guid ComponentGuid => new Guid("{67691d26-05ad-4680-a28d-666f0b83e939}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.face;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.ConvertCurveToGraph;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -525,7 +525,7 @@ namespace SlowRoboticsGH
         public CreatePlaneFieldElementComponent() : base("Create Plane Field Element", "CreatePlaneElement", "Create plane field elements", "Nursery", "Field") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{9d565fc7-b92d-4464-b18c-80022e8f6e1d}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.sun;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.planeField;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -569,7 +569,7 @@ namespace SlowRoboticsGH
         public CreateDistanceFieldElementComponent() : base("Create Distance Field Element", "CreateDistanceElement", "Create distance field elements (attracion forces)", "Nursery", "Field") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{6522aa26-68a2-4e16-8ce4-16766d662245}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.sun;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.distanceField;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -613,7 +613,7 @@ namespace SlowRoboticsGH
         public CreateMeshFieldElementComponent() : base("Create Mesh Field Element", "CreateMeshElement", "Create mesh field elements", "Nursery", "Field") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{df15c4b0-10b3-4aa1-baac-ce85323bf87f}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.sun;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.meshField;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -658,7 +658,7 @@ namespace SlowRoboticsGH
         public CreateBitmapFieldElementComponent() : base("Create Bitmap Field Element", "CreateBitmapElement", "Create 2D bitmap field elements", "Nursery", "Field") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{6cc8ba1f-c21b-4bdf-9ea7-98d98c14bb8c}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.sun;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.bitmapField;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -713,7 +713,7 @@ namespace SlowRoboticsGH
         public CreatePolarFieldElementComponent() : base("Create Polar Field Element", "CreatePolarElement", "Create polar field elements (spin forces)", "Nursery", "Field") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{8795cd34-4b1e-49e1-a613-9405b8676b40}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.sun;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.polarField;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -758,7 +758,7 @@ namespace SlowRoboticsGH
         public CreateNoiseFieldElement() : base("Create Noise Field Element", "CreateNoiseElement", "Create noise field elements", "Nursery", "Field") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{c6e17c04-e71f-4a3f-85fd-ba822dd25136}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.sun;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.noiseField;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -815,7 +815,7 @@ namespace SlowRoboticsGH
         public CreateFieldComponent() : base("Create Field", "CreateField", "Create Field from planes", "Nursery", "Field") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{32709dc6-16dc-4038-98b2-e76e565def1b}");
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.sun;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.createField;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {

@@ -88,8 +88,7 @@ namespace SlowRobotics.Rhino.IO
                 c.FrameAt(pts[i], out currentPlane);
                 SRParticle p2 = new SRParticle(currentPlane.ToPlane3D());
                 p2.parent = g.parent; // parent the particle
-                Agent<SRParticle> b = new Agent<SRParticle>(p2);
-                
+                Agent<SRParticle> b = (i==pts.Length-1 && c.IsClosed)? agents[0]:new Agent<SRParticle>(p2);
 
                 agents.Add(b);
                 Spring s = new Spring(a.getData(), b.getData());
@@ -133,8 +132,8 @@ namespace SlowRobotics.Rhino.IO
             {
                 IndexPair p = m.TopologyEdges.GetTopologyVertices(i);
                 Spring s = new Spring(particles[p.I], particles[p.J]);
-                s.a.Index = m.TopologyVertices.MeshVertexIndices(p.I)[0];
-                s.b.Index = m.TopologyVertices.MeshVertexIndices(p.J)[0]; //set indexes to original vertices
+                s.a.Tag = m.TopologyVertices.MeshVertexIndices(p.I)[0].ToString();
+                s.b.Tag = m.TopologyVertices.MeshVertexIndices(p.J)[0].ToString(); //set tags to mesh vertex indexes
                 s.s = stiffness;
                 lm.insert(s);
             }

@@ -268,7 +268,12 @@ namespace SlowRobotics.SRGraph
             lock (_nodeMap)
             {
                 bool hasKey = _nodeMap.ContainsKey(node.Geometry);
-                if (!hasKey) _nodeMap.Add(node.Geometry, node);
+                if (!hasKey)
+                {
+                    //set node index to current
+                    node.Index = Count;
+                    _nodeMap.Add(node.Geometry, node);
+                }
                 return !hasKey;
             }
 
