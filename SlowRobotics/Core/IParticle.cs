@@ -24,5 +24,7 @@ namespace SlowRobotics.Core
 
         Vec3D getExtents();
         void step(float dt);
+
+        IParticle duplicate();
     }
 }

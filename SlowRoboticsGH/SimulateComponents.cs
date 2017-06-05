@@ -132,7 +132,6 @@ namespace SlowRoboticsGH
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            //making a new particle for some reason... 
 
             List<Point3d> points = new List<Point3d>();
             GH_Particle ghP = null; 
@@ -140,7 +139,8 @@ namespace SlowRoboticsGH
             if (!DA.GetData(0, ref ghP)) { return; }
             if (!DA.GetDataList(1, points)) { return; }
 
-            IParticle part = ghP.Value;
+            //make a copy
+            IParticle part = ghP.Value.duplicate();
             foreach (Point3d p in points)
             {
                 if (part.get().distanceTo(new Vec3D((float)p.X, (float)p.Y, (float)p.Z)) < 1)
@@ -149,7 +149,7 @@ namespace SlowRoboticsGH
                     break;
                 }
             }
-
+            
             DA.SetData(0, part);
         }
 

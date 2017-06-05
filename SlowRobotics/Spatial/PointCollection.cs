@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SlowRobotics.SRMath;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,9 +25,14 @@ namespace SlowRobotics.Spatial
             allPts.Add(pt);
         }
 
-        public IEnumerable<Vec3D> Search(Vec3D pt, float radius)
+        public IEnumerable<Vec3D> Search(Vec3D pt, float radius, int maxPoints)
         {
-            return allPts.Where(p => p.distanceTo(pt) < radius);
+            List<Vec3D> pts = allPts.Where(p => p.distanceTo(pt) < radius).ToList();
+            pts.Sort(delegate (Vec3D x, Vec3D y)
+            {
+                return x.sub(pt).CompareTo(y.sub(pt));
+            });
+            return pts.Take(maxPoints);
         }
 
         public void Update(IEnumerable<Vec3D> pts)

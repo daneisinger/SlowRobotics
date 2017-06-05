@@ -29,8 +29,9 @@ namespace SlowRobotics.Spatial
             allPts[key].Add(pt);
         }
 
-        public IEnumerable<Vec3D> Search(Vec3D pt, float radius)
+        public IEnumerable<Vec3D> Search(Vec3D pt, float radius, int maxPoints)
         {
+            //todo - implement max points
             foreach(string s in getBins(pt, radius))
             {
                 foreach (Vec3D p in allPts[s])

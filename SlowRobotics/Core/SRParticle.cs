@@ -208,5 +208,24 @@ namespace SlowRobotics.Core
             if (inertia > 1) inertia = 1;
             if (inertia < 0) inertia = 0;
         }
+
+        public void copyAttributes(SRParticle _p)
+        {
+            //duplicate properties
+            age = _p.age;
+            inertia = _p.inertia;
+            mass = _p.mass;
+            radius = _p.radius;
+            tag = _p.tag;
+            f = _p.f;
+            accel = _p.accel.copy();
+        }
+
+        public virtual IParticle duplicate()
+        {
+            SRParticle copy = new SRParticle(this);
+            copy.copyAttributes(this);
+            return copy;
+        }
     }
 }

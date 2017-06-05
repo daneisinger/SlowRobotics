@@ -20,9 +20,9 @@ namespace SlowRobotics.Spatial
             tree = new KDTree<Vec3D>(3);
         }
 
-        public IEnumerable<Vec3D> Search(Vec3D pt, float radius)
+        public IEnumerable<Vec3D> Search(Vec3D pt, float radius, int maxPoints)
         {
-            NearestNeighbour<Vec3D> n = tree.NearestNeighbors(new double[] { pt.x, pt.y, pt.z }, 255, radius * radius);
+            NearestNeighbour<Vec3D> n = tree.NearestNeighbors(new double[] { pt.x, pt.y, pt.z }, maxPoints, radius * radius);
             return n.ToList();
         }
 

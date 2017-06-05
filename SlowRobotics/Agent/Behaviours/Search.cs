@@ -17,12 +17,13 @@ namespace SlowRobotics.Agent.Behaviours
         
         public ISearchable pts;
         public float radius;
+        public int num;
 
-        public Search(int _priority, float _radius,  ISearchable _pts) : base(_priority)
+        public Search(int _priority, float _radius,  ISearchable _pts, int _num) : base(_priority)
         {
             pts = _pts;
             radius = _radius;
-            //lateUpdate = true;
+            num = _num;
         }
 
         public override void run(IAgent<object> a)
@@ -31,7 +32,7 @@ namespace SlowRobotics.Agent.Behaviours
             Vec3D n = a.getData() as Vec3D;
             if (n != null)
             {
-                a.neighbours = pts.Search(n, radius).ToList();
+                a.neighbours = pts.Search(n, radius, num).ToList();
                 a.neighbours.Remove(n);
             }
 

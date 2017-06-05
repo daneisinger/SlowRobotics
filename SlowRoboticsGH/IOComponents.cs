@@ -118,6 +118,106 @@ namespace SlowRoboticsGH
         }
     }
 
+    /*
+
+        TODO - generic deconstruct 
+
+    public class DeconstructComponent : GH_Component, IGH_VariableParameterComponent
+    {
+        public DeconstructComponent() : base("Deconstruct", "Deconstruct", "Deconstructs a nursery object into subobjects", "Nursery", "Utilities") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{6eb5c7de-1ba2-4eb3-8e74-4001be7da0cb}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.DeconstructAgentList;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Object", "O", "Object to deconstruct", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            GH_ObjectWrapper o  = null;
+            if (!DA.GetData(0, ref o)) { return; }
+
+            //destroy all output parameters
+            for (int i = 0; i < Params.Output.Count; i++) {
+                Params.UnregisterOutputParameter(Params.Output[i]);
+            }
+
+            if(o.Value is AgentList)
+            {
+                AgentListParameter param = new AgentListParameter();
+                param.Name = "Agents";
+                param.NickName = "A";
+                param.Description = "Agents in agentlist";
+                param.Access = GH_ParamAccess.list;
+
+                Params.RegisterOutputParam(param);
+                Params.OnParametersChanged();
+
+                DA.SetDataList(0, ((AgentList)o.Value).getAgents());
+              //  return;
+            }
+
+            if (o.Value is IAgent)
+            {
+
+            }
+            if (o.Value is SRBody)
+            {
+
+            }
+            if (o.Value is SRParticle)
+            {
+
+            }
+            if (o.Value is Graph<SRParticle,Spring>)
+            {
+
+            }
+            //DA.SetDataList(0, agentlist.Value.getAgents());
+        }
+
+        
+        bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+
+        bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+        {
+
+            Param_GenericObject param = new Param_GenericObject();
+            param.Name = GH_ComponentParamServer.InventUniqueNickname("ABCDEFGHIJKLMNOPQRSTUVWXYZ", Params.Output);
+            param.NickName = param.Name;
+            param.Description = "Param" + (Params.Output.Count + 1);
+            param.SetPersistentData(0.0);
+            param.Access = GH_ParamAccess.item;
+            return param;
+        }
+
+        bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
+        {
+            //Params.UnregisterInputParameter(Params.Input[index + 1]);
+            return true;
+        }
+
+
+        void IGH_VariableParameterComponent.VariableParameterMaintenance()
+        {
+            ExpireSolution(true);
+        }
+    }
+    */
+
     public class DeconstructAgentListComponent : GH_Component
     {
         public DeconstructAgentListComponent() : base("Deconstruct AgentList", "DeAgentList", "Deconstructs an agentlist into individual agent", "Nursery", "Utilities") { }
@@ -215,6 +315,7 @@ namespace SlowRoboticsGH
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddIntegerParameter("Node Indexes", "N", "Node Indexes", GH_ParamAccess.list);
+            pManager.AddTextParameter("Node Tags", "T", "Node Tags", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Start Indexes", "S", "Edge Start Indexes", GH_ParamAccess.list);
             pManager.AddIntegerParameter("End Indexes", "E", "Edge End Indexes", GH_ParamAccess.list);
         }
@@ -226,8 +327,9 @@ namespace SlowRoboticsGH
             if (!DA.GetData(0, ref graph)) { return; }
             
             DA.SetDataList(0, graph.Value.Nodes.ConvertAll(n=> n.Index));
-            DA.SetDataList(1, graph.Value.Edges.ConvertAll(e=> e.a.Index));
-            DA.SetDataList(2, graph.Value.Edges.ConvertAll(e => e.b.Index));
+            DA.SetDataList(1, graph.Value.Nodes.ConvertAll(n => n.Tag));
+            DA.SetDataList(2, graph.Value.Edges.ConvertAll(e=> e.a.Index));
+            DA.SetDataList(3, graph.Value.Edges.ConvertAll(e => e.b.Index));
         }
     }
 

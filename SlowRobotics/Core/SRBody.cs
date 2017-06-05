@@ -211,5 +211,13 @@ namespace SlowRobotics.Core
 
             return body;
         }
+
+        public override IParticle duplicate()
+        {
+            SRBody copy = new SRBody(this);
+            copy.copyAttributes(this);
+            copy.insertPoints(pts);
+            return copy;
+        }
     }
 }

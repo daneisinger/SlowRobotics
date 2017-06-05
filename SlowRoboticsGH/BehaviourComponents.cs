@@ -117,6 +117,7 @@ namespace SlowRoboticsGH
         {
             pManager.AddNumberParameter("Damping", "D", "Spring Damping", GH_ParamAccess.item,1);
             pManager.AddBooleanParameter("Hookes", "H", "Update Both Particles", GH_ParamAccess.item,true);
+            pManager.AddNumberParameter("Scale", "S", "Rest length scale", GH_ParamAccess.item, 1);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
@@ -132,10 +133,12 @@ namespace SlowRoboticsGH
             double damping = 0.1;
             bool verlet = true;
             int priority = 5;
+            double rs = 1;
 
             if (!DA.GetData(0, ref damping)) { return; }
             if (!DA.GetData(1, ref verlet)) { return; }
-            if (!DA.GetData(2, ref priority)) { return; }
+            if (!DA.GetData(2, ref rs)) { return; }
+            if (!DA.GetData(3, ref priority)) { return; }
 
             if (spring!=null)
             {
@@ -143,11 +146,12 @@ namespace SlowRoboticsGH
                 spring.damping = (float)damping;
                 spring.verlet = verlet;
                 spring.priority = priority;
+                spring.restLengthScale = (float)rs;
                 
             }
             else
             {
-                spring = new SpringBehaviour(priority, (float)damping, verlet);
+                spring = new SpringBehaviour(priority, (float)damping, verlet, (float)rs);
                 
             }
             DA.SetData(0,spring);
@@ -1291,6 +1295,7 @@ namespace SlowRoboticsGH
 
             pManager.AddNumberParameter("Radius", "R", "Search Radius", GH_ParamAccess.item,10);
             pManager.AddGenericParameter("Structure", "S", "Spatial structure to search", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Num Points", "N", "Limit number of returned points", GH_ParamAccess.item,255);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
 
@@ -1306,10 +1311,12 @@ namespace SlowRoboticsGH
             double radius = 10;
             ISearchable pts = null;
             int priority = 5;
+            int num = 255;
 
             if (!DA.GetData(0, ref radius)) { return; }
             if (!DA.GetData(1, ref pts)) { return; }
-            if (!DA.GetData(2, ref priority)) { return; }
+            if (!DA.GetData(2, ref num)) { return; }
+            if (!DA.GetData(3, ref priority)) { return; }
 
 
             if (searchBehaviour != null)
@@ -1320,7 +1327,7 @@ namespace SlowRoboticsGH
             }
             else
             {
-                searchBehaviour = new Search(priority, (float)radius, pts);
+                searchBehaviour = new Search(priority, (float)radius, pts, num);
             } 
             DA.SetData(0, searchBehaviour);
         }

@@ -211,5 +211,13 @@ namespace SlowRobotics.Core
         {
             return MathUtils.closestPoint(this, other);
         }
+
+        public override IParticle duplicate()
+        {
+            SRLinearParticle copy = new SRLinearParticle(this);
+            copy.copyAttributes(this);
+            copy.length = length;
+            return copy;
+        }
     }
 }
