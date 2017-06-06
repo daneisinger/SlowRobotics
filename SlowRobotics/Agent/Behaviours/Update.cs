@@ -33,17 +33,17 @@ namespace SlowRobotics.Agent.Behaviours
     public class RebuildTree : Behaviour<ISearchable>
     {
 
-        public AgentList pop;
-
+         public AgentList pop;
+       
         public RebuildTree(int _p, AgentList _pop) : base(_p)
         {
             pop = _pop;
+
             //lateUpdate = true;
         }
 
         public override void runOn(ISearchable tree)
         {
-
             List<Vec3D> pts = new List<Vec3D>();
             if (pop != null)
             {

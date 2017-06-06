@@ -139,8 +139,7 @@ namespace SlowRoboticsGH
             if (!DA.GetData(0, ref ghP)) { return; }
             if (!DA.GetDataList(1, points)) { return; }
 
-            //make a copy
-            IParticle part = ghP.Value.duplicate();
+            IParticle part = ghP.Value;
             foreach (Point3d p in points)
             {
                 if (part.get().distanceTo(new Vec3D((float)p.X, (float)p.Y, (float)p.Z)) < 1)
@@ -148,6 +147,7 @@ namespace SlowRoboticsGH
                     part.f = true;
                     break;
                 }
+                part.f = false;
             }
             
             DA.SetData(0, part);

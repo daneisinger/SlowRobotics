@@ -397,6 +397,7 @@ namespace SlowRoboticsGH
                 target = (Q)(object)new GH_Plane(Value.get().ToPlane());
                 return true;
             }
+
             return base.CastTo<Q>(ref target);
         }
 
@@ -506,7 +507,7 @@ namespace SlowRoboticsGH
                 target = (Q)(object)new GH_Plane(Value.get().ToPlane());
                 return true;
             }
-            return base.CastTo<Q>(ref target);
+                return base.CastTo<Q>(ref target);
         }
 
         public void DrawViewportWires(GH_PreviewWireArgs args)
@@ -597,7 +598,7 @@ namespace SlowRoboticsGH
 
             foreach (Spring li in graph.Edges)
             {
-                if (li.tag == "")
+                if (li.tag != "brace")
                 {
                     Vec3D aa = li.a.Geometry;
                     Vec3D bb = li.b.Geometry;

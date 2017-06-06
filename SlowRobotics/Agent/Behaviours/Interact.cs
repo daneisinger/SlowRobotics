@@ -60,5 +60,9 @@ namespace SlowRobotics.Agent.Behaviours
             foreach (IBehaviour b in newBehaviours) behaviours.Enqueue(b);
         }
 
+        public List<IBehaviour> getBehaviours()
+        {
+            return behaviours.getData();
+        }
     }
 }

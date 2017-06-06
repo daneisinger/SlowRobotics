@@ -13,12 +13,62 @@ using SlowRobotics.Core;
 using Toxiclibs.core;
 using SlowRobotics.Spatial;
 using SlowRobotics.SRMath;
+using Grasshopper.Kernel.Types;
 
 namespace SlowRoboticsGH
 {
 
     public class RebuildComponent : GH_Component
     {
+
+        /*
+        //todo - at the moment rebuild tree needs a reference to a collection in order
+        //to handle dynamic populations... direct passing of a collection of vec3ds won't
+        //update unless the grasshopper solution is expired... problem.
+
+        protected IEnumerable<Vec3D> tryGetVector(GH_ObjectWrapper o)
+        {
+            if(o.Value is Vec3D)
+            {
+                yield return (Vec3D)o.Value;
+            }else if (o.Value is GH_Plane3D)
+            {
+                yield return ((GH_Plane3D)o.Value).Value;
+            }
+            else if(o.Value is GH_Particle)
+            {
+                yield return ((GH_Particle)o.Value).Value.get();
+            }else if (o.Value is GH_Body)
+            {
+                yield return ((GH_Body)o.Value).Value.get();
+            }
+            else if (o.Value is GH_Agent)
+            {
+                GH_Agent a = (GH_Agent)o.Value;
+                foreach (Vec3D v in tryGetVector(a.Value)) yield return v;
+            }
+            else if(o.Value is GH_AgentList)
+            {
+                GH_AgentList al = (GH_AgentList)o.Value;
+                foreach(IAgent a in al.Value.getAgents())
+                {
+                    foreach (Vec3D v in tryGetVector(a)) yield return v;
+                }
+            }
+            yield return null;
+        }
+
+        protected IEnumerable<Vec3D> tryGetVector(IAgent a)
+        {
+            IAgent<object> ao = (IAgent<object>)a;
+            if(ao!= null)
+            {
+                Vec3D v = (Vec3D)ao.getData();
+                if (v != null) yield return v;
+            }
+            yield return null;
+        }*/
+
         public RebuildComponent() : base("Rebuild Tree", "Rebuild", "ISearchable Behaviour: Rebuilds spatial structure with new objects", "Nursery", "Behaviours") { }
         public override GH_Exposure Exposure => GH_Exposure.primary;
         public override Guid ComponentGuid => new Guid("{71a0c2d9-bcde-4d03-b079-245205106639}");
@@ -27,7 +77,7 @@ namespace SlowRoboticsGH
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddParameter(new AgentListParameter(), "Agents", "A", "Try and add objects from these agents", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
+            pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item, 0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -48,13 +98,13 @@ namespace SlowRoboticsGH
             if (rebuildtree != null)
             {
 
-                if(pop.Value!=null)rebuildtree.pop = pop.Value;
+                if (pop.Value != null) rebuildtree.pop = pop.Value;
                 rebuildtree.priority = priority;
 
             }
             else
             {
-               if(pop.Value!= null) rebuildtree = new RebuildTree(priority, pop.Value);
+                if (pop.Value != null) rebuildtree = new RebuildTree(priority, pop.Value);
             }
 
             DA.SetData(0, rebuildtree);
@@ -1194,7 +1244,7 @@ namespace SlowRoboticsGH
             }
             else
             {
-                attract = new Move.Together(priority, (float)minDist, (float)maxDist, (float)strength, inXY);
+                attract = new Move.Together(priority, (float)strength, (float)minDist, (float)maxDist, inXY);
                 attract.falloff = f;
             }
             DA.SetData(0, attract);
