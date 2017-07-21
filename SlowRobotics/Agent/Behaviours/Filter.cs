@@ -38,39 +38,6 @@ namespace SlowRobotics.Agent.Behaviours
                 }
             }
         }
-
-        /*
-        //legacy function
-        public override void run(IAgent<object> agent)
-        {
-
-            Vec3D pos = agent.getData() as Vec3D;
-            if(pos!= null) { 
-
-            var neighbours = agent.neighbours;
-
-                if (neighbours.Count > 0)
-                {
-
-                    double cd = Double.MaxValue;
-                    Vec3D closest = null;
-                    foreach (Vec3D nn in neighbours)
-                    {
-                        var dist = nn.distanceToSquared(pos);
-                        if (dist < cd)
-                        {
-                            cd = dist;
-                            closest = nn;
-                        }
-                    }
-                    if (closest != null)
-                    {
-                        agent.neighbours.Clear();
-                        agent.neighbours.Add(closest);
-                    }
-                }
-            }
-        }*/
     }
 
     /// <summary>
@@ -82,9 +49,37 @@ namespace SlowRobotics.Agent.Behaviours
         {
         }
 
-        public override void run(IAgent<object> agent)
+        public override void run(IAgent<object> a)
         {
-            agent.neighbours = agent.neighbours.Where(n => ((SRParticle)n).parent != ((SRParticle)agent.getData()).parent).ToList();
+            List<Vec3D> nl = a.neighbours.Where(n => ((SRParticle)n).parent != ((SRParticle)a.getData()).parent).ToList();
+            a.neighbours = nl;
         }
+    }
+
+    public class FilterClosestParents : ScaledBehaviour<SRParticle>
+    {
+        int num;
+            public FilterClosestParents(int priority, int _num) : base(priority)
+            {
+            num = _num;
+            }
+
+            public override void run(IAgent<object> a)
+            {
+                List<Vec3D> nl = a.neighbours.Where(n => ((SRParticle)n).parent != ((SRParticle)a.getData()).parent).ToList();
+                a.neighbours = nl;
+
+                //check if a is Vec3D
+                Vec3D pos = a.getData() as Vec3D;
+                if (pos != null)
+                {
+                    //sort neighbour list by distance to a and then take first numClosest
+                    a.neighbours.Sort(delegate (Vec3D x, Vec3D y)
+                    {
+                        return x.sub(pos).CompareTo(y.sub(pos));
+                    });
+                    a.neighbours = a.neighbours.Take(num).ToList();
+                }
+            }
     }
 }
