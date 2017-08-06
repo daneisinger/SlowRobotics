@@ -109,12 +109,12 @@ namespace SlowRobotics.Agent.Behaviours
 
             public override void interactWith(SRParticle p, object b)
             {
-                SRParticle b_v = b as SRParticle;
+                Plane3D b_v = b as Plane3D;
                 if(b_v!= null) {
                     Vec3D ab = (!inXY) ? p.sub(b_v) : getProjectedAB(p, p.zz, b_v);
-                    float radiusSum = b_v.radius + p.radius;
-                    float repelDist = maxDist > radiusSum ? maxDist : radiusSum;
-                    force.addSelf(falloff.getForce(ab, minDist, repelDist, strength * scaleFactor, interpolator));
+                    //float radiusSum = b_v.radius + p.radius;
+                    //float repelDist = maxDist > radiusSum ? maxDist : radiusSum;
+                    force.addSelf(falloff.getForce(ab, minDist, maxDist, strength * scaleFactor, interpolator));
                 }
             }
 
@@ -146,7 +146,7 @@ namespace SlowRobotics.Agent.Behaviours
 
             public override void interactWith(SRParticle p, object b)
             {
-                SRParticle b_v = b as SRParticle;
+                Plane3D b_v = b as Plane3D;
                 if (b_v != null)
                 {
                     Vec3D ab = (!inXY) ? p.sub(b_v) : getProjectedAB(p, p.zz, b_v);

@@ -231,6 +231,52 @@ namespace SlowRoboticsGH
         }
     }
 
+    public class ModifyParticleComponent : GH_Component
+    {
+        public ModifyParticleComponent() : base("Modify Particle", "ModParticle", "Modifies particle properties", "Nursery", "Utilities") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{90fab20f-251d-41e0-a918-f67032ffee00}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateParticles;
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddParameter(new ParticleParameter(), "Particle","P","Particle to modify", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Mass", "M", "Mass of the particle", GH_ParamAccess.item);
+            pManager.AddTextParameter("Tag", "T", "Additional data attached to the particle", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Fix", "F", "Fix the particle", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Radius", "R", "Radius of particle sphere", GH_ParamAccess.item);
+            pManager[1].Optional = true;
+            pManager[2].Optional = true;
+            pManager[3].Optional = true;
+            pManager[4].Optional = true;
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddParameter(new ParticleParameter(), "Particle", "P", "Particle", GH_ParamAccess.item);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            GH_Particle p = null;
+            double mass = 1;
+            string tag = "";
+            bool f = false;
+            double radius = 0;
+
+            if (!DA.GetData(0, ref p)) { return; }
+            IParticle particle = p.Value;
+
+            //update if data set
+            if (DA.GetData(1, ref mass)) { particle.mass = (float) mass; }
+            if (DA.GetData(2, ref tag)) { particle.tag = tag; }
+            if (DA.GetData(3, ref f)) { particle.f = f; }
+            if (DA.GetData(4, ref radius)) { particle.radius = (float)radius; }
+            
+            DA.SetData(0, new GH_Particle(particle));
+        }
+    }
+
     public class CreateKDTreeComponent : GH_Component
     {
         public CreateKDTreeComponent() : base("Create KDTree", "KDTree", "Creates a KDTree", "Nursery", "Utilities") { }

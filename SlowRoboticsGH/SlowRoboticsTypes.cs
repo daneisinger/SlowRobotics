@@ -246,7 +246,7 @@ namespace SlowRoboticsGH
 
     }
 
-    public class GH_Plane3D : GH_Goo<Plane3D>
+    public class GH_Plane3D : GH_Goo<Plane3D>, IGH_PreviewData
     {
         public GH_Plane3D() { this.Value = null; }
         public GH_Plane3D(GH_Plane3D goo) { this.Value = goo.Value; }
@@ -259,7 +259,15 @@ namespace SlowRoboticsGH
         public override string ToString() => this.Value.ToString();
         public override object ScriptVariable() => Value;
 
-        //todo - do casts
+        public BoundingBox ClippingBox
+        {
+            get
+            {
+                Plane3D p = m_value;
+                Vec3D d = p.xx + p.yy;
+                return new BoundingBox(p.x, p.y, p.z, p.x + d.x, p.y + d.y, p.z + d.z);
+            }
+        }
 
         public override bool CastFrom(object source)
         {
@@ -305,6 +313,23 @@ namespace SlowRoboticsGH
                 return true;
             }
             return base.CastTo<Q>(ref target);
+        }
+
+        public void DrawViewportWires(GH_PreviewWireArgs args)
+        {
+
+            Plane3D pln = m_value;
+            Point3d pt = pln.ToPoint3d();
+            Point3d px = pln.xx.ToPoint3d();
+            Point3d py = pln.yy.ToPoint3d();
+            args.Pipeline.DrawLine(pt, pt + px, System.Drawing.Color.Red, 1);
+            args.Pipeline.DrawLine(pt, pt + py, System.Drawing.Color.Blue, 1);
+
+        }
+
+        public void DrawViewportMeshes(GH_PreviewMeshArgs args)
+        {
+            // DrawViewportMeshes(args);
         }
     }
 

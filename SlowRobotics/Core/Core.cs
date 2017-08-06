@@ -59,20 +59,10 @@ namespace SlowRobotics.Core
             for (int i = 0; i < steps; i++)
             {
                 //-------------------------------------------------------------------start parallel compute loop
-                int numChunks = (int)Math.Ceiling(pop.Count / (double)maxThreads);
-                int runningThreads = 0;
+                //int numChunks = (int)Math.Ceiling(pop.Count / (double)maxThreads);
                 //List<IAgent> agents = pop.getRandomizedAgents();
                 List<IAgent> agents = pop.getAgents();
-                foreach (IAgent a in agents)
-                {
-                    System.Threading.Interlocked.Increment(ref runningThreads);
-                    System.Threading.ThreadPool.QueueUserWorkItem(delegate
-                    {
-                        a.step();
-                        System.Threading.Interlocked.Decrement(ref runningThreads);
-                    });
-                }
-                while (runningThreads > 0) {} // wait for threads to finish
+                System.Threading.Tasks.Parallel.ForEach(agents, a => a.step());
 
                 //-------------------------------------------------------------------late update loop
                 //hack: todo implement as event

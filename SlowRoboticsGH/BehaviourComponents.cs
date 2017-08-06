@@ -140,6 +140,7 @@ namespace SlowRoboticsGH
             if (!DA.GetData(0, ref damping)) { return; }
             if (!DA.GetData(1, ref priority)) { return; }
 
+            if (damping > 1) damping = 1;
             if (integrate != null)
             {
 

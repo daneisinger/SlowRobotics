@@ -19,7 +19,7 @@ namespace SlowRobotics.Utils
             int ci = data.Count - 1;
             while (ci > 0)
             {
-                int pi = (ci - 1) / 2;
+                int pi = (ci - 1);
                 if (data[ci].CompareTo(data[pi]) >= 0)
                     break;
                 T tmp = data[ci]; data[ci] = data[pi]; data[pi] = tmp;
