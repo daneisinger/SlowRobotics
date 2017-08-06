@@ -234,13 +234,31 @@ namespace SlowRoboticsGH
         }
     }
 
-    public class Plane3DParameter : GH_PersistentParam<GH_Plane3D>
+    public class Plane3DParameter : GH_PersistentParam<GH_Plane3D>, IGH_PreviewObject
     {
         public Plane3DParameter() : base("Plane3D", "Plane3D", "This is a Plane3D", "Nursery", "Parameters") { }
         public override GH_Exposure Exposure => GH_Exposure.secondary;
         protected override System.Drawing.Bitmap Icon => Properties.Resources.plane3d;
         public override System.Guid ComponentGuid => new Guid("{0ec193e4-45a7-4029-adc6-8995aa45cc2a}");
+        bool _hidden;
+        public bool Hidden
+        {
+            get { return _hidden; }
+            set { _hidden = value; }
+        }
 
+        public bool IsPreviewCapable
+        {
+            get { return true; }
+        }
+
+        public BoundingBox ClippingBox
+        {
+            get
+            {
+                return Preview_ComputeClippingBox();
+            }
+        }
         protected override GH_GetterResult Prompt_Singular(ref GH_Plane3D value)
         {
 
@@ -253,6 +271,16 @@ namespace SlowRoboticsGH
         {
             values = new List<GH_Plane3D>();
             return GH_GetterResult.success;
+        }
+
+        public void DrawViewportWires(IGH_PreviewArgs args)
+        {
+            Preview_DrawWires(args);
+        }
+
+        public void DrawViewportMeshes(IGH_PreviewArgs args)
+        {
+            Preview_DrawMeshes(args);
         }
     }
 
