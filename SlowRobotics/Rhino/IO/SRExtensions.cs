@@ -37,7 +37,7 @@ namespace SlowRobotics.Rhino.IO
 
         public static Line toLine(this Spring s)
         {
-            return new Line(s.start.ToPoint3d(), s.end.ToPoint3d());
+            return new Line(s.a.Geometry.ToPoint3d(), s.b.Geometry.ToPoint3d());
         }
 
         public static Line toLine(this ILine l)

@@ -831,7 +831,7 @@ namespace SlowRoboticsGH
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Axis", "A", "Axis of field plane", GH_ParamAccess.item,0);
+            pManager.AddIntegerParameter("Axis", "A", "Axis of field plane - 0 is x, 1 is y, 2 is z", GH_ParamAccess.item,0);
             pManager.AddNumberParameter("Strength", "S", "Strength of effect", GH_ParamAccess.item,0.1);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }

@@ -156,7 +156,7 @@ namespace SlowRoboticsGH
 
         public void DrawViewportWires(GH_PreviewWireArgs args)
         {
-            ILine l = m_value;
+            Spring l = m_value;
             args.Pipeline.DrawLine(l.toLine(), System.Drawing.Color.Red, 1);
         }
 
