@@ -169,9 +169,13 @@ namespace SlowRobotics.Rhino.IO
             //construct a graph using custom comparer for location checks
             Graph<SRParticle, Spring> graph = new Graph<SRParticle, Spring>(new SRParticleComparer());
             //insert all unique points
+            IParticle parent = null;
             foreach (Line l in edges)
             {
                 Spring s = new Spring(l.toLine3D());
+                if (parent == null) parent = s.a.Geometry;
+                s.a.Geometry.parent = parent;
+                s.b.Geometry.parent = parent;
                 s.s = stiffness;
                 graph.insert(s);
             }
