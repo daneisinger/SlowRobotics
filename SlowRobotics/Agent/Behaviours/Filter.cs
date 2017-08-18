@@ -55,31 +55,4 @@ namespace SlowRobotics.Agent.Behaviours
             a.neighbours = nl;
         }
     }
-
-    public class FilterClosestParents : ScaledBehaviour<SRParticle>
-    {
-        int num;
-            public FilterClosestParents(int priority, int _num) : base(priority)
-            {
-            num = _num;
-            }
-
-        public override void run(IAgent<object> a)
-        {
-            List<Vec3D> nl = a.neighbours.Where(n => ((SRParticle)n).parent != ((SRParticle)a.getData()).parent).ToList();
-            a.neighbours = nl;
-
-            //check if a is Vec3D
-            Vec3D pos = a.getData() as Vec3D;
-            if (pos != null)
-            {
-                //sort neighbour list by distance to a and then take first numClosest
-                a.neighbours.Sort(delegate (Vec3D x, Vec3D y)
-                {
-                    return x.sub(pos).CompareTo(y.sub(pos));
-                });
-                a.neighbours = a.neighbours.Take(num).ToList();
-            }
-        }
-    }
 }

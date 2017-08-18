@@ -291,6 +291,11 @@ namespace SlowRoboticsGH
                 Value = new Plane3D(((GH_Point)source).Value.ToVec3D());
                 return true;
             }
+            if (source is Vec3D)
+            {
+                Value = new Plane3D((Vec3D)source);
+                return true;
+            }
             return false;
         }
 
@@ -317,14 +322,13 @@ namespace SlowRoboticsGH
 
         public void DrawViewportWires(GH_PreviewWireArgs args)
         {
-
+            double l = Grasshopper.CentralSettings.PreviewPlaneRadius;
             Plane3D pln = m_value;
             Point3d pt = pln.ToPoint3d();
-            Point3d px = pln.xx.ToPoint3d();
-            Point3d py = pln.yy.ToPoint3d();
+            Point3d px = pln.xx.ToPoint3d()*l;
+            Point3d py = pln.yy.ToPoint3d()*l;
             args.Pipeline.DrawLine(pt, pt + px, System.Drawing.Color.Red, 1);
             args.Pipeline.DrawLine(pt, pt + py, System.Drawing.Color.Blue, 1);
-
         }
 
         public void DrawViewportMeshes(GH_PreviewMeshArgs args)
@@ -428,12 +432,13 @@ namespace SlowRoboticsGH
 
         public void DrawViewportWires(GH_PreviewWireArgs args)
         {
+            double l = Grasshopper.CentralSettings.PreviewPlaneRadius;
             IParticle p = m_value;
             Vec3D d = p.getExtents();
             Plane3D pln = p.get();
             Point3d pt = pln.ToPoint3d();
-            Point3d px = pln.xx.ToPoint3d();
-            Point3d py = pln.yy.ToPoint3d();
+            Point3d px = pln.xx.ToPoint3d()*l;
+            Point3d py = pln.yy.ToPoint3d()*l;
             args.Pipeline.DrawLine(pt, pt + px, System.Drawing.Color.Red, 1);
             args.Pipeline.DrawLine(pt, pt + py, System.Drawing.Color.Blue, 1);
 
@@ -537,13 +542,14 @@ namespace SlowRoboticsGH
 
         public void DrawViewportWires(GH_PreviewWireArgs args)
         {
+            double l = Grasshopper.CentralSettings.PreviewPlaneRadius;
             SRBody body = m_value;
             foreach (SRParticle p in body.pts)
             {
                 Vec3D d = p.xx.add(p.yy).add(p.zz);
                 Point3d pt = p.ToPoint3d();
-                Point3d px = p.xx.ToPoint3d();
-                Point3d py = p.yy.ToPoint3d();
+                Point3d px = p.xx.ToPoint3d()*l;
+                Point3d py = p.yy.ToPoint3d()*l;
                 args.Pipeline.DrawLine(pt, pt + px, System.Drawing.Color.Red, 1);
                 args.Pipeline.DrawLine(pt, pt + py, System.Drawing.Color.Blue, 1);
             }
