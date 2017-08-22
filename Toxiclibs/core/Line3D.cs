@@ -369,9 +369,9 @@ namespace Toxiclibs.core
             return new Ray3D(a.copy(), getDirection());
         }*/
 
-        public String toString()
+        public override string ToString()
         {
-            return start.toString() + " -> " + end.toString();
+            return start.ToString() + " -> " + end.ToString();
         }
     }
 }

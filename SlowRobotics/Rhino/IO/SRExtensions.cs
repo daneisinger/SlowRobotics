@@ -14,13 +14,81 @@ namespace SlowRobotics.Rhino.IO
     /// </summary>
     public static class SRExtensions
     {
-
-        public static Plane ToPlane(this Plane3D p)
+        private static Point3d _ToPoint3d(Vec3D p)
         {
-            Point3d origin = new Point3d(p.x, p.y, p.z);
+            return new Point3d(p.x, p.y, p.z);
+        }
+        private static Vector3d _ToVector3d(Vec3D p)
+        {
+            return new Vector3d(p.x, p.y, p.z);
+        }
+
+        private static Plane _ToPlane(Plane3D p)
+        {
+            Point3d origin = _ToPoint3d(p);
             Vector3d xx = new Vector3d(p.xx.x, p.xx.y, p.xx.z);
             Vector3d yy = new Vector3d(p.yy.x, p.yy.y, p.yy.z);
             return new Plane(origin, xx, yy);
+        }
+
+        public static Plane ToPlane(this SRParticle p)
+        {
+            return _ToPlane(p);
+        }
+
+        public static Point3d ToPoint3d(this SRParticle p)
+        {
+            return _ToPoint3d(p);
+        }
+
+        public static Vector3d ToVector3d(this SRParticle p)
+        {
+            return _ToVector3d(p);
+        }
+
+        public static Plane ToPlane(this Plane3D p)
+        {
+            return _ToPlane(p);
+        }
+
+        public static Point3d ToPoint3d(this Plane3D p)
+        {
+            return _ToPoint3d(p);
+        }
+
+        public static Vector3d ToVector3d(this Plane3D p)
+        {
+            return _ToVector3d(p);
+        }
+
+        public static Point3d ToPoint3d(this Vec3D p)
+        {
+            return _ToPoint3d(p);
+        }
+
+        public static Vector3d ToVector3d(this Vec3D p)
+        {
+            return _ToVector3d(p);
+        }
+
+        public static Line ToLine(this SRLinearParticle l)
+        {
+            return new Line(l.start.ToPoint3d(), l.end.ToPoint3d());
+        }
+
+        public static Line ToLine(this Spring s)
+        {
+            return new Line(s.a.Geometry.ToPoint3d(), s.b.Geometry.ToPoint3d());
+        }
+
+        public static Line ToLine(this ILine l)
+        {
+            return new Line(l.start.ToPoint3d(), l.end.ToPoint3d());
+        }
+
+        public static Line3D ToLine3D(this Line l)
+        {
+            return new Line3D(l.From.ToVec3D(), l.To.ToVec3D());
         }
 
         public static Plane3D ToPlane3D(this Plane p)
@@ -28,26 +96,6 @@ namespace SlowRobotics.Rhino.IO
             return new Plane3D(new Vec3D((float)p.Origin.X, (float)p.Origin.Y, (float)p.Origin.Z),
                          new Vec3D((float)p.XAxis.X, (float)p.XAxis.Y, (float)p.XAxis.Z),
                          new Vec3D((float)p.YAxis.X, (float)p.YAxis.Y, (float)p.YAxis.Z));
-        }
-
-        public static Line toLine(this SRLinearParticle l)
-        {
-            return new Line(l.start.ToPoint3d(), l.end.ToPoint3d());
-        }
-
-        public static Line toLine(this Spring s)
-        {
-            return new Line(s.a.Geometry.ToPoint3d(), s.b.Geometry.ToPoint3d());
-        }
-
-        public static Line toLine(this ILine l)
-        {
-            return new Line(l.start.ToPoint3d(), l.end.ToPoint3d());
-        }
-
-        public static Line3D toLine3D(this Line l)
-        {
-            return new Line3D(l.From.ToVec3D(), l.To.ToVec3D());
         }
 
         public static Vec3D ToVec3D(this Point3f p)
@@ -72,14 +120,6 @@ namespace SlowRobotics.Rhino.IO
             return AABB.fromMinMax(min, max);
         }
 
-        public static Point3d ToPoint3d(this Vec3D p)
-        {
-            return new Point3d(p.x, p.y, p.z);
-        }
 
-        public static Vector3d ToVector3d(this Vec3D p)
-        {
-            return new Vector3d(p.x, p.y, p.z);
-        }
     }
 }

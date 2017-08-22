@@ -142,12 +142,12 @@ namespace SlowRoboticsGH
         {
             if (typeof(Q) == typeof(Line))
             {
-                target = (Q)(object)Value.toLine();
+                target = (Q)(object)Value.ToLine();
                 return true;
             }
             if (typeof(Q) == typeof(GH_Line))
             {
-                target = (Q)(object)new GH_Line(Value.toLine());
+                target = (Q)(object)new GH_Line(Value.ToLine());
                 return true;
             }
 
@@ -157,7 +157,7 @@ namespace SlowRoboticsGH
         public void DrawViewportWires(GH_PreviewWireArgs args)
         {
             Spring l = m_value;
-            args.Pipeline.DrawLine(l.toLine(), System.Drawing.Color.Red, 1);
+            args.Pipeline.DrawLine(l.ToLine(), System.Drawing.Color.Red, 1);
         }
 
         public void DrawViewportMeshes(GH_PreviewMeshArgs args)

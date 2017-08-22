@@ -610,10 +610,10 @@ public bool intersectsTriangle(Triangle3D tri)
          * 
          * @see toxi.geom.Vec3D#toString()
          */
-        public String toString()
+        public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("<aabb> pos: ").Append(base.toString()).Append(" ext: ")
+            sb.Append("<aabb> pos: ").Append(base.ToString()).Append(" ext: ")
                     .Append(extent);
             return sb.ToString();
         }

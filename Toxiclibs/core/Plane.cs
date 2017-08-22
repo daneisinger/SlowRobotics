@@ -211,11 +211,11 @@ namespace Toxiclibs.core
         return mesh;
     }
     */
-    public String toString()
+    public override string ToString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.Append("origin: ").Append(base.toString()).Append(" norm: ")
-                .Append(normal.toString());
+        sb.Append("origin: ").Append(base.ToString()).Append(" norm: ")
+                .Append(normal.ToString());
         return sb.ToString();
     }
 }

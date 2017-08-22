@@ -522,9 +522,9 @@ namespace Toxiclibs.core
      * 
      * @see toxi.geom.AABB#toString()
      */
-    public String toString()
+    public override string ToString()
     {
-        return "<octree> offset: " + base.toString() + " size: " + size;
+        return "<octree> offset: " + base.ToString() + " size: " + size;
     }
 }
 }

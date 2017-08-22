@@ -192,5 +192,10 @@ namespace SlowRobotics.Core
             yy = p.yy.copy();
             zz = p.zz.copy();
         }
+
+        public override string ToString()
+        {
+            return string.Format("Plane3D:O {0},{1},{2}  Z {3},{4},{5}", x, y, z,zz.x,zz.y,zz.z);
+        }
     }
 }

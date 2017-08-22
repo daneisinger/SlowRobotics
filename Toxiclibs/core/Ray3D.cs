@@ -92,9 +92,9 @@ namespace Toxiclibs.core
         return new Line3D(this, getPointAtDistance(dist));
     }
 
-    public String toString()
+    public override string ToString()
     {
-        return "origin: " + base.toString() + " dir: " + dir;
+        return "origin: " + base.ToString() + " dir: " + dir;
     }
 }
 }

@@ -117,14 +117,15 @@ namespace SlowRobotics.Rhino.IO
 
             List<SRParticle> particles = new List<SRParticle>();
             SRParticle p1 = new SRParticle(new Plane3D(m.TopologyVertices[0].ToVec3D()));
-            Graph<SRParticle, Spring>  lm = new Graph<SRParticle,Spring>();
-            lm.parent = p1;
+            Graph<SRParticle, Spring>  g = new Graph<SRParticle,Spring>();
+            g.parent = p1;
             particles.Add(p1);
 
             for (int i = 1; i < m.TopologyVertices.Count; i++)
             {
                 Point3f p = m.TopologyVertices[i];
                 SRParticle p2 = new SRParticle(new Plane3D(p.ToVec3D()));
+                p2.parent = g.parent;
                 particles.Add(p2);
             }
 
@@ -135,9 +136,9 @@ namespace SlowRobotics.Rhino.IO
                 s.a.Tag = m.TopologyVertices.MeshVertexIndices(p.I)[0].ToString();
                 s.b.Tag = m.TopologyVertices.MeshVertexIndices(p.J)[0].ToString(); //set tags to mesh vertex indexes
                 s.s = stiffness;
-                lm.insert(s);
+                g.insert(s);
             }
-            return lm;
+            return g;
         }
 
         private class SRParticleComparer : IEqualityComparer<SRParticle>
@@ -172,7 +173,7 @@ namespace SlowRobotics.Rhino.IO
             IParticle parent = null;
             foreach (Line l in edges)
             {
-                Spring s = new Spring(l.toLine3D());
+                Spring s = new Spring(l.ToLine3D());
                 if (parent == null) parent = s.a.Geometry;
                 s.a.Geometry.parent = parent;
                 s.b.Geometry.parent = parent;
