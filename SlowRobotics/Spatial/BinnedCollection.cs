@@ -22,6 +22,15 @@ namespace SlowRobotics.Spatial
             allPts = new Dictionary<string,List<Vec3D>>();
         }
 
+        public IEnumerable<Vec3D> Collection
+        {
+            //TODO - implement
+            get
+            {
+                return new List<Vec3D>();
+            }
+        }
+
         public void Add(Vec3D pt)
         {
             string key = GraphUtils.makeSpatialKey(pt, binSize);

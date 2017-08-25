@@ -22,6 +22,13 @@ namespace SlowRobotics.Spatial
             extents = d;
         }
 
+        public IEnumerable<Vec3D> Collection
+        {
+            get
+            {
+                return tree.getPoints();
+            }
+        }
         public IEnumerable<Vec3D> Search(Vec3D pt, float radius, int maxPoints)
         {
             //todo - might need to sort by distance

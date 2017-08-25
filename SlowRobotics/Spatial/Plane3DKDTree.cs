@@ -14,10 +14,20 @@ namespace SlowRobotics.Spatial
     public class Plane3DKDTree : ISearchable
     {
         private KDTree<Vec3D> tree;
+        private List<Vec3D> ptRefs; //TODO - rewrite kdtree to give access to point collection
 
         public Plane3DKDTree()
         {
             tree = new KDTree<Vec3D>(3);
+            ptRefs = new List<Vec3D>();
+        }
+
+        public IEnumerable<Vec3D> Collection
+        {
+            get
+            {
+                return ptRefs;
+            }
         }
 
         public IEnumerable<Vec3D> Search(Vec3D pt, float radius, int maxPoints)
@@ -29,6 +39,7 @@ namespace SlowRobotics.Spatial
         public void Add(Vec3D pt)
         {
             tree.AddPoint(new double[] { pt.x, pt.y, pt.z }, pt);
+            ptRefs.Add(pt);
         }
 
         public void Update(IEnumerable<Vec3D> pts)

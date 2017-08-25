@@ -426,6 +426,16 @@ namespace SlowRoboticsGH
                 target = (Q)(object)new GH_Plane(Value.get().ToPlane());
                 return true;
             }
+            if (typeof(Q) == typeof(Point3d))
+            {
+                target = (Q)(object)new Point3d(Value.get().ToPoint3d());
+                return true;
+            }
+            if (typeof(Q) == typeof(Vector3d))
+            {
+                target = (Q)(object)new Point3d(Value.get().ToVector3d());
+                return true;
+            }
 
             return base.CastTo<Q>(ref target);
         }

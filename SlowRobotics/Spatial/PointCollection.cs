@@ -20,6 +20,15 @@ namespace SlowRobotics.Spatial
             allPts = new List<Vec3D>();
         }
 
+        public IEnumerable<Vec3D> Collection
+        {
+            //TODO - implement
+            get
+            {
+                return allPts;
+            }
+        }
+
         public void Add(Vec3D pt)
         {
             allPts.Add(pt);

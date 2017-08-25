@@ -31,6 +31,8 @@ namespace SlowRobotics.Spatial
         /// </summary>
         /// <param name="pts"></param>
         void Update(IEnumerable<Vec3D> pts);
+
+        IEnumerable<Vec3D> Collection { get; }
         
     }
 }
