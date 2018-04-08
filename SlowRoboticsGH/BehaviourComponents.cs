@@ -166,8 +166,6 @@ namespace SlowRoboticsGH
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("Damping", "D", "Spring Damping", GH_ParamAccess.item,1);
-            pManager.AddBooleanParameter("Hookes", "H", "Update Both Particles", GH_ParamAccess.item,true);
             pManager.AddNumberParameter("Scale", "S", "Rest length scale", GH_ParamAccess.item, 1);
             pManager.AddIntegerParameter("Priority", "P", "Behaviour Priority", GH_ParamAccess.item,0);
         }
@@ -181,28 +179,22 @@ namespace SlowRoboticsGH
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            double damping = 0.1;
-            bool verlet = true;
-            int priority = 5;
+            
             double rs = 1;
+            int priority = 5;
 
-            if (!DA.GetData(0, ref damping)) { return; }
-            if (!DA.GetData(1, ref verlet)) { return; }
-            if (!DA.GetData(2, ref rs)) { return; }
-            if (!DA.GetData(3, ref priority)) { return; }
+            if (!DA.GetData(0, ref rs)) { return; }
+            if (!DA.GetData(1, ref priority)) { return; }
 
             if (spring!=null)
             {
-                
-                spring.damping = (float)damping;
-                spring.verlet = verlet;
                 spring.priority = priority;
                 spring.restLengthScale = (float)rs;
                 
             }
             else
             {
-                spring = new SpringBehaviour(priority, (float)damping, verlet, (float)rs);
+                spring = new SpringBehaviour(priority, (float)rs);
                 
             }
             DA.SetData(0,spring);
@@ -1435,6 +1427,7 @@ namespace SlowRoboticsGH
             else
             {
                 scaleBox = new Scale.ByDistToBoundingBox(priority,behaviours,bounds,(float)maxDist);
+
             }
             DA.SetData(0, scaleBox);
         }

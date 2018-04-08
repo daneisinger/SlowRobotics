@@ -7,6 +7,7 @@ using SlowRobotics.Agent;
 using SlowRobotics.Core;
 using SlowRobotics.Rhino.IO;
 using SlowRobotics.SRGraph;
+using SlowRobotics.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ using Toxiclibs.core;
 
 namespace SlowRoboticsGH
 {
+
    public static class SR_GH_IO
     {
         public static List<IAgent> getFromWrapper(GH_ObjectWrapper wrapper)
@@ -41,6 +43,44 @@ namespace SlowRoboticsGH
             else if (wrapper.Value is GH_Agent) addTo.Add(((GH_Agent)wrapper.Value).Value);
 
             return addTo;
+        }
+    }
+
+    public class DebugComponent : GH_Component
+    {
+        public DebugComponent() : base("Debug", "Debug", "Prints runtime and log output from agents", "Nursery", "Utilities") { }
+        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("{39090ffc-268d-4eb3-b312-ea8655f729cb}");
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.Unwrap; //TODO - generate icon
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        {
+            pManager.AddParameter(new AgentParameter(), "Agents", "A", "Agents to debug", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        {
+            pManager.AddTextParameter("Log", "L", "Print of log", GH_ParamAccess.list);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+
+            GH_Agent o = null;
+            if (!DA.GetData(0, ref o)) { return; };
+            SRLogger logger = new SRLogger();
+
+            IAgent a = o.Value;
+            IAgent<object> ao = (IAgent<object>)a;
+            if (ao != null)
+            {
+                foreach (IBehaviour b in a.behaviours.getData())
+                {
+                    logger.Log(b.debug(ao).ToString());
+                }
+            }
+
+            DA.SetDataList(0, logger.Read());
         }
     }
 

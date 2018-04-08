@@ -48,7 +48,7 @@ namespace SlowRobotics.Agent.Behaviours
 
             public override void runOn(SRParticle p)
             {
-                if (scaleFactor > 0) p.addForce(getAxis(p).scale(strength * scaleFactor));
+                p.addForce(getAxis(p).scale(strength * scaleFactor));
             }
 
             public Vec3D getAxis(Plane3D a)
@@ -98,13 +98,7 @@ namespace SlowRobotics.Agent.Behaviours
             public Apart(int _priority, float _strength, float _minDist, float _maxDist, bool _inXY) : base(_priority, _strength, _minDist,_maxDist)
             {
                 inXY = _inXY;
-                reset();
-            }
-
-            public override void reset()
-            {
                 force = new Vec3D();
-                scaleFactor = 1;
             }
 
             public override void interactWith(SRParticle p, object b)
@@ -114,7 +108,7 @@ namespace SlowRobotics.Agent.Behaviours
                     Vec3D ab = (!inXY) ? p.sub(b_v) : getProjectedAB(p, p.zz, b_v);
                     //float radiusSum = b_v.radius + p.radius;
                     //float repelDist = maxDist > radiusSum ? maxDist : radiusSum;
-                    force.addSelf(falloff.getForce(ab, minDist, maxDist, strength * scaleFactor, interpolator));
+                    force.addSelf(falloff.getForce(ab, minDist, maxDist, strength, interpolator));
                 }
             }
 
@@ -127,9 +121,10 @@ namespace SlowRobotics.Agent.Behaviours
 
             public override void runOn(SRParticle p)
             {
-                p.addForce(force);
-                reset();
+                p.addForce(force*scaleFactor);
+                force = new Vec3D();
             }
+
         }
 
         /// <summary>
@@ -150,7 +145,7 @@ namespace SlowRobotics.Agent.Behaviours
                 if (b_v != null)
                 {
                     Vec3D ab = (!inXY) ? p.sub(b_v) : getProjectedAB(p, p.zz, b_v);
-                    force.addSelf(falloff.getForce(ab.getInverted(), minDist, maxDist, strength * scaleFactor, interpolator));
+                    force.addSelf(falloff.getForce(ab.getInverted(), minDist, maxDist, strength, interpolator));
                 }
             }
         }
@@ -170,7 +165,7 @@ namespace SlowRobotics.Agent.Behaviours
 
                     Vec3D cPt = b_l.closestPoint(p);
 
-                    force.addSelf(falloff.getForce(cPt.sub(p), minDist, maxDist, strength * scaleFactor, interpolator));
+                    force.addSelf(falloff.getForce(cPt.sub(p), minDist, maxDist, strength, interpolator));
 
                    // force.addSelf(calcForce(p, cPt.sub(p), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
 
@@ -197,7 +192,7 @@ namespace SlowRobotics.Agent.Behaviours
                         Vec3D cPt_a = a_l.closestPoint(b_l);
                         Vec3D cPt_b = b_l.closestPoint(a_l);
                         //force.addSelf(calcForce(p, cPt_a.sub(cPt_b), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
-                        force.addSelf(falloff.getForce(cPt_a.sub(cPt_b), minDist, maxDist, strength * scaleFactor, interpolator));
+                        force.addSelf(falloff.getForce(cPt_a.sub(cPt_b), minDist, maxDist, strength, interpolator));
                     }
                 }
             }
@@ -241,7 +236,7 @@ namespace SlowRobotics.Agent.Behaviours
                                 if (cPt_a != null && cPt_b != null)
                                 {
                                     Vec3D dir = cPt_b.sub(cPt_a);
-                                    force.addSelf(falloff.getForce(dir, minDist, maxDist, strength * scaleFactor, interpolator));
+                                    force.addSelf(falloff.getForce(dir, minDist, maxDist, strength, interpolator));
                                    // force.addSelf(calcForce(a, dir, minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
                                 }
                             }
@@ -250,7 +245,7 @@ namespace SlowRobotics.Agent.Behaviours
                         {
                             //attract to closest points on lines
                             Vec3D cPt = b_s.closestPoint(a);
-                            force.addSelf(falloff.getForce(cPt.sub(a), minDist, maxDist, strength * scaleFactor, interpolator));
+                            force.addSelf(falloff.getForce(cPt.sub(a), minDist, maxDist, strength, interpolator));
                             //force.addSelf(calcForce(a, cPt.sub(a), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared));
                         }
                     }
@@ -293,13 +288,13 @@ namespace SlowRobotics.Agent.Behaviours
             {
                 if (closestPt != null)
                 {
-                    force = falloff.getForce(closestPt.sub(p), minDist, maxDist, strength * scaleFactor, interpolator);
-                   // force = calcForce(p, closestPt.sub(p), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared);
-                    p.addForce(force);
+                    force = falloff.getForce(closestPt.sub(p), minDist, maxDist, strength, interpolator);
+                    // force = calcForce(p, closestPt.sub(p), minDist, maxDist, strength * scaleFactor, ExponentialInterpolation.Squared);
+                    p.addForce(force * scaleFactor);
                 }
                 closestPt = null;
                 md = 1000000;
-                reset();
+               // reset();
             }
         }
 
@@ -354,7 +349,7 @@ namespace SlowRobotics.Agent.Behaviours
                 (float)ThreadedRandom.RandDouble() - 0.5f, 
                 inXY?0: (float)ThreadedRandom.RandDouble() - 0.5f);
 
-            randomVector.scaleSelf(strength);
+            randomVector.scaleSelf(strength*scaleFactor);
             v.addForce(randomVector);
         }
 

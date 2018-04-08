@@ -34,7 +34,7 @@ namespace SlowRobotics.SRGraph
     {
         public INode<T> a { get; set; }
         public INode<T> b { get; set; }
-
+        public int index { get; set; }
         /// <summary>
         /// Default constructor
         /// </summary>

@@ -14,13 +14,9 @@ namespace SlowRobotics.Agent.Behaviours
     /// </summary>
     public class SpringBehaviour : ScaledBehaviour<Graph<SRParticle,Spring>>
     {
-        public float damping { get; set; }
-        public bool verlet { get; set; }
         public float restLengthScale { get; set; }
-        public SpringBehaviour(int _priority, float _damping, bool _verlet, float _restLengthScale) : base(_priority)
+        public SpringBehaviour(int _priority, float _restLengthScale) : base(_priority)
         {
-            damping = _damping;
-            verlet = _verlet;
             restLengthScale = _restLengthScale;
         }
 
@@ -28,12 +24,22 @@ namespace SlowRobotics.Agent.Behaviours
         {
             foreach (Spring l in graph.Edges)
             {
-                float d = ((l.l*restLengthScale) - (l.getLength()));
-                Vec3D ab = l.getDir();
+                Vec3D delta = l.a.Geometry.sub(l.b.Geometry);
+                float distance = delta.magnitude();
+                if (distance > 0)
+                {
+                    delta /= distance;
+                }
+                else {
+                    delta.set(0f, 0f, 0f);
+                }
+                float intensity = -(distance - l.l) * l.s;
+                delta *= intensity;
 
-                l.a.Geometry.addForce(ab.scale(-d * l.s * damping * scaleFactor));
-                if (verlet)l.b.Geometry.addForce(ab.scale(d * l.s * damping * scaleFactor));
+                l.a.Geometry.addForce(delta);
+                l.b.Geometry.addForce(delta.invert());
             }
         }
+
     }
 }

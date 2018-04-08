@@ -43,7 +43,7 @@ namespace SlowRobotics.Agent.Behaviours
             /// <param name="a"></param>
             public override void runOn(Vec3D p)
             {
-                if (c++ % frequency == 0)pts.Add(p); 
+                if (c++ % frequency == 0)pts.Add(p.copy()); 
             }
         }
 
@@ -82,6 +82,7 @@ namespace SlowRobotics.Agent.Behaviours
 
             public override void runOn(Graph<SRParticle,Spring> graph)
             {
+        
                 SRParticle p = graph.parent;
                 if (p.age % frequency == 0)
                 {

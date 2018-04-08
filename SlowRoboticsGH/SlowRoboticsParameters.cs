@@ -262,15 +262,15 @@ namespace SlowRoboticsGH
         protected override GH_GetterResult Prompt_Singular(ref GH_Plane3D value)
         {
 
-            value = new GH_Plane3D();
-            return GH_GetterResult.success;
+            //value = new GH_Plane3D();
+            return GH_GetterResult.cancel;
 
         }
 
         protected override GH_GetterResult Prompt_Plural(ref List<GH_Plane3D> values)
         {
-            values = new List<GH_Plane3D>();
-            return GH_GetterResult.success;
+            //values = new List<GH_Plane3D>();
+            return GH_GetterResult.cancel;
         }
 
         public void DrawViewportWires(IGH_PreviewArgs args)

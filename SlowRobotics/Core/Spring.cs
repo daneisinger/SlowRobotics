@@ -15,6 +15,7 @@ namespace SlowRobotics.Core
     {
         public INode<SRParticle> a { get; set; }
         public INode<SRParticle> b { get; set; }
+        public int index { get; set; }
 
         public float l { get; set; }
         public float s { get; set; }

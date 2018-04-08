@@ -115,8 +115,8 @@ namespace SlowRobotics.Rhino.IO
 
         public static AABB ToAABB(this Box b)
         {
-            Vec3D min = ToVec3D(b.BoundingBox.Min);
-            Vec3D max = ToVec3D(b.BoundingBox.Max);
+            Vec3D min = ToVec3D(b.PointAt(0,0,0));
+            Vec3D max = ToVec3D(b.PointAt(1,1,1));
             return AABB.fromMinMax(min, max);
         }
 

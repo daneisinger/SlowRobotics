@@ -64,5 +64,33 @@ namespace SlowRobotics.Agent.Behaviours
         {
             return behaviours.getData();
         }
+
+        /// <summary>
+        /// Gets runtime of behaviour for a given agent in milliseconds
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        public override string debug(IAgent<object> a)
+        {
+            string log = "";
+            stopWatch.Reset();
+            stopWatch.Start();
+            if (a.hasNeighbours())
+            {
+                // Testing step - loop through all neighbours
+                // used for closest point search etc.
+
+                //TODO - should loop through agents
+                foreach (Vec3D p in a.neighbours)
+                {
+                    //TODO - neighbour search doesnt return IAgent
+                    foreach (IBehaviour b in behaviours.getData()) b.interact(a, p);
+                }
+                //update the agent using test data
+                foreach (IBehaviour b in behaviours.getData()) log= log+b.debug(a)+ "\r\n";
+            }
+            stopWatch.Stop();
+            return "Name: " + ToString() + "\r\n" + log + "Run Time: "+stopWatch.ElapsedMilliseconds.ToString();
+        }
     }
 }

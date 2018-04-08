@@ -18,6 +18,10 @@ namespace SlowRobotics.Agent
         bool lateUpdate { get; set; }
         void run(IAgent<object> a);
         void interact(IAgent<object> a, object b);
+
+        //debugging
+        string debug(IAgent<object> a);
+
     }
 
     /// <summary>

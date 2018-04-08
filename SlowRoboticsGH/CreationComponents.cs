@@ -453,6 +453,7 @@ namespace SlowRoboticsGH
             pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item, 0.08);
             pManager.AddNumberParameter("Minimum Distance", "Mn", "Minimum connection distance", GH_ParamAccess.item,0);
             pManager.AddNumberParameter("Maximum Distance", "Mx", "Maximum connection distance", GH_ParamAccess.item,1);
+            pManager.AddNumberParameter("Scale", "Rs", "Rest Length Scale", GH_ParamAccess.item, 1);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -466,15 +467,16 @@ namespace SlowRoboticsGH
             GH_Graph _graph = null;
             double minD = 0;
             double maxD = 10;
+            double rls = 1;
 
             if (!DA.GetData(0, ref _graph)) { return; }
             if (!DA.GetData(1, ref stiffness)) { return; }
             if (!DA.GetData(2, ref minD)) { return; }
             if (!DA.GetData(3, ref maxD)) { return; }
-
+            if (!DA.GetData(4, ref rls)) { return; }
             Graph<SRParticle, Spring> g = _graph.Value;
 
-            GraphUtils.createProximateSprings(g, (float)stiffness, (float)minD, (float)maxD, "brace");
+            GraphUtils.createProximateSprings(g, (float)stiffness, (float)minD, (float)maxD, "brace", (float) rls);
 
             DA.SetData(0, g);
         }
@@ -492,6 +494,7 @@ namespace SlowRoboticsGH
             pManager.AddParameter(new GraphParameter(), "Graph", "G", "Graph to span", GH_ParamAccess.item);
             pManager.AddNumberParameter("Stiffness", "S", "Stiffness of springs between agents", GH_ParamAccess.item,0.15);
             pManager.AddIntegerParameter("Degree", "D", "Creates bracing that connect d number of springs from a given node", GH_ParamAccess.item, 1);
+            pManager.AddNumberParameter("Scale", "Rs", "Rest Length Scale", GH_ParamAccess.item, 0.15);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -505,13 +508,15 @@ namespace SlowRoboticsGH
             GH_Graph _graph = null;
             double stiffness = 0.1;
             int degree = 1;
+            double rls = 1;
 
             if (!DA.GetData(0, ref _graph)) { return; }
             if (!DA.GetData(1, ref stiffness)) { return; }
-            if (!DA.GetData(1, ref degree)) { return; }
+            if (!DA.GetData(2, ref degree)) { return; }
+            if (!DA.GetData(3, ref rls)) { return; }
 
             Graph<SRParticle, Spring> g = _graph.Value;
-            GraphUtils.spanSprings(g, (float) stiffness, 1f, degree);
+            GraphUtils.spanSprings(g, (float) stiffness, (float) rls, degree);
 
             DA.SetData(0, g);
         }

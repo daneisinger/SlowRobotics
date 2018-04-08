@@ -2,6 +2,7 @@
 using SlowRobotics.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Toxiclibs.core;
@@ -18,6 +19,7 @@ namespace SlowRobotics.Agent
         /// Order to run behaviour - low numbers run first
         /// </summary>
         public int priority { get; set; }
+        protected Stopwatch stopWatch;
 
         /// <summary>
         /// Flag to set whether to run the behaviour on the multithreaded core or the single threaded late update.
@@ -35,6 +37,7 @@ namespace SlowRobotics.Agent
         {
             priority = _priority;
             lateUpdate = false;
+            stopWatch = new Stopwatch();
         }
 
         /// <summary>
@@ -67,6 +70,8 @@ namespace SlowRobotics.Agent
         /// <param name="b"></param>
         public abstract void interact(IAgent<object> a, object b);
 
+        public abstract string debug(IAgent<object> a);
+
     }
 
     /// <summary>
@@ -78,11 +83,13 @@ namespace SlowRobotics.Agent
     {
         public int priority { get; set; }
         public bool lateUpdate { get; set; }
+        private Stopwatch stopWatch;
 
         public Behaviour(int _priority)
         {
             priority = _priority;
             lateUpdate = false;
+            stopWatch = new Stopwatch();
         }
 
         public int CompareTo(IBehaviour other)
@@ -138,23 +145,39 @@ namespace SlowRobotics.Agent
         /// <param name="a"></param>
         /// <param name="b"></param>
         public virtual void interactWith(T a, object b){}
+
+        /// <summary>
+        /// Gets runtime of behaviour for a given agent in milliseconds
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        public virtual string debug(IAgent<object> a)
+        {
+            stopWatch.Reset();
+            stopWatch.Start();
+            run(a);
+            stopWatch.Stop();
+            return "Name: " + ToString() + "Run Time: "+stopWatch.ElapsedMilliseconds.ToString();
+        }
+
     }
 
     /// <summary>
     /// Extension of behaviour to allow for scaling of behaviour parameters each step
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class ScaledBehaviour<T> : Behaviour<T>, IScaledBehaviour where T :class
+    public class ScaledBehaviour<T> : Behaviour<T>, IScaledBehaviour where T : class
     {
         /// <summary>
         /// Scale factor for behaviour
         /// </summary>
         public float scaleFactor { get; set; }
-
+        
         /// <summary>
         /// Intepolation strategy for the behaviour - used to add falloff effects to behaviour scaling
         /// </summary>
         public InterpolateStrategy interpolator;
+
 
         /// <summary>
         /// Default constructor with priority 0 and linear interpolator
@@ -179,11 +202,10 @@ namespace SlowRobotics.Agent
         /// <param name="a">Agent to get data for</param>
         public override void run(IAgent<object> a)
         {
-            T data = a.getData() as T; 
-            if (data !=null)
+            T data = a.getData() as T;
+            if (data != null)
             {
                 runOn(data);
-                reset();
             }
         }
 
@@ -211,6 +233,11 @@ namespace SlowRobotics.Agent
         public void setInterpolateStrategy(InterpolateStrategy _interpolator)
         {
             interpolator = _interpolator;
+        }
+
+        public override string debug(IAgent<object> a)
+        {
+            return base.debug(a) + ", Scale factor: " + scaleFactor;
         }
 
     }

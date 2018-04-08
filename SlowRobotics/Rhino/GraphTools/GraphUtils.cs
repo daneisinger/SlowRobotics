@@ -45,7 +45,7 @@ namespace SlowRobotics.Rhino.GraphTools
         /// <param name="minDist">Minimum distance for connections</param>
         /// <param name="maxDist">Maximum distance for connections</param>
         /// <param name="tag">Tag for new springs</param>
-        public static void createProximateSprings(Graph<SRParticle, Spring> graph, float stiffness, float minDist, float maxDist, string tag)
+        public static void createProximateSprings(Graph<SRParticle, Spring> graph, float stiffness, float minDist, float maxDist, string tag, float restLengthScale)
         {
             List<Vec3D> pts = graph.Geometry.ConvertAll(x => (Vec3D)x);
             AABB bb = AABB.getBoundingBox(pts);
@@ -60,6 +60,7 @@ namespace SlowRobotics.Rhino.GraphTools
                     {
                         Spring s = new Spring(p, (SRParticle)v);
                         s.s = stiffness;
+                        s.l *= restLengthScale;
                         s.tag = tag;
                         graph.insert(s);
                     }

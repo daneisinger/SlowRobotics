@@ -285,7 +285,6 @@ namespace SlowRobotics.SRGraph
         /// <param name="edge">Edge to insert</param>
         public void insert(E edge)
         {
-            
             T a = edge.a.Geometry;
             T b = edge.b.Geometry;
 
@@ -300,6 +299,8 @@ namespace SlowRobotics.SRGraph
             //insert in graph
             lock (_edges)
             {
+                //assign an index
+                edge.index = _edges.Count;
                 _edges.Add(edge);
             }
 

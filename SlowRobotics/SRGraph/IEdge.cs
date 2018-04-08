@@ -25,6 +25,7 @@ namespace SlowRobotics.SRGraph
         INode<T> Common(IEdge<T> toThis);
         bool replaceNode(INode<T> replaceThis, INode<T> withThat);
         void cleanup();
+        int index { get; set; }
     }
 
 }

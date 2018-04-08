@@ -52,10 +52,8 @@ namespace SlowRobotics.Core
         public static void run(AgentList pop, int steps)
         {
             System.Threading.ThreadPool.SetMaxThreads(maxThreads, maxThreads);
-
             //add any new agents
             pop.populate();
-
             for (int i = 0; i < steps; i++)
             {
                 //-------------------------------------------------------------------start parallel compute loop
@@ -63,11 +61,9 @@ namespace SlowRobotics.Core
                 //List<IAgent> agents = pop.getRandomizedAgents();
                 List<IAgent> agents = pop.getAgents();
                 System.Threading.Tasks.Parallel.ForEach(agents, a => a.step());
-
                 //-------------------------------------------------------------------late update loop
                 //hack: todo implement as event
                 foreach (IAgent a in agents) a.lateUpdate();
-
             }
             pop.flush(); 
             }

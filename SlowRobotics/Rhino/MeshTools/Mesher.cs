@@ -51,7 +51,7 @@ namespace SlowRobotics.Rhino.MeshTools
                 }
             }
 
-            return buildClosedMeshFromPolylineSections(sections, true , true);
+            return buildClosedMeshFromPolylineSections(sections, true , true, true);
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace SlowRobotics.Rhino.MeshTools
         /// <param name="capStart">Fills the first polyline</param>
         /// <param name="capEnd">Fills the last polyline</param>
         /// <returns></returns>
-        public static Mesh buildClosedMeshFromPolylineSections(List<Polyline> sections, bool capStart, bool capEnd)
+        public static Mesh buildClosedMeshFromPolylineSections(List<Polyline> sections, bool capStart, bool capEnd, bool closeLoft)
         {
             Mesh chunk = new Mesh();
             int numVertsPerPoly = 0;
@@ -100,7 +100,7 @@ namespace SlowRobotics.Rhino.MeshTools
 
             for (int i = 0; i <= (numVertsPerPoly * (sections.Count - 1)) - 1; i++)
             {
-                if (i % (numVertsPerPoly) == numVertsPerPoly - 1)
+                if (closeLoft && (i % (numVertsPerPoly) == numVertsPerPoly - 1))
                 {
                     chunk.Faces.AddFace(i, i - numVertsPerPoly + 1, i + 1, i + numVertsPerPoly);
                 }
